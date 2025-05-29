@@ -11,8 +11,5 @@ class AdminSesiController extends Controller
         return view('admin.auth.login');
     }
 
-    public function index()
-    {
-        return view('admin.dashboard');
-    }
+    
 }

@@ -67,6 +67,6 @@ class PelanggaranSeeder extends Seeder
             ['kategori' => 'berat', 'deskripsi' => 'Merusak sarana dan prasarana sekolah.', 'skor' => 30],
         ];
 
-        DB::table('pelanggaran')->insert($data);
+        DB::table('pelanggarans')->insert($data);
     }
 }
