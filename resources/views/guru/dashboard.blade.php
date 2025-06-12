@@ -1,13 +1,12 @@
-<p>Selamat Guru {{ Auth::user()->name }}</p>
+@extends('components.admin')
 
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@section('title', 'Dashboard Guru')
+@section('page_title', 'Dashboard Guru')
 
-<ul>
-    <li><a href="{{ route('guru.profil') }}">Profil</a></li>
-    <li><a href="{{ route('guru.siswa') }}">Siswa</a></li>
-    <li><a href="{{ route('guru.skorsing') }}">Skorsing</a></li>
-    <li><a href="{{ route('guru.pelanggaran') }}">Pelanggaran</a></li>
-</ul>
+@section('content')
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Selamat Datang, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-600">Ini adalah halaman utama dashboard Guru. Silakan pilih menu di sebelah kiri untuk melihat
+            informasi lebih lanjut.</p>
+    </div>
+@endsection

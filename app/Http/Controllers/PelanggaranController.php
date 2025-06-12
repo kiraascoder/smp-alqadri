@@ -9,7 +9,7 @@ class PelanggaranController extends Controller
 {
     public function pelanggaran()
     {
-        $pelanggarans = Pelanggaran::all();
+        $pelanggarans = Pelanggaran::paginate(10);
         return view('siswa.pelanggaran', compact('pelanggarans'));
     }
     public function store(Request $request)

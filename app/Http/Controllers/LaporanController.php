@@ -11,11 +11,12 @@ class LaporanController extends Controller
 {
     public function laporan()
     {
-        $laporans = Laporan::with(['siswa', 'guru', 'pelanggaran', 'konseling'])->latest()->get();
+        $laporans = Laporan::with(['siswa', 'guru', 'pelanggaran',])->latest()->get();
         $siswaList = User::where('role', 'siswa')->get();
+        $currentUserId = auth()->id();
         $guruList = User::where('role', 'guru_bk')->get();
         $pelanggaranList = Pelanggaran::all();
-        return view('siswa.laporan', compact('laporans', 'siswaList', 'guruList', 'pelanggaranList'));
+        return view('siswa.laporan', compact('laporans', 'siswaList', 'guruList', 'pelanggaranList', 'currentUserId'));
     }
     public function store(Request $request)
     {

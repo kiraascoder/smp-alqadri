@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatPelanggaran extends Model
 {
-    protected $fillable = ['siswa_id', 'pelanggaran_id', 'tanggal', 'keterangan'];
+
+    protected $table = 'riwayat_pelanggaran';
+    protected $fillable = ['siswa_id', 'pelanggarans_id', 'tanggal', 'keterangan'];
 
     public function siswa()
     {
@@ -15,6 +17,6 @@ class RiwayatPelanggaran extends Model
 
     public function pelanggaran()
     {
-        return $this->belongsTo(Pelanggaran::class);
+        return $this->belongsTo(Pelanggaran::class, 'pelanggarans_id');
     }
 }

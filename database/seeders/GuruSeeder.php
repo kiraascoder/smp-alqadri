@@ -20,5 +20,6 @@ class GuruSeeder extends Seeder
             'no_hp' => '08123456789',
             'role' => 'guru',
         ]);
+        
     }
 }

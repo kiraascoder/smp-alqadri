@@ -39,6 +39,7 @@ class KonselingController extends Controller
 
         return redirect()->back()->with('success', 'Permohonan konseling berhasil dikirim.');
     }
+
     public function destroy($id)
     {
         $konseling = Konseling::findOrFail($id);

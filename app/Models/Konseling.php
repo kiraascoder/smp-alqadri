@@ -9,6 +9,8 @@ class Konseling extends Model
 {
     use HasFactory;
 
+    protected $table = 'konselings';
+
     protected $fillable = [
         'user_id',
         'guru_bk_id',
@@ -33,9 +35,4 @@ class Konseling extends Model
         return $this->belongsTo(User::class, 'guru_bk_id');
     }
 
-
-    public function laporan()
-    {
-        return $this->belongsTo(Laporan::class, 'laporan_id');
-    }
 }

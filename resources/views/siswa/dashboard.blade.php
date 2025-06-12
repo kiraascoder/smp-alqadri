@@ -1,11 +1,12 @@
-<p>Selamat Datang Siswa {{ Auth::user()->name }}</p>
+@extends('components.admin')
 
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@section('title', 'Dashboard Siswa')
+@section('page_title', 'Dashboard Siswa')
 
-<a href="{{ route('siswa.profil') }}">Profil</a>
-<a href="{{ route('siswa.pelanggaran') }}">Pelanggaran</a>
-<a href="{{ route('siswa.konseling') }}">konseling</a>
-<a href="{{ route('siswa.laporan') }}">laporan</a>
+@section('content')
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Selamat Datang, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-600">Ini adalah halaman utama dashboard siswa. Silakan pilih menu di sebelah kiri untuk melihat
+            informasi lebih lanjut.</p>
+    </div>
+@endsection

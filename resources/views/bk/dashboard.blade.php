@@ -1,15 +1,12 @@
-<p>Selamat datang {{ Auth::user()->name }}</p>
+@extends('components.admin')
 
-<ul>
-    <li><a href="{{ route('bk.dashboard') }}">Dashboard</a></li>
-    <li><a href="{{ route('bk.profil') }}">profil</a></li>
-    <li><a href="{{ route('bk.pelanggaran') }}">pelanggaran</a></li>
-    <li><a href="{{ route('bk.riwayat') }}">riwayat</a></li>
-    <li><a href="{{ route('bk.skorsing') }}">skorsing</a></li>
-    <li><a href="{{ route('bk.pengelolaan') }}">pengelolaan</a></li>
-</ul>
+@section('title', 'Dashboard Guru Bk')
+@section('page_title', 'Dashboard Guru Bk')
 
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@section('content')
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Selamat Datang, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-600">Ini adalah halaman utama dashboard Guru Bk. Silakan pilih menu di sebelah kiri untuk melihat
+            informasi lebih lanjut.</p>
+    </div>
+@endsection

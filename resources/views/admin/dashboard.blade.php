@@ -1,16 +1,12 @@
-<p>Selamat Datang Admin</p>
+@extends('components.admin')
 
-<ul>
-    <li><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-    <li><a href="{{ route('admin.bk') }}">Guru BK</a></li>
-    <li><a href="{{ route('admin.guru') }}">guru</a></li>
-    <li><a href="{{ route('admin.laporan') }}">laporan</a></li>
-    <li><a href="{{ route('admin.pelanggaran') }}">pelanggaran</a></li>
-    <li><a href="{{ route('admin.riwayat') }}">riwayat</a></li>
-    <li><a href="{{ route('admin.siswa') }}">siswa</a></li>
-</ul>
+@section('title', 'Dashboard Admin')
+@section('page_title', 'Dashboard Admin')
 
-<form action="{{ route('logout') }}" method="POST">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@section('content')
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Selamat Datang, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-600">Ini adalah halaman utama dashboard Admin. Silakan pilih menu di sebelah kiri untuk melihat
+            informasi lebih lanjut.</p>
+    </div>
+@endsection
