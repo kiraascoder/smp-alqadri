@@ -63,8 +63,7 @@ class GuruController extends Controller
     }
     public function pelanggaran()
     {
-
-
+        $pelanggarans = Pelanggaran::paginate(10);
         return view('guru.pelanggaran', compact('pelanggarans'));
     }
 

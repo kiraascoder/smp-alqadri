@@ -5,15 +5,13 @@
 @section('content')
     <div class="bg-gray-100 min-h-screen p-6">
         <div class="max-w-6xl mx-auto space-y-6">
-
             {{-- Header --}}
             <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-semibold text-gray-800">📋 Daftar Laporan</h1>
+                <h1 class="text-4xl font-bold text-gray-800">💻 Daftar Laporan</h1>
                 <button onclick="bukaModalTambah()"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg transition">
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow transition">
                     + Tambah Laporan
                 </button>
-
             </div>
 
             {{-- Success Message --}}
@@ -22,20 +20,21 @@
                     {{ session('success') }}
                 </div>
             @endif
+
+            {{-- Error Message --}}
+            @if ($errors->any())
+                <div class="p-4 bg-red-100 text-red-800 rounded-md border border-red-300">
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul class="mt-2 list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             {{-- Table --}}
             <div class="bg-white rounded-xl shadow-md overflow-x-auto">
-                {{-- Error Message --}}
-                @if ($errors->any())
-                    <div class="p-4 bg-red-100 text-red-800 rounded-md border border-red-300">
-                        <strong>Terjadi kesalahan:</strong>
-                        <ul class="mt-2 list-disc list-inside text-sm">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <table class="min-w-full table-auto text-sm">
                     <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-semibold">
                         <tr>
@@ -73,9 +72,7 @@
                                     </div>
                                     <div class="modal-action mt-4">
                                         <form method="dialog">
-                                            <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">
-                                                Tutup
-                                            </button>
+                                            <button class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Tutup</button>
                                         </form>
                                     </div>
                                 </div>
@@ -95,9 +92,8 @@
                                         <form method="POST" action="{{ route('laporan.hapus', $laporan->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                                                Hapus
-                                            </button>
+                                            <button
+                                                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Hapus</button>
                                         </form>
                                     </div>
                                 </div>
@@ -167,6 +163,7 @@
             </div>
         </div>
     </div>
+
     <script>
         function bukaModalTambah() {
             document.getElementById('modalTambah').classList.remove('hidden');

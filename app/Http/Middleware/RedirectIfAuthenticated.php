@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
                 } elseif ($user->role === 'guru_bk') {
                     return redirect()->route('bk.dashboard');
                 } elseif ($user->role === 'siswa') {
-                    return redirect()->route('siswa.dashboard');
+                    return redirect()->route('siswa.profil');
                 } else {
                     return redirect('/');
                 }
