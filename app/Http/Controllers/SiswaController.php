@@ -20,6 +20,8 @@ class SiswaController extends Controller
         $kelasList = Kelas::all();
         return view('siswa.profil', compact('siswa', 'kelasList'));
     }
+
+
     public function edit(Request $request)
     {
         $user = auth()->user();
@@ -27,16 +29,25 @@ class SiswaController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'no_hp' => 'nullable|string|max:20',
             'nisn' => ['required', 'string', 'max:20', Rule::unique('siswa')->ignore($siswa->id)],
             'kelas_id' => ['required', 'exists:kelas,id'],
         ]);
 
+        // Handle avatar upload
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        } else {
+            $avatarPath = $user->avatar; // keep existing
+        }
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
+            'avatar' => $avatarPath,
         ]);
 
         $siswa->update([

@@ -7,7 +7,7 @@
         }
     </style>
 
-    <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6" x-data="{ openModal: false }">
+    <div class="w-full min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6" x-data="{ openModal: false, imagePreview: null }">
 
         <!-- Header -->
         <div class="text-center mb-8 animate-fade-in">
@@ -23,7 +23,8 @@
                 <!-- Avatar Section -->
                 <div class="flex flex-col items-center mb-8">
                     <div class="relative group">
-                        <img src="{{ Auth::user()->avatar ?? asset('default-avatar.png') }}" alt="Avatar"
+                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('default-avatar.png') }}"
+                            alt="Avatar"
                             class="w-32 h-32 rounded-full object-cover border-4 border-indigo-500 shadow-lg mb-4 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
                         <div
                             class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white animate-pulse">
@@ -173,9 +174,74 @@
                     </button>
                 </div>
 
-                <form action="{{ route('siswa.edit') }}" method="POST" class="space-y-6">
+                <form action="{{ route('siswa.edit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     @method('PUT')
+
+                    <!-- Avatar Upload Section -->
+                    <div class="space-y-4">
+                        <label class="block text-sm font-semibold text-gray-700">Foto Profil</label>
+
+                        <!-- Current Avatar & Preview -->
+                        <div class="flex items-center justify-center">
+                            <div class="relative">
+                                <img :src="imagePreview || '{{ Auth::user()->avatar ?? asset('default-avatar.png') }}'"
+                                    alt="Avatar Preview"
+                                    class="w-24 h-24 rounded-full object-cover border-4 border-indigo-500 shadow-lg">
+                                <div
+                                    class="absolute bottom-0 right-0 w-6 h-6 bg-indigo-500 rounded-full border-2 border-white flex items-center justify-center">
+                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Input -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-center w-full">
+                                <label for="avatar"
+                                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-indigo-400 transition-all duration-300">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                            </path>
+                                        </svg>
+                                        <p class="mb-2 text-sm text-gray-500">
+                                            <span class="font-semibold">Klik untuk upload</span> atau drag & drop
+                                        </p>
+                                        <p class="text-xs text-gray-500">PNG, JPG atau JPEG (Maks. 2MB)</p>
+                                    </div>
+                                    <input type="file" name="avatar" id="avatar" class="hidden"
+                                        accept="image/png,image/jpg,image/jpeg"
+                                        @change="
+                                            const file = $event.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onload = (e) => {
+                                                    imagePreview = e.target.result;
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        " />
+                                </label>
+                            </div>
+                            @error('avatar')
+                                <p class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 

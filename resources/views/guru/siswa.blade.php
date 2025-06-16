@@ -1,7 +1,24 @@
 @extends('components.admin')
 
 @section('content')
-    <div x-data="{ showDetail: false, selectedSiswa: null, searchTerm: '', showFilters: false }" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
+    <div x-data="{
+        showDetail: false,
+        selectedSiswa: null,
+        searchTerm: '',
+        showFilters: false,
+        siswas: @js($siswas->toArray()),
+        openDetail(siswaId) {
+            this.selectedSiswa = siswaId;
+            this.showDetail = true;
+        },
+        closeDetail() {
+            this.showDetail = false;
+            this.selectedSiswa = null;
+        },
+        getSelectedSiswa() {
+            return this.siswas.find(siswa => siswa.id === this.selectedSiswa);
+        }
+    }" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 md:p-6">
         <div class="max-w-7xl mx-auto space-y-6">
 
             {{-- Header Section --}}
@@ -116,7 +133,7 @@
                                     </td>
 
                                     <td class="px-8 py-6">
-                                        <button @click="selectedSiswa = {{ $siswa->id }}; showDetail = true"
+                                        <button @click="openDetail({{ $siswa->id }})"
                                             class="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold 
                                                        text-white bg-gradient-to-r from-blue-500 to-indigo-500 
                                                        hover:from-blue-600 hover:to-indigo-600 rounded-2xl
@@ -160,135 +177,118 @@
             </div>
 
             {{-- Enhanced Modal --}}
-            <template x-if="showDetail">
-                <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div x-show="showDetail" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
 
-                    {{-- Backdrop --}}
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+                {{-- Backdrop --}}
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeDetail()"></div>
 
-                    {{-- Modal Content --}}
-                    <div @click.away="showDetail = false"
-                        class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl transform"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-200"
-                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                {{-- Modal Content --}}
+                <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl transform"
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 translate-y-4">
 
-                        @foreach ($siswas as $siswa)
-                            <div x-show="selectedSiswa === {{ $siswa->id }}"
-                                x-transition:enter="transition ease-out duration-200 delay-100"
-                                x-transition:enter-start="opacity-0 translate-y-4"
-                                x-transition:enter-end="opacity-100 translate-y-0" class="p-8">
-
-                                {{-- Modal Header --}}
-                                <div class="flex items-center justify-between mb-8">
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 
-                                                    rounded-3xl flex items-center justify-center text-white font-bold text-2xl
-                                                    shadow-lg">
-                                            {{ substr($siswa->user->name ?? 'N', 0, 1) }}
-                                        </div>
-                                        <div>
-                                            <h3
-                                                class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                                Detail Siswa
-                                            </h3>
-                                            <p class="text-gray-500 mt-1">Informasi lengkap siswa</p>
-                                        </div>
+                    <template x-if="selectedSiswa">
+                        <div class="p-8">
+                            {{-- Modal Header --}}
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 
+                                                rounded-3xl flex items-center justify-center text-white font-bold text-2xl
+                                                shadow-lg"
+                                        x-text="getSelectedSiswa()?.user?.name ? getSelectedSiswa().user.name.charAt(0) : 'N'">
                                     </div>
-                                    <button @click="showDetail = false"
-                                        class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-2xl 
-                                                   flex items-center justify-center transition-all duration-200
-                                                   hover:scale-110">
-                                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </button>
+                                    <div>
+                                        <h3
+                                            class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                            Detail Siswa
+                                        </h3>
+                                        <p class="text-gray-500 mt-1">Informasi lengkap siswa</p>
+                                    </div>
                                 </div>
+                                <button @click="closeDetail()"
+                                    class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-2xl 
+                                               flex items-center justify-center transition-all duration-200
+                                               hover:scale-110">
+                                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
 
-                                {{-- Modal Body --}}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div class="space-y-6">
-                                        <div
-                                            class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                                            <h4 class="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
-                                                👤 Informasi Pribadi
-                                            </h4>
-                                            <div class="space-y-4">
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-gray-600 font-medium">Nama Lengkap</span>
-                                                    <span
-                                                        class="text-gray-900 font-semibold">{{ $siswa->user->name ?? '-' }}</span>
-                                                </div>
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-gray-600 font-medium">NISN</span>
-                                                    <span
-                                                        class="font-mono bg-white px-3 py-1 rounded-lg">{{ $siswa->nisn }}</span>
-                                                </div>
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-gray-600 font-medium">Nomor HP</span>
-                                                    <span
-                                                        class="text-gray-900 font-semibold">{{ $siswa->user->no_hp ?? '-' }}</span>
-                                                </div>
+                            {{-- Modal Body --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-6">
+                                    <div
+                                        class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                                        <h4 class="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                                            👤 Informasi Pribadi
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">Nama Lengkap</span>
+                                                <span class="text-gray-900 font-semibold"
+                                                    x-text="getSelectedSiswa()?.user?.name || '-'"></span>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-6">
-                                        <div
-                                            class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100">
-                                            <h4
-                                                class="text-lg font-semibold text-emerald-900 mb-4 flex items-center gap-2">
-                                                🏫 Informasi Akademik
-                                            </h4>
-                                            <div class="space-y-4">
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-gray-600 font-medium">Kelas</span>
-                                                    <span
-                                                        class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg font-semibold">
-                                                        {{ $siswa->kelas->nama_kelas }}
-                                                    </span>
-                                                </div>
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-gray-600 font-medium">Skor Pelanggaran</span>
-                                                    <span
-                                                        class="bg-red-100 text-red-800 px-3 py-1 rounded-lg font-bold text-lg">
-                                                        {{ $siswa->score ?? 0 }}
-                                                    </span>
-                                                </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">NISN</span>
+                                                <span class="font-mono bg-white px-3 py-1 rounded-lg"
+                                                    x-text="getSelectedSiswa()?.nisn || '-'"></span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">Nomor HP</span>
+                                                <span class="text-gray-900 font-semibold"
+                                                    x-text="getSelectedSiswa()?.user?.no_hp || '-'"></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Modal Footer --}}
-                                <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-100">
-                                    <button @click="showDetail = false"
-                                        class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 
-                                                   rounded-2xl font-semibold transition-all duration-200
-                                                   hover:scale-105 shadow-md hover:shadow-lg">
-                                        Tutup
-                                    </button>
-                                    <button
-                                        class="px-8 py-3 text-white bg-gradient-to-r from-blue-500 to-indigo-500 
-                                                   hover:from-blue-600 hover:to-indigo-600 rounded-2xl font-semibold 
-                                                   transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl">
-                                        Edit Siswa
-                                    </button>
+                                <div class="space-y-6">
+                                    <div
+                                        class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100">
+                                        <h4 class="text-lg font-semibold text-emerald-900 mb-4 flex items-center gap-2">
+                                            🏫 Informasi Akademik
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">Kelas</span>
+                                                <span
+                                                    class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg font-semibold"
+                                                    x-text="getSelectedSiswa()?.kelas?.nama_kelas || '-'"></span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">Skor Pelanggaran</span>
+                                                <span
+                                                    class="bg-red-100 text-red-800 px-3 py-1 rounded-lg font-bold text-lg"
+                                                    x-text="getSelectedSiswa()?.score || '0'"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+
+                            {{-- Modal Footer --}}
+                            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-100">
+                                <button @click="closeDetail()"
+                                    class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 
+                                               rounded-2xl font-semibold transition-all duration-200
+                                               hover:scale-105 shadow-md hover:shadow-lg">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
-            </template>
+            </div>
 
         </div>
     </div>

@@ -46,14 +46,14 @@ class SesiController extends Controller
             if ($user->role == "admin") {
                 return redirect('/admin/dashboard');
             } elseif ($user->role == "guru") {
-                return redirect('/guru/dashboard');
+                return redirect('/guru/profil');
             } elseif ($user->role == "guru_bk") {
-                return redirect('/bk/dashboard');
+                return redirect('/bk/profil');
             } elseif ($user->role == 'siswa') {
                 return redirect('/siswa/profil-siswa');
             }
         }
-        return redirect('/admin/login')->withErrors(['login' => 'Login Gagal, Email atau Password tidak sesuai!'])->withInput();
+        return redirect('/login')->withErrors(['login' => 'Login Gagal, Email atau Password tidak sesuai!'])->withInput();
     }
     public function register(Request $request)
     {
@@ -87,7 +87,7 @@ class SesiController extends Controller
             'nisn' => $request->nisn,
             'nama' => $request->name,
             'kelas_id' => $request->kelas_id,
-            'score_bk' => 200,
+            'score_bk' => 0,
         ]);
 
         return redirect('/login')->with('success', 'Registrasi berhasil! Silahkan Login Ke Akun Anda.');

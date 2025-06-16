@@ -22,7 +22,7 @@ class PelanggaranController extends Controller
 
         Pelanggaran::create($request->all());
 
-        return redirect()->route('siswa.pelanggaran')->with('success', 'Pelanggaran berhasil ditambahkan.');
+        return redirect()->route('admin.pelanggaran')->with('success', 'Pelanggaran berhasil ditambahkan.');
     }
 
     public function destroy(Pelanggaran $pelanggaran)

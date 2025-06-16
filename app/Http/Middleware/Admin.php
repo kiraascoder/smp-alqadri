@@ -18,6 +18,7 @@ class Admin
         if (auth()->check() && auth()->user()->role == $role) {
             return $next($request);
         }
-        return redirect()->route('unauthorized')->with('timeout', true);
+
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
 }

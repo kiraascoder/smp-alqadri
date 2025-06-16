@@ -8,6 +8,8 @@ use App\Models\RiwayatPelanggaran;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class GuruController extends Controller
@@ -33,31 +35,74 @@ class GuruController extends Controller
         $user = auth()->user();
         $guru = $user->guru;
 
+        // Validation rules
         $request->validate([
             'name' => 'required|string|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'no_hp' => 'nullable|string|max:20',
-            'nip' => ['required', 'string', 'max:20', Rule::unique('guru')->ignore($guru->id)],
         ]);
+        $avatarPath = $user->avatar;
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+
 
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
-
-        ]);
-
-        $guru->update([
-            'nip' => $request->nip,
+            'avatar' => $avatarPath
         ]);
 
         return redirect()->route('guru.profil')->with('success', 'Profil berhasil diperbarui.');
     }
 
+    public function detailSkorsing($id)
+    {
+        try {
+            $skorsing = RiwayatPelanggaran::with(['siswa.user', 'pelanggaran'])
+                ->where('id', $id)
+                ->first();
+
+            if (!$skorsing) {
+                return response()->json([
+                    'error' => 'Data tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'id' => $skorsing->id,
+                'siswa' => [
+                    'user' => [
+                        'name' => $skorsing->siswa->user->name ?? '-'
+                    ],
+                    'nisn' => $skorsing->siswa->nisn ?? '-'
+                ],
+                'pelanggaran' => [
+                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
+                    'skor' => $skorsing->pelanggaran->skor ?? 0
+                ],
+                'tanggal' => $skorsing->tanggal,
+                'keterangan' => $skorsing->keterangan,
+                'created_at' => $skorsing->created_at
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan server'
+            ], 500);
+        }
+    }
     public function skorsing()
     {
         $siswas = Siswa::with(['user', 'kelas'])->get();
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])->get();
+        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
+            ->orderBy('tanggal', 'desc')
+            ->paginate(10);
         $pelanggarans = Pelanggaran::all();
         return view('guru.skorsing', compact('siswas', 'riwayat', 'pelanggarans'));
     }
@@ -75,20 +120,36 @@ class GuruController extends Controller
             'tanggal' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
-        $siswa = Siswa::find($request->siswa_id);
-        $pelanggarans = Pelanggaran::find($request->pelanggarans_id);
 
-        RiwayatPelanggaran::create([
-            'siswa_id' => $siswa->id,
-            'pelanggarans_id' => $request->pelanggarans_id,
-            'tanggal' => $request->tanggal,
-            'keterangan' => $request->keterangan,
-        ]);
+        try {
+            DB::beginTransaction();
+
+            $siswa = Siswa::find($request->siswa_id);
+            $pelanggaran = Pelanggaran::find($request->pelanggarans_id);
 
 
-        $siswa->score_bk -= $pelanggarans->skor;
-        $siswa->save();
+            RiwayatPelanggaran::create([
+                'siswa_id' => $siswa->id,
+                'pelanggarans_id' => $request->pelanggarans_id,
+                'tanggal' => $request->tanggal,
+                'keterangan' => $request->keterangan,
+            ]);
 
-        return redirect()->route('guru.skorsing')->with('success', 'Skorsing berhasil ditambahkan.');
+
+            $siswa->score_bk = ($siswa->score_bk ?? 0) + $pelanggaran->skor;
+            $siswa->save();
+
+            DB::commit();
+
+            return redirect()->route('bk.skorsing')->with(
+                'success',
+                "Skorsing berhasil ditambahkan. Skor {$siswa->user->name} sekarang: {$siswa->score_bk} poin"
+            );
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Error tambah skorsing: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menambah skorsing.');
+        }
     }
 }

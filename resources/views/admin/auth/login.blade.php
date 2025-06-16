@@ -1,5 +1,3 @@
-<!-- resources/views/admin/login.blade.php -->
-
 <!DOCTYPE html>
 <html>
 

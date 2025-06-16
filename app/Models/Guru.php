@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Guru extends Model
 {
     protected $table = 'guru';
-    protected $fillable = ['user_id', 'nip'];
+    protected $fillable = ['user_id',];
 
     public function user()
     {

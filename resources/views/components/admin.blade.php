@@ -28,11 +28,10 @@
 
 <body class="bg-gray-100 text-gray-800">
     <div class="flex min-h-screen">
-        {{-- Sidebar --}}
-        @include('components.sidebar')
 
+        @include('components.sidebar')
         {{-- Main content --}}
-        <div class="flex-1">
+        <div class="flex-1 lg:ml-64">
             <main class="pt-16 lg:pt-0 px-6">
                 @yield('content')
             </main>

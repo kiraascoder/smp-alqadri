@@ -43,10 +43,13 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
     Route::get('guru', [AdminController::class, 'guru'])->name('admin.guru');
     Route::post('guru-tambah', [AdminController::class, 'storeGuru'])->name('admin-guru.tambah');
     Route::put('guru/{id}/edit', [AdminController::class, 'editGuru'])->name('admin-guru.edit');
-    Route::delete('guru/{id}/delete', [AdminController::class, 'destroyGuru'])->name('admin-guru.delete');
-
-    // Siswa Route
+    Route::delete('guru/{id}', [AdminController::class, 'destroyGuru'])->name('admin.guru.delete');
+    Route::delete('gurubk/{id}', [AdminController::class, 'destroyGuruBk'])->name('admin.gurubk.delete');
+    // Siswa Route`
     Route::get('siswa', [AdminController::class, 'siswa'])->name('admin.siswa');
+    Route::post('siswa/register', [AdminController::class, 'register'])->name('admin.siswa.register');
+    Route::delete('siswa/{id}', [AdminController::class, 'destroySiswa'])->name('admin.siswa.delete');
+
 
 
     // BK Route
@@ -54,6 +57,21 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
     Route::post('bk-tambah', [AdminController::class, 'storeGuruBk'])->name('admin-bk.tambah');
     Route::put('bk/{id}/edit', [AdminController::class, 'editGuruBk'])->name('admin-bk.edit');
     Route::delete('bk/{id}/delete', [AdminController::class, 'destroyGuruBk'])->name('admin-bk.delete');
+
+    // Pelanggaran
+    Route::post('pelanggaran-tambah', [PelanggaranController::class, 'store'])->name('admin.tambah.pelanggaran');
+
+
+
+    // Riwayat Skorsing
+    Route::delete('riwayat/{id}', [AdminController::class, 'destroyRiwayat'])->name('admin.riwayat.delete');
+    Route::delete('admin/skorsing/hapus/{id}', [AdminController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
+
+
+
+
+
+
 
 
 
@@ -94,6 +112,7 @@ Route::prefix('guru')->middleware('admin:guru')->group(function () {
     //  Skorsing
     Route::get('/skorsing', [GuruController::class, 'skorsing'])
         ->name('guru.skorsing');
+    Route::get('skorsing/detail/{id}', [GuruController::class, 'detailSkorsing'])->name('guru.skorsing.detail');
     Route::post('/skorsing-tambah', [GuruController::class, 'tambahSkorsing'])
         ->name('skorsing.tambah');
     // Pelanggaran Siswa
@@ -117,13 +136,25 @@ Route::prefix('bk')->middleware('admin:guru_bk')->group(function () {
         ->name('bk.riwayat');
     Route::get('/skorsing', [BkController::class, 'skorsing'])
         ->name('bk.skorsing');
+    Route::post('/skorsing-tambah-bk', [BkController::class, 'tambahSkorsing'])
+        ->name('skorsing.tambah-bk');
     Route::get('/konseling', [BkController::class, 'konseling'])
         ->name('bk.konseling');
     Route::post('/konseling-tambah', [BkController::class, 'store'])
         ->name('konseling-Bktambah');
-    Route::post('/konseling-hapus', [BkController::class, 'destroy'])
+    Route::put('/{id}/konseling-edit', [BkController::class, 'updateStatus'])
+        ->name('guru.konseling.update-status');
+    Route::delete('/{id}/konseling-hapus', [BkController::class, 'destroy'])
         ->name('konseling-Bkhapus');
+    // Pengaduan 
+    Route::delete('/{id}/laporan-hapus', [BkController::class, 'destroyPengaduan'])
+        ->name('pengaduan.hapus');
+
+    // Skorsing 
+    Route::get('skorsing/detail/{id}', [bkController::class, 'detailSkorsing'])->name('admin.skorsing.detail');
+    Route::delete('bk/skorsing/hapus/{id}', [BkController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
 });
+
 
 // Siswa
 Route::prefix('siswa')->middleware('admin:siswa')->group(function () {
@@ -157,11 +188,6 @@ Route::prefix('siswa')->middleware('admin:siswa')->group(function () {
     Route::delete('/{id}/laporan-hapus', [LaporanController::class, 'destroy'])
         ->name('laporan.hapus');
 });
-
-
-
-
-
 
 
 Route::post('/logout', [SesiController::class, 'logout'])->name('logout');

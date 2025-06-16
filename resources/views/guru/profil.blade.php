@@ -5,9 +5,28 @@
         [x-cloak] {
             display: none !important;
         }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 
-    <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6" x-data="{ openModal: false }">
+    <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6" x-data="{
+        openModal: false,
+        imagePreview: null
+    }">
 
         <!-- Header -->
         <div class="text-center mb-8 animate-fade-in">
@@ -16,15 +35,14 @@
         </div>
 
         <div class="max-w-4xl mx-auto">
-
-            <!-- Main Profile Card -->
             <!-- Main Profile Card -->
             <div class="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl p-8 border border-white/20">
 
                 <!-- Avatar Section -->
                 <div class="flex flex-col items-center mb-8">
                     <div class="relative group">
-                        <img src="{{ Auth::user()->avatar ?? asset('default-avatar.png') }}" alt="Avatar"
+                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('default-avatar.png') }}"
+                            alt="Avatar {{ $guru->user->name }}"
                             class="w-32 h-32 rounded-full object-cover border-4 border-indigo-500 shadow-lg mb-4 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
                         <div
                             class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white animate-pulse">
@@ -75,27 +93,7 @@
                         </div>
                     </div>
 
-                    <!-- NIP -->
-                    <div
-                        class="group p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all duration-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-violet-50">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">NIP</p>
-                                <p class="font-semibold text-gray-800 text-sm">{{ $guru->nip }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tombol Edit Profil (span full width) -->
+                    <!-- Edit Profile Button (span full width) -->
                     <div class="md:col-span-2 text-center mt-4">
                         <button @click="openModal = true"
                             class="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
@@ -108,7 +106,6 @@
                     </div>
                 </div>
             </div>
-
 
             <!-- Modal -->
             <div x-show="openModal" x-cloak
@@ -138,101 +135,119 @@
                         </button>
                     </div>
 
-                    <form action="{{ route('guru.edit') }}" method="POST" class="space-y-6">
+                    <!-- Form -->
+                    <form action="{{ route('guru.edit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT')
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="md:flex md:items-start gap-6">
+                                <!-- Avatar Upload -->
+                                <div class="flex flex-col items-center md:items-start space-y-3 md:mr-6 w-full md:w-1/3">
+                                    <label class="text-sm font-semibold text-gray-700">Foto Profil</label>
+                                    <div class="relative">
+                                        <img x-bind:src="imagePreview ? imagePreview :
+                                            '{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('default-avatar.png') }}'"
+                                            alt="Avatar Preview"
+                                            class="w-24 h-24 rounded-full object-cover border-4 border-indigo-500 shadow-lg">
+                                        <div
+                                            class="absolute bottom-0 right-0 w-6 h-6 bg-indigo-500 rounded-full border-2 border-white flex items-center justify-center">
+                                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                            </svg>
+                                        </div>
+                                    </div>
 
-                            <!-- Name Field -->
-                            <div class="space-y-2">
-                                <label for="name" class="block text-sm font-semibold text-gray-700">Nama Lengkap</label>
-                                <input type="text" name="name" id="name"
-                                    value="{{ old('name', $guru->user->name) }}"
-                                    class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
-                                    required>
-                                @error('name')
-                                    <p class="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                                    <!-- Upload Input -->
+                                    <label for="avatar"
+                                        class="flex flex-col items-center justify-center w-full h-28 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-indigo-400 transition-all duration-300 text-center">
+                                        <div class="flex flex-col items-center justify-center pt-4 pb-4">
+                                            <svg class="w-6 h-6 mb-2 text-gray-400" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            <p class="text-sm text-gray-500">
+                                                <span class="font-semibold">Klik untuk upload</span><br>
+                                                PNG, JPG (Maks. 2MB)
+                                            </p>
+                                        </div>
+                                        <input type="file" name="avatar" id="avatar" class="hidden"
+                                            accept="image/*"
+                                            @change="
+                                                const file = $event.target.files[0];
+                                                if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => {
+                                                        imagePreview = e.target.result;
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            " />
+                                    </label>
 
-                            <!-- Email Field -->
-                            <div class="space-y-2">
-                                <label for="email" class="block text-sm font-semibold text-gray-700">Email</label>
-                                <input type="email" name="email" id="email"
-                                    value="{{ old('email', $guru->user->email) }}"
-                                    class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
-                                    required>
-                                @error('email')
-                                    <p class="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                                    @error('avatar')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
 
-                            <!-- Phone Field -->
-                            <div class="space-y-2">
-                                <label for="no_hp" class="block text-sm font-semibold text-gray-700">Nomor HP</label>
-                                <input type="text" name="no_hp" id="no_hp"
-                                    value="{{ old('no_hp', $guru->user->no_hp) }}"
-                                    class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all">
-                                @error('no_hp')
-                                    <p class="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
+                                <!-- Form Input Fields -->
+                                <div class="w-full md:w-2/3 space-y-6">
+                                    <!-- Nama -->
+                                    <div class="space-y-2">
+                                        <label for="name" class="block text-sm font-semibold text-gray-700">Nama
+                                            Lengkap</label>
+                                        <input type="text" name="name" id="name"
+                                            value="{{ old('name', $guru->user->name) }}"
+                                            class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                                            required>
+                                        @error('name')
+                                            <p class="text-red-500 text-sm">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
-                            <!-- NIP Field -->
-                            <div class="space-y-2">
-                                <label for="nisn" class="block text-sm font-semibold text-gray-700">NIP</label>
-                                <input type="text" name="nip" id="nip"
-                                    value="{{ old('nisn', $guru->nip) }}"
-                                    class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
-                                    required>
-                                @error('nip')
-                                    <p class="text-red-500 text-sm flex items-center gap-1 mt-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
+                                    <!-- Email -->
+                                    <div class="space-y-2">
+                                        <label for="email"
+                                            class="block text-sm font-semibold text-gray-700">Email</label>
+                                        <input type="email" name="email" id="email"
+                                            value="{{ old('email', $guru->user->email) }}"
+                                            class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                                            required>
+                                        @error('email')
+                                            <p class="text-red-500 text-sm">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <!-- No HP -->
+                                    <div class="space-y-2">
+                                        <label for="no_hp" class="block text-sm font-semibold text-gray-700">Nomor
+                                            HP</label>
+                                        <input type="text" name="no_hp" id="no_hp"
+                                            value="{{ old('no_hp', $guru->user->no_hp) }}"
+                                            placeholder="Contoh: 08123456789"
+                                            class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all">
+                                        @error('no_hp')
+                                            <p class="text-red-500 text-sm">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+                        <!-- Buttons -->
+                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 mt-6">
                             <button type="button" @click="openModal = false"
-                                class="px-6 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200 hover:border-gray-400">
+                                class="px-6 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200">
                                 Batal
                             </button>
-
                             <button type="submit"
-                                class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 flex items-center gap-2 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7">
-                                    </path>
+                                        d="M5 13l4 4L19 7" />
                                 </svg>
                                 Simpan Perubahan
                             </button>
@@ -240,6 +255,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
-    @endsection
+    </div>
+@endsection
