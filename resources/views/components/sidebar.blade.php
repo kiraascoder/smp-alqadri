@@ -15,7 +15,7 @@
     <!-- Logo -->
     <div class="flex items-center gap-2">
         <span class="text-2xl">🎓</span>
-        <span class="text-lg font-bold text-blue-900">EduPanel</span>
+        <span class="text-lg font-bold text-blue-900">SMP AL QADRI ISLAMIC SCHOOL</span>
     </div>
 </header>
 
@@ -32,7 +32,7 @@
             <div class="mb-3">
                 <span class="text-3xl">🎓</span>
             </div>
-            <h1 class="text-xl font-bold tracking-wide mb-2">EduPanel</h1>
+            <h1 class="text-xl font-bold tracking-wide mb-2">SMP AL QADRI ISLAMIC SCHOOL</h1>
             <div class="bg-blue-800 rounded-lg p-3">
                 <p class="text-sm text-blue-200">Selamat datang</p>
                 <p class="text-xs text-blue-300 mt-1 capitalize">{{ Auth::user()->role }}</p>
@@ -286,7 +286,7 @@
 
     <div class="p-6 border-t border-blue-700">
         <form method="POST" action="{{ route('logout') }}">
-            @csrf            
+            @csrf
             <button type="submit"
                 class="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-400 border border-red-400 rounded-lg hover:bg-red-500 hover:text-white hover:border-red-500 transition-all duration-200">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
