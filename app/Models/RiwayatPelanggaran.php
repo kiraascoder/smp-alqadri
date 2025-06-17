@@ -12,7 +12,7 @@ class RiwayatPelanggaran extends Model
 
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id', 'id');
     }
 
     public function pelanggaran()

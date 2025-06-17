@@ -269,6 +269,44 @@ class AdminController extends Controller
         return view('admin.siswa', compact('siswas', 'kelasList'));
     }
 
+    public function detailSkorsing($id)
+    {
+        try {
+            $skorsing = RiwayatPelanggaran::with(['siswa.user', 'siswa.kelas', 'pelanggaran'])
+                ->where('id', $id)
+                ->first();
+
+            if (!$skorsing) {
+                return response()->json([
+                    'error' => 'Data tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'id' => $skorsing->id,
+                'siswa' => [
+                    'user' => [
+                        'name' => $skorsing->siswa->user->name ?? '-'
+                    ],
+                    'nisn' => $skorsing->siswa->nisn ?? '-',
+                    'kelas' => [
+                        'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
+                    ]
+                ],
+                'pelanggaran' => [
+                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
+                    'skor' => $skorsing->pelanggaran->skor ?? 0
+                ],
+                'tanggal' => $skorsing->tanggal,
+                'keterangan' => $skorsing->keterangan,
+                'created_at' => $skorsing->created_at
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan server'
+            ], 500);
+        }
+    }
     public function register(Request $request)
     {
         $request->validate([

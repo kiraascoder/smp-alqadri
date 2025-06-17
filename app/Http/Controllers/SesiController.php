@@ -13,6 +13,20 @@ class SesiController extends Controller
 {
     public function LoginView()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'admin') {
+                return redirect('/admin/dashboard');
+            } elseif ($user->role === 'guru') {
+                return redirect('/guru/profil');
+            } elseif ($user->role === 'guru_bk') {
+                return redirect('/bk/profil');
+            } elseif ($user->role === 'siswa') {
+                return redirect('/siswa/profil-siswa');
+            } else {
+                return redirect('/');
+            }
+        }
 
         return view('auth.login');
     }

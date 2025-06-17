@@ -66,6 +66,8 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
     // Riwayat Skorsing
     Route::delete('riwayat/{id}', [AdminController::class, 'destroyRiwayat'])->name('admin.riwayat.delete');
     Route::delete('admin/skorsing/hapus/{id}', [AdminController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
+    Route::get('admin/skorsing/detail/{id}', [AdminController::class, 'detailSkorsing'])->name('admin.skorsing.detail');
+
 
 
 
@@ -191,3 +193,32 @@ Route::prefix('siswa')->middleware('admin:siswa')->group(function () {
 
 
 Route::post('/logout', [SesiController::class, 'logout'])->name('logout');
+
+
+Route::get('/manifest.json', function () {
+    $manifest = config('pwa.manifest');
+
+    return response()->json($manifest, 200, [
+        'Content-Type' => 'application/manifest+json',
+        'Cache-Control' => 'public, max-age=604800', // Cache for 1 week
+    ]);
+})->name('pwa.manifest');
+
+Route::get('/offline.html', function () {
+    return view('pwa.offline');
+})->name('pwa.offline');
+
+// Service Worker route (optional, untuk debugging)
+Route::get('/serviceworker.js', function () {
+    $content = file_get_contents(public_path('serviceworker.js'));
+
+    return response($content, 200, [
+        'Content-Type' => 'application/javascript',
+        'Cache-Control' => 'public, max-age=86400', // Cache for 1 day
+    ]);
+})->name('pwa.serviceworker');
+
+// PWA Install helper route
+Route::get('/pwa/install', function () {
+    return view('pwa.install');
+})->name('pwa.install');
