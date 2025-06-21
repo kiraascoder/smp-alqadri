@@ -50,7 +50,8 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                        {{ $laporan->siswa->name ?? '-' }}
+                                        {{ $laporan->siswa->user->name ?? '-' }}
+
                                     </td>
 
                                     <td class="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">
@@ -91,7 +92,15 @@
                                                             <label
                                                                 class="text-xs font-semibold text-gray-500 uppercase">Siswa</label>
                                                             <p class="text-sm font-medium text-gray-900">
-                                                                {{ $laporan->siswa->name ?? '-' }}</p>
+                                                                {{ $laporan->siswa->user->name ?? '-' }}
+                                                            </p>
+
+                                                        </div>
+                                                        <div>
+                                                            <label
+                                                                class="text-xs font-semibold text-gray-500 uppercase">Kelas</label>
+                                                            <p class="text-sm font-medium text-gray-900">
+                                                                {{ $laporan->siswa->kelas->nama_kelas ?? '-' }}</p>
                                                         </div>
                                                         <div>
                                                             <label
@@ -145,8 +154,10 @@
                                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Konfirmasi Hapus</h3>
                                             <p class="text-sm text-gray-600 mb-6">
                                                 Yakin ingin menghapus laporan untuk siswa
-                                                <span
-                                                    class="font-semibold text-gray-900">{{ $laporan->siswa->name ?? '-' }}</span>?
+                                                <span class="font-semibold text-gray-900">
+                                                    {{ $laporan->siswa->user->name ?? '-' }}
+                                                </span>
+                                                ?
                                                 <br><span class="text-red-500">Tindakan ini tidak dapat dibatalkan.</span>
                                             </p>
                                         </div>

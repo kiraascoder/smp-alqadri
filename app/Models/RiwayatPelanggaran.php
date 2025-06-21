@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiwayatPelanggaran extends Model
 {
-
     protected $table = 'riwayat_pelanggaran';
-    protected $fillable = ['siswa_id', 'pelanggarans_id', 'tanggal', 'keterangan'];
+
+
+    protected $fillable = ['siswa_id', 'pelanggaran_id', 'tanggal', 'keterangan'];
 
     public function siswa()
     {
@@ -17,6 +18,12 @@ class RiwayatPelanggaran extends Model
 
     public function pelanggaran()
     {
-        return $this->belongsTo(Pelanggaran::class, 'pelanggarans_id');
+
+        return $this->belongsTo(Pelanggaran::class, 'pelanggaran_id', 'id');
+    }
+
+    public function kelas()
+    {
+        return $this->hasOneThrough(Kelas::class, Siswa::class, 'id', 'id', 'siswa_id', 'kelas_id');
     }
 }

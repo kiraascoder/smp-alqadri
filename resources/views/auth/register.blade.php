@@ -64,6 +64,16 @@
             </div>
 
             <div>
+                <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700">Kelas</label>
+                <select name="jenis_kelamin" id="jenis_kelamin" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
+                    <option value="">-- Jenis Kelamin --</option>
+                    <option value="Laki-Laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+
+            <div>
                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                 <input type="password" name="password" id="password" required
                     class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"

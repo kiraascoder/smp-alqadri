@@ -20,10 +20,10 @@
             <!-- Main Profile Card -->
             <div class="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl p-8 border border-white/20">
 
-                <!-- Avatar Section -->
+
                 <div class="flex flex-col items-center mb-8">
                     <div class="relative group">
-                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('default-avatar.png') }}"
+                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : (Auth::user()->jenis_kelamin === 'Laki-Laki' ? asset('images/avatar/laki.png') : asset('images/avatar/perempuan.png')) }}"
                             alt="Avatar"
                             class="w-32 h-32 rounded-full object-cover border-4 border-indigo-500 shadow-lg mb-4 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl">
                         <div
@@ -52,7 +52,9 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-500 font-medium">Email</p>
-                                <p class="font-semibold text-gray-800 text-sm">{{ $siswa->user->email }}</p>
+                                <p class="font-semibold text-gray-800 text-sm break-all">
+                                    {{ $siswa->user->email }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -185,7 +187,8 @@
                         <!-- Current Avatar & Preview -->
                         <div class="flex items-center justify-center">
                             <div class="relative">
-                                <img :src="imagePreview || '{{ Auth::user()->avatar ?? asset('default-avatar.png') }}'"
+                                <img :src="imagePreview ||
+                                    '{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : (Auth::user()->jenis_kelamin === 'Laki-Laki' ? asset('images/avatar/laki.png') : asset('images/avatar/perempuan.png')) }}'"
                                     alt="Avatar Preview"
                                     class="w-24 h-24 rounded-full object-cover border-4 border-indigo-500 shadow-lg">
                                 <div

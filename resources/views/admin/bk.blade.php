@@ -10,7 +10,7 @@
                     <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                         Daftar Guru BK
                     </h1>
-                    <p class="text-gray-600 text-lg">Kelola data guru dengan mudah dan efisien</p>
+                    <p class="text-gray-600 text-lg">Kelola data guru bk dengan mudah dan efisien</p>
                 </div>
                 <button onclick="openModal()"
                     class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 font-semibold">
@@ -83,7 +83,7 @@
                             </div>
                             <div>
                                 <h2 class="text-2xl font-bold text-gray-800">Data Guru BK</h2>
-                                <p class="text-gray-600">Daftar lengkap guru sekolah</p>
+                                <p class="text-gray-600">Daftar lengkap guru bk sekolah</p>
                             </div>
                         </div>
 
@@ -108,7 +108,7 @@
                                     No</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    Nama Guru</th>
+                                    Nama Guru BK</th>
 
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -120,11 +120,11 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse ($gurus as $item)
+                                {{-- Perbaiki bagian table row dengan data attributes yang benar --}}
                                 <tr class="hover:bg-blue-50/50 transition-colors duration-200 group"
                                     data-id="{{ $item->id }}" data-name="{{ $item->user->name ?? '-' }}"
-                                    data-kelas="{{ $item->kelas->nama_kelas ?? '-' }}"
                                     data-email="{{ $item->user->email ?? '-' }}"
-                                    data-no-hp="{{ $item->user->no_hp ?? '-' }}">
+                                    data-telepon="{{ $item->user->no_hp ?? '-' }}">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div
                                             class="w-8 h-8 bg-gray-100 group-hover:bg-blue-100 rounded-lg flex items-center justify-center text-sm font-semibold text-gray-600 transition-colors duration-200">
@@ -141,12 +141,12 @@
                                             </div>
                                             <div>
                                                 <p class="text-sm font-semibold text-gray-900">
-                                                    {{ $item->user->name ?? '-' }}</p>
+                                                    {{ $item->user->name ?? '-' }}
+                                                </p>
                                                 <p class="text-xs text-gray-500">Guru BK</p>
                                             </div>
                                         </div>
                                     </td>
-
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
                                             class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -155,7 +155,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-2">
-                                            <!-- Tombol Detail -->
+                                            <!-- Tombol Detail dengan debug -->
                                             <button onclick="showDetail(this)"
                                                 class="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-2 rounded-lg text-xs font-medium hover:from-blue-600 hover:to-blue-700 transform hover:-translate-y-0.5 transition-all duration-200 shadow-sm hover:shadow-md">
                                                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
@@ -170,7 +170,7 @@
 
                                             <!-- Tombol Hapus -->
                                             <button
-                                                onclick="confirmDelete({{ $item->id }}, '{{ $item->user->name ?? 'Guru' }}')"
+                                                onclick="confirmDelete({{ $item->id }}, '{{ $item->user->name ?? 'Guru BK' }}')"
                                                 class="group inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium hover:from-red-600 hover:to-red-700 transform hover:-translate-y-0.5 transition-all duration-200 shadow-sm hover:shadow-md">
                                                 <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,7 +198,7 @@
                                             </div>
                                             <div class="text-center">
                                                 <h3 class="text-lg font-semibold text-gray-900">Belum ada data</h3>
-                                                <p class="text-gray-500">Belum ada Guru yang terdaftar</p>
+                                                <p class="text-gray-500">Belum ada Guru BK yang terdaftar</p>
                                             </div>
                                         </div>
                                     </td>
@@ -296,8 +296,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold">Tambah Guru Baru</h3>
-                            <p class="text-green-100">Daftarkan Guru baru ke sistem</p>
+                            <h3 class="text-xl font-bold">Tambah Guru BK Baru</h3>
+                            <p class="text-green-100">Daftarkan Guru BK baru ke sistem</p>
                         </div>
                     </div>
                     <button onclick="closeAddModal()"
@@ -335,7 +335,7 @@
                             </label>
                             <input type="text" id="name" name="name" required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                placeholder="Masukkan nama lengkap Guru">
+                                placeholder="Masukkan nama lengkap Guru BK">
                             <div class="text-red-500 text-sm mt-1 hidden" id="name-error"></div>
                         </div>
 
@@ -358,9 +358,21 @@
                                 placeholder="08xxxxxxxx">
                             <div class="text-red-500 text-sm mt-1 hidden" id="no_hp-error"></div>
                         </div>
+                        <div>
+                            <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">
+                                Jenis Kelamin <span class="text-red-500">*</span>
+                            </label>
+                            <select id="jenis_kelamin" name="jenis_kelamin" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                                <option value="">-- Pilih Jenis Kelamin --</option>
+                                <option value="Laki-Laki">Laki-Laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                            <div class="text-red-500 text-sm mt-1 hidden" id="jenis_kelamin-error"></div>
+                        </div>
                     </div>
 
-                    <!-- Security Information Section -->
+
                     <div class="space-y-4">
                         <div class="flex items-center gap-3 pb-3 border-b border-gray-200">
                             <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -433,7 +445,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                 </svg>
-                                Tambah Guru
+                                Tambah Guru BK
                             </span>
                         </button>
                     </div>
@@ -457,8 +469,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold">Detail Guru</h3>
-                            <p class="text-blue-100">Informasi lengkap data Guru</p>
+                            <h3 class="text-xl font-bold">Detail Guru BK</h3>
+                            <p class="text-blue-100">Informasi lengkap data Guru BK</p>
                         </div>
                     </div>
                     <button onclick="closeDetailModal()"
@@ -492,7 +504,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Hapus</h3>
-                        <p class="text-gray-600">Apakah Anda yakin ingin menghapus data Guru ini?</p>
+                        <p class="text-gray-600">Apakah Anda yakin ingin menghapus data BK ini?</p>
                     </div>
                 </div>
 
@@ -587,7 +599,7 @@
         function confirmDelete(id, name) {
             currentDeleteId = id;
             document.getElementById('deleteItemName').textContent = name;
-            document.getElementById('deleteForm').action = `/admin/gurubk/${id}`;
+            document.getElementById('deleteForm').action = `bk/${id}/delete`;
             document.getElementById('deleteModal').classList.add('show');
         }
         let currentDeleteId = null;
@@ -599,39 +611,19 @@
                 id: row.dataset.id,
                 name: row.dataset.name,
                 email: row.dataset.email,
-                telepon: row.dataset.telepon,
+                telepon: row.dataset.telepon || '-', // Fallback ke '-' jika undefined
             };
-
-            // Format tanggal lahir
-            let formattedDate = '-';
-            if (data.tanggalLahir && data.tanggalLahir !== '-') {
-                try {
-                    const date = new Date(data.tanggalLahir);
-                    formattedDate = date.toLocaleDateString('id-ID', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                } catch (e) {
-                    formattedDate = data.tanggalLahir;
-                }
-            }
-
-            // Tentukan warna skor
-            const score = parseInt(data.score) || 0;
-            let scoreColor = 'text-green-600 bg-green-100';
-            if (score >= 80) scoreColor = 'text-red-600 bg-red-100';
-            else if (score >= 50) scoreColor = 'text-yellow-600 bg-yellow-100';
 
             const detailContent = `
                 <div class="space-y-6">
                     <!-- Profile Section -->
                     <div class="flex items-center gap-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
                         <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-                            <span class="text-2xl font-bold text-white">${data.name.charAt(0).toUpperCase()}</span>
+                            <span class="text-2xl font-bold text-white">${data.name ? data.name.charAt(0).toUpperCase() : 'G'}</span>
                         </div>
                         <div>
-                            <h4 class="text-2xl font-bold text-gray-900">${data.name}</h4>                            
+                            <h4 class="text-2xl font-bold text-gray-900">${data.name || '-'}</h4>
+                            <p class="text-gray-600">Guru BK</p>                            
                         </div>                        
                     </div>
 
@@ -643,24 +635,30 @@
                             
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Nama Lengkap</label>
-                                <p class="text-gray-900 font-semibold mt-1">${data.name}</p>
-                            </div>                                                                                                    
-                        </div>
-
-                        <!-- Contact & Academic Information -->
-                        <div class="space-y-4">
-                            <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Kontak & Akademik</h5>
+                                <p class="text-gray-900 font-semibold mt-1">${data.name || '-'}</p>
+                            </div>
                             
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Email</label>
-                                <p class="text-gray-900 font-semibold mt-1">${data.email}</p>
+                                <p class="text-gray-900 font-semibold mt-1">${data.email || '-'}</p>
+                            </div>                                                                                                    
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="space-y-4">
+                            <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Kontak</h5>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <label class="text-sm font-medium text-gray-500">No. HP</label>
+                                <p class="text-gray-900 font-semibold mt-1">${data.telepon}</p>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <label class="text-sm font-medium text-gray-500">Role</label>
+                                <p class="text-gray-900 font-semibold mt-1">Guru BK</p>
                             </div>                                                                                
                         </div>
                     </div>
-
-                    
-
-                    
                 </div>
             `;
 
@@ -671,14 +669,6 @@
         // Function untuk menutup modal detail
         function closeDetailModal() {
             document.getElementById('detailModal').classList.remove('show');
-        }
-
-        // Function untuk konfirmasi hapus
-        function confirmDelete(id, name) {
-            currentDeleteId = id;
-            document.getElementById('deleteItemName').textContent = name;
-            document.getElementById('deleteForm').action = `/admin/guru/${id}`;
-            document.getElementById('deleteModal').classList.add('show');
         }
 
         // Function untuk menutup modal hapus
@@ -745,7 +735,7 @@
             });
 
             // Validate required fields
-            const requiredFields = ['name', 'email', 'nisn', 'kelas_id', 'password', 'password_confirmation'];
+            const requiredFields = ['name', 'email', 'no_hp', 'password', 'password_confirmation'];
 
             requiredFields.forEach(fieldName => {
                 const field = document.getElementById(fieldName);
@@ -764,6 +754,16 @@
 
             if (email.value && !emailRegex.test(email.value)) {
                 showError(email, emailError, 'Format email tidak valid');
+                isValid = false;
+            }
+
+            // Validate phone number format
+            const noHp = document.getElementById('no_hp');
+            const noHpError = document.getElementById('no_hp-error');
+            const phoneRegex = /^[0-9]{10,15}$/;
+
+            if (noHp.value && !phoneRegex.test(noHp.value.replace(/[^0-9]/g, ''))) {
+                showError(noHp, noHpError, 'Format nomor HP tidak valid (10-15 digit)');
                 isValid = false;
             }
 

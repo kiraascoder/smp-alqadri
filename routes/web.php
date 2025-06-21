@@ -8,6 +8,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PelanggaranController;
 use App\Http\Controllers\SesiController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\TestingAPIController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminSesiController;
@@ -65,8 +66,8 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
 
     // Riwayat Skorsing
     Route::delete('riwayat/{id}', [AdminController::class, 'destroyRiwayat'])->name('admin.riwayat.delete');
-    Route::delete('admin/skorsing/hapus/{id}', [AdminController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
-    Route::get('admin/skorsing/detail/{id}', [AdminController::class, 'detailSkorsing'])->name('admin.skorsing.detail');
+    Route::delete('skorsing/hapus/{id}', [AdminController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
+
 
 
 
@@ -114,9 +115,10 @@ Route::prefix('guru')->middleware('admin:guru')->group(function () {
     //  Skorsing
     Route::get('/skorsing', [GuruController::class, 'skorsing'])
         ->name('guru.skorsing');
+
     Route::get('skorsing/detail/{id}', [GuruController::class, 'detailSkorsing'])->name('guru.skorsing.detail');
     Route::post('/skorsing-tambah', [GuruController::class, 'tambahSkorsing'])
-        ->name('skorsing.tambah');
+        ->name('skorsing.guru');
     // Pelanggaran Siswa
     Route::get('/pelanggaran', [GuruController::class, 'pelanggaran'])
         ->name('guru.pelanggaran');
@@ -128,6 +130,9 @@ Route::prefix('bk')->middleware('admin:guru_bk')->group(function () {
         ->name('bk.dashboard');
     Route::put('/profil-bk/edit', [BkController::class, 'edit'])
         ->name('bk.edit');
+    // Lihat Siswa
+    Route::get('/siswa', [BkController::class, 'siswa'])
+        ->name('bk.siswa');
     Route::get('/profil', [BkController::class, 'profil'])
         ->name('bk.profil');
     Route::get('/pengaduan', [BkController::class, 'pengaduan'])
@@ -192,6 +197,7 @@ Route::prefix('siswa')->middleware('admin:siswa')->group(function () {
 });
 
 
+
 Route::post('/logout', [SesiController::class, 'logout'])->name('logout');
 
 
@@ -208,7 +214,7 @@ Route::get('/offline.html', function () {
     return view('pwa.offline');
 })->name('pwa.offline');
 
-// Service Worker route (optional, untuk debugging)
+
 Route::get('/serviceworker.js', function () {
     $content = file_get_contents(public_path('serviceworker.js'));
 
@@ -218,7 +224,7 @@ Route::get('/serviceworker.js', function () {
     ]);
 })->name('pwa.serviceworker');
 
-// PWA Install helper route
+
 Route::get('/pwa/install', function () {
     return view('pwa.install');
 })->name('pwa.install');

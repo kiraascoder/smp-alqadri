@@ -284,7 +284,7 @@
                             Jenis Pelanggaran
                         </label>
                         <div class="relative">
-                            <select name="pelanggarans_id"
+                            <select name="pelanggaran_id"
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none"
                                 required>
                                 <option value="">Pilih jenis pelanggaran...</option>
@@ -578,11 +578,11 @@
                                 </div>
                                 
                                 ${data.keterangan ? `
-                                    <div class="bg-yellow-50 rounded-xl p-4">
-                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                    </div>
-                                    ` : ''}
+                                        <div class="bg-yellow-50 rounded-xl p-4">
+                                            <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                            <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                        </div>
+                                        ` : ''}
                             </div>
                         </div>
                     </div>

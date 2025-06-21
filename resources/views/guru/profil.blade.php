@@ -68,7 +68,9 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-500 font-medium">Email</p>
-                                <p class="font-semibold text-gray-800 text-sm">{{ $guru->user->email }}</p>
+                                <p class="font-semibold text-gray-800 text-sm break-all">
+                                    {{ $guru->user->email }}
+                                </p>
                             </div>
                         </div>
                     </div>

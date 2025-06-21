@@ -17,8 +17,9 @@ class SiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        // Data siswa dari Excel
+        // Data siswa lengkap dari Excel
         $siswaData = [
+            // KELAS 7
             ["NO" => 1, "NAMA" => "AHMAD FATWAL", "JK" => "L", "NISN" => "0128925508", "ROMBEL" => "Kelas 7"],
             ["NO" => 2, "NAMA" => "AHMAD SYAFAR", "JK" => "L", "NISN" => "3122185991", "ROMBEL" => "Kelas 7"],
             ["NO" => 3, "NAMA" => "AISYAH AQILAH", "JK" => "P", "NISN" => "0129568755", "ROMBEL" => "Kelas 7"],
@@ -57,7 +58,8 @@ class SiswaSeeder extends Seeder
             ["NO" => 36, "NAMA" => "RISKI AULIA AZHAR", "JK" => "L", "NISN" => "0129734653", "ROMBEL" => "Kelas 7"],
             ["NO" => 37, "NAMA" => "SALMA", "JK" => "P", "NISN" => "0123629497", "ROMBEL" => "Kelas 7"],
             ["NO" => 38, "NAMA" => "WINDA AULIA", "JK" => "P", "NISN" => "0129703797", "ROMBEL" => "Kelas 7"],
-            // Kelas 8 students
+
+            // KELAS 8
             ["NO" => 39, "NAMA" => "A. ILHAM SAID", "JK" => "L", "NISN" => "0115563993", "ROMBEL" => "Kelas 8"],
             ["NO" => 40, "NAMA" => "ADINDA CHALISHAH RAMADHANI", "JK" => "P", "NISN" => "0115563994", "ROMBEL" => "Kelas 8"],
             ["NO" => 41, "NAMA" => "AGUSTINA", "JK" => "P", "NISN" => "0118634325", "ROMBEL" => "Kelas 8"],
@@ -96,7 +98,8 @@ class SiswaSeeder extends Seeder
             ["NO" => 74, "NAMA" => "SYAFIRAH", "JK" => "P", "NISN" => "0115564013", "ROMBEL" => "Kelas 8"],
             ["NO" => 75, "NAMA" => "SYFIKAH KHAERANI", "JK" => "P", "NISN" => "0115564014", "ROMBEL" => "Kelas 8"],
             ["NO" => 76, "NAMA" => "YUSRIL", "JK" => "L", "NISN" => "0118634342", "ROMBEL" => "Kelas 8"],
-            // Kelas 9 students
+
+            // KELAS 9
             ["NO" => 77, "NAMA" => "A. ANNUR ROBBANI", "JK" => "L", "NISN" => "0106659533", "ROMBEL" => "Kelas 9"],
             ["NO" => 78, "NAMA" => "A. MUH. ALIF ATHALLAH", "JK" => "L", "NISN" => "0103943334", "ROMBEL" => "Kelas 9"],
             ["NO" => 79, "NAMA" => "ANDI ALYSA FADHILLAH", "JK" => "P", "NISN" => "0103943335", "ROMBEL" => "Kelas 9"],
@@ -137,10 +140,18 @@ class SiswaSeeder extends Seeder
             ["NO" => 114, "NAMA" => "ZIHAN NURKAMALIAH", "JK" => "P", "NISN" => "0106659551", "ROMBEL" => "Kelas 9"]
         ];
 
+        $this->command->info("🚀 Memulai proses seeding data siswa...\n");
+
         // Pastikan data kelas sudah ada terlebih dahulu
+        $this->command->info("📚 Menyiapkan data kelas...");
         $kelas7 = Kelas::firstOrCreate(['nama_kelas' => 'Kelas 7']);
         $kelas8 = Kelas::firstOrCreate(['nama_kelas' => 'Kelas 8']);
         $kelas9 = Kelas::firstOrCreate(['nama_kelas' => 'Kelas 9']);
+
+        $this->command->info("✓ Kelas berhasil disiapkan");
+        $this->command->info("  - {$kelas7->nama_kelas} (ID: {$kelas7->id})");
+        $this->command->info("  - {$kelas8->nama_kelas} (ID: {$kelas8->id})");
+        $this->command->info("  - {$kelas9->nama_kelas} (ID: {$kelas9->id})\n");
 
         // Map kelas
         $kelasMap = [
@@ -149,13 +160,30 @@ class SiswaSeeder extends Seeder
             'Kelas 9' => $kelas9->id,
         ];
 
+        // Counters untuk statistik
+        $berhasil = 0;
+        $dilewati = 0;
+        $gagal = 0;
+        $lakiLaki = 0;
+        $perempuan = 0;
+
+        $this->command->info("👥 Memproses data siswa...\n");
+
+        // Progress bar sederhana
+        $total = count($siswaData);
+        $processed = 0;
+
         // Buat akun untuk setiap siswa
         foreach ($siswaData as $data) {
+            $processed++;
+            $progress = round(($processed / $total) * 100);
+
             // Skip jika NISN sudah ada
             if (User::whereHas('siswa', function ($query) use ($data) {
                 $query->where('nisn', $data['NISN']);
             })->exists()) {
-                $this->command->info("Siswa dengan NISN {$data['NISN']} sudah ada, dilewati.");
+                $this->command->warn("[{$progress}%] ⚠️  Siswa dengan NISN {$data['NISN']} sudah ada, dilewati.");
+                $dilewati++;
                 continue;
             }
 
@@ -166,12 +194,16 @@ class SiswaSeeder extends Seeder
                 // Password default: nisn123
                 $defaultPassword = $data['NISN'] . '123';
 
-                // Buat user
+                // Konversi jenis kelamin
+                $jenisKelamin = $data['JK'] === 'L' ? 'Laki-laki' : 'Perempuan';
+
+                // Buat user dengan jenis kelamin
                 $user = User::create([
                     'name' => $data['NAMA'],
                     'email' => $email,
                     'password' => Hash::make($defaultPassword),
                     'role' => 'siswa',
+                    'jenis_kelamin' => $jenisKelamin,
                     'email_verified_at' => now(), // Auto verify
                 ]);
 
@@ -180,19 +212,74 @@ class SiswaSeeder extends Seeder
                     'user_id' => $user->id,
                     'nisn' => $data['NISN'],
                     'kelas_id' => $kelasMap[$data['ROMBEL']],
-                    'score_bk' => 0,
+                    'score_bk' => 0, // Default score BK
                 ]);
 
-                $this->command->info("✓ Berhasil membuat akun untuk: {$data['NAMA']} (NISN: {$data['NISN']})");
+                // Update counters
+                $berhasil++;
+                if ($data['JK'] === 'L') {
+                    $lakiLaki++;
+                } else {
+                    $perempuan++;
+                }
+
+                $gender = $data['JK'] === 'L' ? '👨‍🎓' : '👩‍🎓';
+                $this->command->info("[{$progress}%] ✓ {$gender} {$data['NAMA']} ({$jenisKelamin}, {$data['ROMBEL']}, NISN: {$data['NISN']})");
             } catch (\Exception $e) {
-                $this->command->error("✗ Gagal membuat akun untuk: {$data['NAMA']} - {$e->getMessage()}");
+                $gagal++;
+                $this->command->error("[{$progress}%] ✗ Gagal membuat akun untuk: {$data['NAMA']} - {$e->getMessage()}");
             }
         }
 
-        $this->command->info("\n📊 Seeder selesai dijalankan!");
-        $this->command->info("📧 Email format: nama.nisn@smpsekolah.edu");
-        $this->command->info("🔑 Password default: NISN + 123 (contoh: 0128925508123)");
-        $this->command->info("👥 Total siswa: " . count($siswaData));
+        // Tampilkan statistik final
+        $this->command->info("\n" . str_repeat("=", 80));
+        $this->command->info("📊 RINGKASAN SEEDER SISWA");
+        $this->command->info(str_repeat("=", 80));
+
+        $this->command->info("📈 Statistik Proses:");
+        $this->command->info("  ✅ Berhasil dibuat    : {$berhasil} siswa");
+        $this->command->info("  ⚠️  Dilewati (sudah ada): {$dilewati} siswa");
+        $this->command->info("  ❌ Gagal            : {$gagal} siswa");
+        $this->command->info("  📝 Total data       : " . count($siswaData) . " siswa");
+
+        $this->command->info("\n👥 Statistik Gender:");
+        $this->command->info("  👨‍🎓 Laki-laki       : {$lakiLaki} siswa (" . round(($lakiLaki / max($berhasil, 1)) * 100, 1) . "%)");
+        $this->command->info("  👩‍🎓 Perempuan       : {$perempuan} siswa (" . round(($perempuan / max($berhasil, 1)) * 100, 1) . "%)");
+
+        $this->command->info("\n🏫 Distribusi Per Kelas:");
+        $kelas7Count = collect($siswaData)->where('ROMBEL', 'Kelas 7')->count();
+        $kelas8Count = collect($siswaData)->where('ROMBEL', 'Kelas 8')->count();
+        $kelas9Count = collect($siswaData)->where('ROMBEL', 'Kelas 9')->count();
+
+        $this->command->info("  📚 Kelas 7          : {$kelas7Count} siswa");
+        $this->command->info("  📚 Kelas 8          : {$kelas8Count} siswa");
+        $this->command->info("  📚 Kelas 9          : {$kelas9Count} siswa");
+
+        $this->command->info("\n🔐 Informasi Login:");
+        $this->command->info("  📧 Format Email     : nama.4digit-nisn@smpsekolah.edu");
+        $this->command->info("  🔑 Format Password  : NISN + 123");
+        $this->command->info("  📝 Contoh Login     :");
+        $this->command->info("     Email    : ahmad.fatwal.5508@smpsekolah.edu");
+        $this->command->info("     Password : 0128925508123");
+
+        $this->command->info("\n🎯 Fitur yang Tersedia:");
+        $this->command->info("  ✅ Akun sudah terverifikasi otomatis");
+        $this->command->info("  ✅ Data jenis kelamin sudah diset");
+        $this->command->info("  ✅ Score BK default = 0");
+        $this->command->info("  ✅ Relasi kelas sudah terhubung");
+
+        if ($berhasil > 0) {
+            $this->command->info("\n🎉 Seeder berhasil dijalankan!");
+            $this->command->info("🚀 Siswa dapat langsung login menggunakan email dan password yang telah dibuat.");
+        } else {
+            $this->command->warn("\n⚠️  Tidak ada siswa baru yang dibuat. Semua data sudah ada atau terjadi error.");
+        }
+
+        if ($gagal > 0) {
+            $this->command->error("\n❗ Terdapat {$gagal} siswa yang gagal dibuat. Periksa log error di atas.");
+        }
+
+        $this->command->info("\n" . str_repeat("=", 80));
     }
 
     /**
@@ -200,8 +287,18 @@ class SiswaSeeder extends Seeder
      */
     private function generateEmail($nama, $nisn)
     {
-        // Bersihkan nama dari karakter khusus
-        $cleanName = Str::slug(strtolower($nama), '.');
+        // Bersihkan nama dari karakter khusus dan spasi
+        $cleanName = strtolower($nama);
+        $cleanName = str_replace(['muh.', 'muhammad'], ['muh', 'muh'], $cleanName); // Singkat nama panjang
+        $cleanName = preg_replace('/[^a-z\s]/', '', $cleanName); // Hapus karakter non-huruf
+        $cleanName = trim($cleanName);
+        $cleanName = str_replace(' ', '.', $cleanName); // Ganti spasi dengan titik
+
+        // Jika nama terlalu panjang, ambil 2 kata pertama
+        $nameParts = explode('.', $cleanName);
+        if (count($nameParts) > 2) {
+            $cleanName = implode('.', array_slice($nameParts, 0, 2));
+        }
 
         // Ambil 4 digit terakhir NISN
         $lastNisn = substr($nisn, -4);
@@ -209,7 +306,7 @@ class SiswaSeeder extends Seeder
         // Generate email
         $baseEmail = $cleanName . '.' . $lastNisn . '@smpsekolah.edu';
 
-        // Cek apakah email sudah ada
+        // Cek apakah email sudah ada, jika ya tambah counter
         $counter = 1;
         $email = $baseEmail;
 
@@ -219,5 +316,28 @@ class SiswaSeeder extends Seeder
         }
 
         return $email;
+    }
+
+    /**
+     * Generate random score BK untuk variasi data (opsional)
+     */
+    private function generateRandomScoreBK()
+    {
+        // 70% siswa score 0-20 (baik)
+        // 20% siswa score 21-60 (sedang) 
+        // 8% siswa score 61-100 (tinggi)
+        // 2% siswa score 101-150 (sangat tinggi)
+
+        $rand = rand(1, 100);
+
+        if ($rand <= 70) {
+            return rand(0, 20); // Kondisi baik
+        } elseif ($rand <= 90) {
+            return rand(21, 60); // Perlu bimbingan
+        } elseif ($rand <= 98) {
+            return rand(61, 100); // Perlu perhatian
+        } else {
+            return rand(101, 150); // Sangat perlu perhatian
+        }
     }
 }

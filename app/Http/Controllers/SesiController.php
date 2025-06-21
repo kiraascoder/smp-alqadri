@@ -76,6 +76,7 @@ class SesiController extends Controller
             'email' => 'required|email|unique:users,email',
             'nisn' => 'required|unique:siswa,nisn',
             'password' => 'required|string|min:6|confirmed',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'kelas_id' => 'required|exists:kelas,id',
         ], [
             'name.required' => 'Nama Wajib Diisi',
@@ -85,12 +86,14 @@ class SesiController extends Controller
             'password.required' => 'Silahkan Masukkan Password Anda',
             'password.min' => 'Password minimal terdiri dari 6 karakter',
             'password.confirmed' => 'Konfirmasi password tidak sesuai',
+            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
             'kelas_id.required' => 'Kelas harus dipilih',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'jenis_kelamin' => $request->jenis_kelamin,
             'password' => Hash::make($request->password),
             'role' => 'siswa',
         ]);

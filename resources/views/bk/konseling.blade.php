@@ -135,6 +135,9 @@
                                     Siswa</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Kelas</th>
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                     Tanggal</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -164,6 +167,19 @@
                                                     {{ $konseling->siswa->name ?? '-' }}</p>
                                                 <p class="text-sm text-gray-500">{{ $konseling->siswa->email ?? '-' }}</p>
                                             </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-2 0H7m5 0v-5a2 2 0 00-2-2h-2a2 2 0 00-2 2v5m6-10a2 2 0 002-2V7a2 2 0 00-2-2H9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2z">
+                                                </path>
+                                            </svg>
+                                            <span class="text-sm font-medium text-gray-900">
+                                                {{ $konseling->siswa->siswaProfile->kelas->nama_kelas ?? 'Tidak ada kelas' }}
+                                            </span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -308,9 +324,28 @@
                                                             </div>
                                                             <div>
                                                                 <p class="text-gray-900 font-semibold">
-                                                                    {{ $konseling->siswa->name ?? '-' }}</p>
+                                                                    {{ $konseling->siswa->name ?? '-' }}
+                                                                </p>
                                                                 <p class="text-gray-500 text-xs">
-                                                                    {{ $konseling->siswa->email ?? '-' }}</p>
+                                                                    {{ $konseling->siswa->email ?? '-' }}
+                                                                </p>
+                                                                @if ($konseling->siswa->siswaProfile && $konseling->siswa->siswaProfile->nisn)
+                                                                    <p class="text-gray-500 text-xs">
+                                                                        NISN: {{ $konseling->siswa->siswaProfile->nisn }}
+                                                                    </p>
+                                                                @endif
+
+                                                                <p class="text-blue-600 text-xs font-medium">
+                                                                    <svg class="w-3 h-3 inline mr-1" fill="none"
+                                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m-2 0H7m5 0v-5a2 2 0 00-2-2h-2a2 2 0 00-2 2v5m6-10a2 2 0 002-2V7a2 2 0 00-2-2H9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2z">
+                                                                        </path>
+                                                                    </svg>
+                                                                    Kelas:
+                                                                    {{ $konseling->siswa->siswaProfile->kelas->nama_kelas ?? 'Tidak ada kelas' }}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>

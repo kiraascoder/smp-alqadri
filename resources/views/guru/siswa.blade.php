@@ -48,13 +48,7 @@
                                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
                                 </div>
-                            </div>
-                            <button @click="showFilters = !showFilters"
-                                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-2xl 
-                                           hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 
-                                           shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold">
-                                🔍 Filter
-                            </button>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -186,7 +180,7 @@
                 <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeDetail()"></div>
 
                 {{-- Modal Content --}}
-                <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl transform"
+                <div class="relative bg-white rounded-3xl max-w-3xl w-full shadow-2xl transform max-h-[90vh] overflow-y-auto"
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 scale-95 translate-y-4"
                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -248,6 +242,11 @@
                                                 <span class="text-gray-900 font-semibold"
                                                     x-text="getSelectedSiswa()?.user?.no_hp || '-'"></span>
                                             </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-gray-600 font-medium">Jenis Kelamin</span>
+                                                <span class="text-gray-900 font-semibold"
+                                                    x-text="getSelectedSiswa()?.user?.jenis_kelamin || '-'"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -265,19 +264,287 @@
                                                     class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-lg font-semibold"
                                                     x-text="getSelectedSiswa()?.kelas?.nama_kelas || '-'"></span>
                                             </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-gray-600 font-medium">Skor Pelanggaran</span>
-                                                <span
-                                                    class="bg-red-100 text-red-800 px-3 py-1 rounded-lg font-bold text-lg"
-                                                    x-text="getSelectedSiswa()?.score || '0'"></span>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {{-- Score BK Section dengan Peringatan --}}
+                            <div class="mt-8">
+                                <div class="bg-white rounded-2xl p-6 border-2"
+                                    :class="{
+                                        'border-red-200 bg-gradient-to-br from-red-50 to-pink-50': (getSelectedSiswa()
+                                            ?.score_bk || 0) >= 150,
+                                        'border-orange-200 bg-gradient-to-br from-orange-50 to-yellow-50': (
+                                            getSelectedSiswa()?.score_bk || 0) >= 100 && (getSelectedSiswa()
+                                            ?.score_bk || 0) < 150,
+                                        'border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50': (
+                                            getSelectedSiswa()?.score_bk || 0) >= 50 && (getSelectedSiswa()
+                                            ?.score_bk || 0) < 100,
+                                        'border-green-200 bg-gradient-to-br from-green-50 to-emerald-50': (
+                                            getSelectedSiswa()?.score_bk || 0) < 50
+                                    }">
+
+                                    {{-- Header dengan Icon Peringatan --}}
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                                            :class="{
+                                                'bg-red-500 animate-pulse': (getSelectedSiswa()?.score_bk || 0) >= 150,
+                                                'bg-orange-500': (getSelectedSiswa()?.score_bk || 0) >= 100 && (
+                                                    getSelectedSiswa()?.score_bk || 0) < 150,
+                                                'bg-yellow-500': (getSelectedSiswa()?.score_bk || 0) >= 50 && (
+                                                    getSelectedSiswa()?.score_bk || 0) < 100,
+                                                'bg-green-500': (getSelectedSiswa()?.score_bk || 0) < 50
+                                            }">
+                                            <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 150">
+                                                <span class="text-white text-xl">🚨</span>
+                                            </template>
+                                            <template
+                                                x-if="(getSelectedSiswa()?.score_bk || 0) >= 100 && (getSelectedSiswa()?.score_bk || 0) < 150">
+                                                <span class="text-white text-xl">⚠️</span>
+                                            </template>
+                                            <template
+                                                x-if="(getSelectedSiswa()?.score_bk || 0) >= 50 && (getSelectedSiswa()?.score_bk || 0) < 100">
+                                                <span class="text-white text-xl">⚡</span>
+                                            </template>
+                                            <template x-if="(getSelectedSiswa()?.score_bk || 0) < 50">
+                                                <span class="text-white text-xl">✅</span>
+                                            </template>
+                                        </div>
+
+                                        <div class="flex-1">
+                                            <h4 class="text-xl font-bold text-gray-800">Status Bimbingan Konseling</h4>
+                                            <p class="text-gray-600">Evaluasi perilaku dan kedisiplinan siswa</p>
+                                        </div>
+
+                                        {{-- Badge Kritis untuk skor tinggi --}}
+                                        <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 150">
+                                            <div class="animate-bounce">
+                                                <span
+                                                    class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg">
+                                                    KRITIS!
+                                                </span>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    {{-- Skor dan Progress Bar --}}
+                                    <div class="space-y-6">
+                                        {{-- Skor Utama --}}
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-700 font-semibold text-lg">Skor Pelanggaran</span>
+                                            <div class="flex items-center gap-3">
+                                                <span class="px-4 py-2 rounded-xl font-bold text-2xl shadow-lg"
+                                                    :class="{
+                                                        'bg-red-100 text-red-800 animate-pulse': (getSelectedSiswa()
+                                                            ?.score_bk || 0) >= 150,
+                                                        'bg-orange-100 text-orange-800': (getSelectedSiswa()
+                                                            ?.score_bk || 0) >= 100 && (getSelectedSiswa()
+                                                            ?.score_bk || 0) < 150,
+                                                        'bg-yellow-100 text-yellow-800': (getSelectedSiswa()
+                                                            ?.score_bk || 0) >= 50 && (getSelectedSiswa()
+                                                            ?.score_bk || 0) < 100,
+                                                        'bg-green-100 text-green-800': (getSelectedSiswa()?.score_bk ||
+                                                            0) < 50
+                                                    }"
+                                                    x-text="(getSelectedSiswa()?.score_bk || 0) + '/200'"></span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Progress Bar dengan Animasi --}}
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between text-sm text-gray-600">
+                                                <span>Progress Pelanggaran</span>
+                                                <span
+                                                    x-text="Math.round(((getSelectedSiswa()?.score_bk || 0) / 200) * 100) + '%'"></span>
+                                            </div>
+
+                                            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
+                                                <div class="h-4 rounded-full transition-all duration-1000 ease-out relative"
+                                                    :style="`width: ${Math.min(((getSelectedSiswa()?.score_bk || 0) / 200) * 100, 100)}%`"
+                                                    :class="{
+                                                        'bg-gradient-to-r from-red-500 to-red-600': (getSelectedSiswa()
+                                                            ?.score_bk || 0) >= 150,
+                                                        'bg-gradient-to-r from-orange-500 to-orange-600': (
+                                                            getSelectedSiswa()?.score_bk || 0) >= 100 && (
+                                                            getSelectedSiswa()?.score_bk || 0) < 150,
+                                                        'bg-gradient-to-r from-yellow-500 to-yellow-600': (
+                                                            getSelectedSiswa()?.score_bk || 0) >= 50 && (
+                                                            getSelectedSiswa()?.score_bk || 0) < 100,
+                                                        'bg-gradient-to-r from-green-500 to-green-600': (
+                                                            getSelectedSiswa()?.score_bk || 0) < 50
+                                                    }">
+                                                    {{-- Shimmer effect untuk skor tinggi --}}
+                                                    <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 100">
+                                                        <div
+                                                            class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse">
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            {{-- Marker Progress --}}
+                                            <div class="flex justify-between text-xs text-gray-500 px-1">
+                                                <span class="text-green-600 font-medium">0 (Baik)</span>
+                                                <span class="text-yellow-600 font-medium">50</span>
+                                                <span class="text-orange-600 font-medium">100</span>
+                                                <span class="text-red-600 font-medium">150</span>
+                                                <span class="text-red-800 font-bold">200 (Max)</span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Status dan Kategori --}}
+                                        <div class="text-center">
+                                            <span
+                                                class="inline-flex items-center px-4 py-2 rounded-full text-lg font-bold shadow-lg"
+                                                :class="{
+                                                    'bg-red-100 text-red-800 border-2 border-red-200': (
+                                                        getSelectedSiswa()?.score_bk || 0) >= 150,
+                                                    'bg-orange-100 text-orange-800 border-2 border-orange-200': (
+                                                        getSelectedSiswa()?.score_bk || 0) >= 100 && (
+                                                        getSelectedSiswa()?.score_bk || 0) < 150,
+                                                    'bg-yellow-100 text-yellow-800 border-2 border-yellow-200': (
+                                                        getSelectedSiswa()?.score_bk || 0) >= 50 && (
+                                                        getSelectedSiswa()?.score_bk || 0) < 100,
+                                                    'bg-green-100 text-green-800 border-2 border-green-200': (
+                                                        getSelectedSiswa()?.score_bk || 0) < 50
+                                                }">
+                                                <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 150">
+                                                    <span>🚨 Sangat Memerlukan Perhatian Khusus</span>
+                                                </template>
+                                                <template
+                                                    x-if="(getSelectedSiswa()?.score_bk || 0) >= 100 && (getSelectedSiswa()?.score_bk || 0) < 150">
+                                                    <span>⚠️ Perlu Perhatian Khusus</span>
+                                                </template>
+                                                <template
+                                                    x-if="(getSelectedSiswa()?.score_bk || 0) >= 50 && (getSelectedSiswa()?.score_bk || 0) < 100">
+                                                    <span>⚡ Perlu Bimbingan</span>
+                                                </template>
+                                                <template x-if="(getSelectedSiswa()?.score_bk || 0) < 50">
+                                                    <span>✅ Kondisi Baik</span>
+                                                </template>
+                                            </span>
+                                        </div>
+
+                                        {{-- Peringatan dan Rekomendasi --}}
+                                        <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 50">
+                                            <div class="mt-6 p-5 rounded-xl border-l-4 shadow-lg"
+                                                :class="{
+                                                    'bg-red-50 border-red-500': (getSelectedSiswa()?.score_bk || 0) >=
+                                                        150,
+                                                    'bg-orange-50 border-orange-500': (getSelectedSiswa()?.score_bk ||
+                                                        0) >= 100 && (getSelectedSiswa()?.score_bk || 0) < 150,
+                                                    'bg-yellow-50 border-yellow-500': (getSelectedSiswa()?.score_bk ||
+                                                        0) >= 50 && (getSelectedSiswa()?.score_bk || 0) < 100
+                                                }">
+
+                                                <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 150">
+                                                    <div>
+                                                        <div class="flex items-center gap-3 mb-3">
+                                                            <span class="text-2xl animate-bounce">🚨</span>
+                                                            <h5 class="font-bold text-red-800 text-lg">PERINGATAN KRITIS!
+                                                            </h5>
+                                                        </div>
+                                                        <p class="text-red-700 mb-4 leading-relaxed">
+                                                            Siswa memiliki skor pelanggaran sangat tinggi (≥150). Diperlukan
+                                                            tindakan segera dan intensif.
+                                                        </p>
+                                                        <div class="bg-red-100 rounded-lg p-4">
+                                                            <h6 class="font-semibold text-red-800 mb-2">Tindakan Segera:
+                                                            </h6>
+                                                            <ul class="text-red-700 text-sm space-y-1">
+                                                                <li>• Konseling intensif segera dengan guru BK</li>
+                                                                <li>• Melibatkan orang tua/wali murid</li>
+                                                                <li>• Evaluasi harian dan monitoring ketat</li>
+                                                                <li>• Pertimbangan tindakan disipliner khusus</li>
+                                                                <li>• Rujukan ke ahli jika diperlukan</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <template
+                                                    x-if="(getSelectedSiswa()?.score_bk || 0) >= 100 && (getSelectedSiswa()?.score_bk || 0) < 150">
+                                                    <div>
+                                                        <div class="flex items-center gap-3 mb-3">
+                                                            <span class="text-2xl">⚠️</span>
+                                                            <h5 class="font-bold text-orange-800 text-lg">Perlu Perhatian
+                                                                Khusus</h5>
+                                                        </div>
+                                                        <p class="text-orange-700 mb-4 leading-relaxed">
+                                                            Skor pelanggaran tinggi (100-149). Diperlukan bimbingan intensif
+                                                            dan monitoring ketat.
+                                                        </p>
+                                                        <div class="bg-orange-100 rounded-lg p-4">
+                                                            <h6 class="font-semibold text-orange-800 mb-2">Rekomendasi:
+                                                            </h6>
+                                                            <ul class="text-orange-700 text-sm space-y-1">
+                                                                <li>• Konseling rutin mingguan</li>
+                                                                <li>• Monitoring ketat oleh wali kelas</li>
+                                                                <li>• Komunikasi intensif dengan orang tua</li>
+                                                                <li>• Program bimbingan khusus</li>
+                                                                <li>• Evaluasi berkala setiap bulan</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <template
+                                                    x-if="(getSelectedSiswa()?.score_bk || 0) >= 50 && (getSelectedSiswa()?.score_bk || 0) < 100">
+                                                    <div>
+                                                        <div class="flex items-center gap-3 mb-3">
+                                                            <span class="text-2xl">⚡</span>
+                                                            <h5 class="font-bold text-yellow-800 text-lg">Perlu Bimbingan
+                                                            </h5>
+                                                        </div>
+                                                        <p class="text-yellow-700 mb-4 leading-relaxed">
+                                                            Skor pelanggaran sedang (50-99). Diperlukan bimbingan dan
+                                                            monitoring reguler.
+                                                        </p>
+                                                        <div class="bg-yellow-100 rounded-lg p-4">
+                                                            <h6 class="font-semibold text-yellow-800 mb-2">Tindakan:</h6>
+                                                            <ul class="text-yellow-700 text-sm space-y-1">
+                                                                <li>• Bimbingan konseling berkala</li>
+                                                                <li>• Monitoring reguler</li>
+                                                                <li>• Pembinaan karakter dan kedisiplinan</li>
+                                                                <li>• Komunikasi dengan orang tua</li>
+                                                                <li>• Program pengembangan diri</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        {{-- Pesan Positif untuk skor baik --}}
+                                        <template x-if="(getSelectedSiswa()?.score_bk || 0) < 50">
+                                            <div
+                                                class="mt-6 p-5 bg-green-50 border-l-4 border-green-500 rounded-xl shadow-lg">
+                                                <div class="flex items-center gap-3 mb-3">
+                                                    <span class="text-2xl">✅</span>
+                                                    <h5 class="font-bold text-green-800 text-lg">Kondisi Baik</h5>
+                                                </div>
+                                                <p class="text-green-700 leading-relaxed">
+                                                    Siswa memiliki skor pelanggaran rendah (0-49). Terus pertahankan
+                                                    perilaku positif dan kedisiplinan yang baik.
+                                                </p>
+                                                <div class="bg-green-100 rounded-lg p-4 mt-4">
+                                                    <h6 class="font-semibold text-green-800 mb-2">Apresiasi:</h6>
+                                                    <ul class="text-green-700 text-sm space-y-1">
+                                                        <li>• Siswa menunjukkan perilaku yang baik</li>
+                                                        <li>• Patuhi terus aturan sekolah</li>
+                                                        <li>• Jadilah contoh untuk teman-teman</li>
+                                                        <li>• Lanjutkan prestasi positif</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
                             {{-- Modal Footer --}}
-                            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-100">
+                            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
                                 <button @click="closeDetail()"
                                     class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 
                                                rounded-2xl font-semibold transition-all duration-200

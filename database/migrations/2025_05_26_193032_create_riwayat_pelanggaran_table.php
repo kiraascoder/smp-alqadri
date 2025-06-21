@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('riwayat_pelanggaran', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('pelanggarans_id')->constrained('pelanggarans')->onDelete('cascade');
+            $table->foreignId('pelanggaran_id')->constrained('pelanggarans')->onDelete('cascade');
             $table->date('tanggal');
             $table->text('keterangan')->nullable();
             $table->timestamps();

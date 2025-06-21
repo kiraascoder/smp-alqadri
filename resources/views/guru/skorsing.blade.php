@@ -239,7 +239,7 @@
 
             <!-- Modal Content -->
             <div class="p-8">
-                <form action="{{ route('skorsing.tambah') }}" method="POST" class="space-y-6">
+                <form action="{{ route('skorsing.guru') }}" method="POST" class="space-y-6">
                     @csrf
                     <!-- Student Selection -->
                     <div class="space-y-2">
@@ -274,7 +274,7 @@
                             Jenis Pelanggaran
                         </label>
                         <div class="relative">
-                            <select name="pelanggarans_id"
+                            <select name="pelanggaran_id"
                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none"
                                 required>
                                 <option value="">Pilih jenis pelanggaran...</option>
@@ -477,7 +477,7 @@
                                             </div>
                                             <div>
                                                 <p class="font-semibold text-gray-900">${data.siswa?.user?.name || 'Nama tidak tersedia'}</p>
-                                                <p class="text-sm text-gray-600">NISN: ${data.siswa?.nisn || 'Tidak tersedia'}</p>
+                                                <p class="text-sm text-gray-600">NISN: ${data.siswa?.nisn || 'Tidak tersedia'}</p>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -517,11 +517,11 @@
                                 </div>
                                 
                                 ${data.keterangan ? `
-                                                        <div class="bg-yellow-50 rounded-xl p-4">
-                                                            <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                            <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                                        </div>
-                                                        ` : ''}
+                                                                                    <div class="bg-yellow-50 rounded-xl p-4">
+                                                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                                                                    </div>
+                                                                                    ` : ''}
                             </div>
                         </div>
                     </div>

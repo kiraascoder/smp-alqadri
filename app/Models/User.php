@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'avatar',
+        'jenis_kelamin',
         'no_hp',
     ];
 
@@ -56,5 +57,9 @@ class User extends Authenticatable
     public function guru()
     {
         return $this->hasOne(Guru::class);
+    }
+    public function siswaProfile()
+    {
+        return $this->hasOne(Siswa::class, 'user_id');
     }
 }

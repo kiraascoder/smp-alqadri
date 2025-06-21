@@ -33,6 +33,12 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
+        .input-error {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2;
+            animation: shake 0.5s ease-in-out;
+        }
+
         .btn-hover {
             transition: all 0.3s ease;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -41,6 +47,11 @@
         .btn-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-loading {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         .floating-shapes {
@@ -94,6 +105,58 @@
             }
         }
 
+        @keyframes shake {
+
+            0%,
+            20%,
+            40%,
+            60%,
+            80%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+
+        .alert-enter {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .alert-exit {
+            animation: slideUp 0.3s ease-in;
+        }
+
         .pulse-animation {
             animation: pulse 2s infinite;
         }
@@ -111,6 +174,25 @@
                 box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
             }
         }
+
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -119,6 +201,84 @@
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" class="fixed top-0 left-0 right-0 z-50">
+        <!-- Success Alert -->
+        @if (session('success'))
+            <div id="successAlert"
+                class="alert-enter bg-green-500 text-white px-6 py-4 mx-4 mt-4 rounded-lg shadow-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-3 text-xl"></i>
+                    <div>
+                        <p class="font-semibold">Berhasil!</p>
+                        <p class="text-sm">{{ session('success') }}</p>
+                    </div>
+                </div>
+                <button onclick="closeAlert('successAlert')" class="text-white hover:text-gray-200 ml-4">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Error Alert -->
+        @if ($errors->any() || session('error'))
+            <div id="errorAlert"
+                class="alert-enter bg-red-500 text-white px-6 py-4 mx-4 mt-4 rounded-lg shadow-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-3 text-xl"></i>
+                    <div>
+                        <p class="font-semibold">Terjadi Kesalahan!</p>
+                        @if (session('error'))
+                            <p class="text-sm">{{ session('error') }}</p>
+                        @endif
+                        @if ($errors->any())
+                            @foreach ($errors->all() as $error)
+                                <p class="text-sm">{{ $error }}</p>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                <button onclick="closeAlert('errorAlert')" class="text-white hover:text-gray-200 ml-4">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Warning Alert -->
+        @if (session('warning'))
+            <div id="warningAlert"
+                class="alert-enter bg-yellow-500 text-white px-6 py-4 mx-4 mt-4 rounded-lg shadow-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+                    <div>
+                        <p class="font-semibold">Peringatan!</p>
+                        <p class="text-sm">{{ session('warning') }}</p>
+                    </div>
+                </div>
+                <button onclick="closeAlert('warningAlert')" class="text-white hover:text-gray-200 ml-4">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
+
+        <!-- Info Alert -->
+        @if (session('info'))
+            <div id="infoAlert"
+                class="alert-enter bg-blue-500 text-white px-6 py-4 mx-4 mt-4 rounded-lg shadow-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle mr-3 text-xl"></i>
+                    <div>
+                        <p class="font-semibold">Informasi</p>
+                        <p class="text-sm">{{ session('info') }}</p>
+                    </div>
+                </div>
+                <button onclick="closeAlert('infoAlert')" class="text-white hover:text-gray-200 ml-4">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        @endif
     </div>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
@@ -138,10 +298,10 @@
             <div class="glass-effect rounded-2xl shadow-2xl p-8 transform transition-all duration-300 hover:scale-105">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">Selamat Datang</h2>
-                    <p class="text-gray-600 text-center text-sm">Silakan masuk </p>
+                    <p class="text-gray-600 text-center text-sm">Silakan masuk untuk melanjutkan</p>
                 </div>
 
-                <form action="{{ route('login.submit') }}" method="POST" class="space-y-6">
+                <form id="loginForm" action="{{ route('login.submit') }}" method="POST" class="space-y-6">
                     @csrf
 
                     <!-- Email Input -->
@@ -150,12 +310,22 @@
                             <i class="fas fa-envelope mr-2 text-indigo-500"></i>Email
                         </label>
                         <div class="relative">
-                            <input type="email" name="email" id="email" required
-                                class="input-focus block w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 bg-white transition-all duration-300"
-                                placeholder="Email">
+                            <input type="email" name="email" id="email" required value="{{ old('email') }}"
+                                class="input-focus block w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 bg-white transition-all duration-300 @error('email') input-error @enderror"
+                                placeholder="contoh@email.com">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
+                        </div>
+                        @error('email')
+                            <p class="text-red-500 text-xs mt-1 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                        <div id="emailError" class="text-red-500 text-xs mt-1 hidden flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            <span id="emailErrorText"></span>
                         </div>
                     </div>
 
@@ -166,7 +336,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="password" required
-                                class="input-focus block w-full px-4 py-3 pl-12 pr-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 bg-white transition-all duration-300"
+                                class="input-focus block w-full px-4 py-3 pl-12 pr-12 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 bg-white transition-all duration-300 @error('password') input-error @enderror"
                                 placeholder="Masukkan kata sandi">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-key text-gray-400"></i>
@@ -177,37 +347,30 @@
                                     class="fas fa-eye text-gray-400 hover:text-indigo-500 transition-colors"></i>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-red-500 text-xs mt-1 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                        <div id="passwordError" class="text-red-500 text-xs mt-1 hidden flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            <span id="passwordErrorText"></span>
+                        </div>
                     </div>
                     <!-- Login Button -->
-                    <button type="submit"
+                    <button type="submit" id="loginButton"
                         class="btn-hover w-full text-white py-3 px-6 rounded-xl font-semibold text-lg shadow-lg">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
-                        Masuk ke Sistem
+                        <span id="loginButtonText">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Masuk ke Sistem
+                        </span>
+                        <span id="loginSpinner" class="hidden">
+                            <div class="spinner inline-block mr-2"></div>
+                            Sedang masuk...
+                        </span>
                     </button>
                 </form>
-
-                <!-- Divider -->
-                <div class="mt-6">
-                    <div class="relative">
-                        <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">atau</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Register Link -->
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
-                        Belum memiliki akun siswa?
-                        <a href="{{ route('register') }}"
-                            class="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors ml-1">
-                            <i class="fas fa-user-plus mr-1"></i>Daftar di sini
-                        </a>
-                    </p>
-                </div>
 
                 <!-- Help Section -->
                 <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -218,6 +381,10 @@
                             <p class="text-xs text-blue-600">
                                 Hubungi guru BK atau admin sekolah jika mengalami kesulitan login.
                             </p>
+                            <button onclick="showHelpModal()"
+                                class="text-xs text-blue-700 underline mt-1 hover:text-blue-800">
+                                Lihat panduan login
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -228,12 +395,72 @@
                 <p class="text-sm text-indigo-200">
                     © 2025 SMP Alqadri Islamic School - Sistem Bimbingan & Konseling
                 </p>
-
             </div>
         </div>
     </div>
 
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 transform transition-all duration-300 scale-95 opacity-0"
+            id="forgotPasswordContent">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">Lupa Kata Sandi</h3>
+                <button onclick="closeForgotPasswordModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 mb-4">Hubungi guru BK atau admin sekolah untuk reset password.</p>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-yellow-800 text-sm">
+                    <i class="fas fa-phone mr-2"></i>Kontak: (0411) 123-4567<br>
+                    <i class="fas fa-envelope mr-2"></i>Email: admin@smpqadri.edu
+                </p>
+            </div>
+            <button onclick="closeForgotPasswordModal()"
+                class="w-full mt-4 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 transform transition-all duration-300 scale-95 opacity-0"
+            id="helpContent">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-800">Panduan Login</h3>
+                <button onclick="closeHelpModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-sm text-gray-600">
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Cara Login:</h4>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>Masukkan email yang terdaftar</li>
+                        <li>Masukkan password yang benar</li>
+                        <li>Klik tombol "Masuk ke Sistem"</li>
+                    </ol>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">Jika Lupa Password:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Hubungi guru BK</li>
+                        <li>Atau kontak admin sekolah</li>
+                        <li>Siapkan NISN untuk verifikasi</li>
+                    </ul>
+                </div>
+            </div>
+            <button onclick="closeHelpModal()"
+                class="w-full mt-4 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                Mengerti
+            </button>
+        </div>
+    </div>
+
     <script>
+        // Password toggle
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
@@ -247,6 +474,149 @@
                 eyeIcon.classList.remove('fa-eye-slash');
                 eyeIcon.classList.add('fa-eye');
             }
+        }
+
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            // Reset errors
+            clearErrors();
+
+            // Email validation
+            if (!email.value.trim()) {
+                showError('email', 'Email harus diisi');
+                isValid = false;
+            } else if (!isValidEmail(email.value)) {
+                showError('email', 'Format email tidak valid');
+                isValid = false;
+            }
+
+            // Password validation
+            if (!password.value.trim()) {
+                showError('password', 'Password harus diisi');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                showError('password', 'Password minimal 6 karakter');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function showError(fieldName, message) {
+            const field = document.getElementById(fieldName);
+            const errorDiv = document.getElementById(fieldName + 'Error');
+            const errorText = document.getElementById(fieldName + 'ErrorText');
+
+            field.classList.add('input-error');
+            errorDiv.classList.remove('hidden');
+            errorText.textContent = message;
+        }
+
+        function clearErrors() {
+            const fields = ['email', 'password'];
+            fields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const errorDiv = document.getElementById(fieldName + 'Error');
+
+                field.classList.remove('input-error');
+                errorDiv.classList.add('hidden');
+            });
+        }
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                return;
+            }
+
+            // Show loading state
+            const loginButton = document.getElementById('loginButton');
+            const loginButtonText = document.getElementById('loginButtonText');
+            const loginSpinner = document.getElementById('loginSpinner');
+
+            loginButton.classList.add('btn-loading');
+            loginButton.disabled = true;
+            loginButtonText.classList.add('hidden');
+            loginSpinner.classList.remove('hidden');
+        });
+
+        // Alert functions
+        function closeAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.classList.remove('alert-enter');
+                alert.classList.add('alert-exit');
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            }
+        }
+
+        // Auto close alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('[id$="Alert"]');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    if (alert && alert.parentNode) {
+                        closeAlert(alert.id);
+                    }
+                }, 5000);
+            });
+        });
+
+        // Modal functions
+        function showForgotPasswordModal() {
+            const modal = document.getElementById('forgotPasswordModal');
+            const content = document.getElementById('forgotPasswordContent');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeForgotPasswordModal() {
+            const modal = document.getElementById('forgotPasswordModal');
+            const content = document.getElementById('forgotPasswordContent');
+
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function showHelpModal() {
+            const modal = document.getElementById('helpModal');
+            const content = document.getElementById('helpContent');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeHelpModal() {
+            const modal = document.getElementById('helpModal');
+            const content = document.getElementById('helpContent');
+
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
         }
 
         // Add smooth animations when page loads
@@ -272,6 +642,39 @@
             input.addEventListener('blur', function() {
                 this.parentElement.style.transform = 'scale(1)';
             });
+
+            // Clear errors on input
+            input.addEventListener('input', function() {
+                if (this.classList.contains('input-error')) {
+                    this.classList.remove('input-error');
+                    const errorDiv = document.getElementById(this.name + 'Error');
+                    if (errorDiv) {
+                        errorDiv.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            const forgotModal = document.getElementById('forgotPasswordModal');
+            const helpModal = document.getElementById('helpModal');
+
+            if (e.target === forgotModal) {
+                closeForgotPasswordModal();
+            }
+            if (e.target === helpModal) {
+                closeHelpModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Close modals with Escape key
+            if (e.key === 'Escape') {
+                closeForgotPasswordModal();
+                closeHelpModal();
+            }
         });
     </script>
 </body>

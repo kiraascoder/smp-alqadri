@@ -19,7 +19,7 @@ class Laporan extends Model
 
     public function siswa()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Siswa::class, 'user_id', 'user_id');
     }
 
 

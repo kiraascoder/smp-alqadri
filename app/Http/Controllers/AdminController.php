@@ -48,6 +48,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'no_hp' => 'nullable|string|max:20',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'password' => 'required|string|min:6|confirmed',
         ], [
             'name.required' => 'Nama Wajib Diisi',
@@ -56,6 +57,7 @@ class AdminController extends Controller
             'email.unique' => 'Email sudah terdaftar',
             'password.required' => 'Silahkan Masukkan Password Anda',
             'password.min' => 'Password minimal terdiri dari 6 karakter',
+            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
             'password.confirmed' => 'Konfirmasi password tidak sesuai',
         ]);
 
@@ -63,6 +65,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
+            'jenis_kelamin' => $request->jenis_kelamin,
             'password' => Hash::make($request->password),
             'role' => 'guru',
         ]);
@@ -79,6 +82,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'no_hp' => 'nullable|string|max:20',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'password' => 'required|string|min:6|confirmed',
         ], [
             'name.required' => 'Nama Wajib Diisi',
@@ -86,6 +90,7 @@ class AdminController extends Controller
             'email.email' => 'Format email yang Anda masukkan tidak valid',
             'email.unique' => 'Email sudah terdaftar',
             'password.required' => 'Silahkan Masukkan Password Anda',
+            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
             'password.min' => 'Password minimal terdiri dari 6 karakter',
             'password.confirmed' => 'Konfirmasi password tidak sesuai',
         ]);
@@ -94,6 +99,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'no_hp' => $request->no_hp,
+            'jenis_kelamin' => $request->jenis_kelamin,
             'password' => Hash::make($request->password),
             'role' => 'guru_bk',
         ]);
@@ -176,42 +182,38 @@ class AdminController extends Controller
                 ->first();
 
             if (!$skorsing) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data pelanggaran tidak ditemukan'
-                ], 404);
+                return redirect()->route('skorsing.index')->with(
+                    'error',
+                    'Data pelanggaran tidak ditemukan'
+                );
             }
 
             $siswa = $skorsing->siswa;
             $siswaName = $siswa->user->name ?? 'Siswa';
             $pelanggaranDesc = $skorsing->pelanggaran->deskripsi ?? 'Pelanggaran';
-            $poin = $skorsing->pelanggaran->skor ?? 0; // skor berasal dari relasi pelanggaran
+            $poin = $skorsing->pelanggaran->skor ?? 0;
 
-            // Tambahkan kembali poin ke skor siswa
+            // Update score_bk siswa (mengurangi poin)
             if ($siswa && $siswa->score_bk !== null) {
                 $siswa->score_bk -= $poin;
                 $siswa->save();
             }
 
+
             $skorsing->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => "Data pelanggaran {$pelanggaranDesc} untuk siswa {$siswaName} berhasil dihapus",
-                'data' => [
-                    'deleted_id' => $id,
-                    'siswa_name' => $siswaName,
-                    'pelanggaran' => $pelanggaranDesc,
-                    'score_bk_now' => $siswa->score_bk
-                ]
-            ], 200);
+
+            return redirect()->route('admin.riwayat')->with(
+                'success',
+                "Data pelanggaran {$pelanggaranDesc} untuk siswa {$siswaName} berhasil dihapus"
+            );
         } catch (\Exception $e) {
             \Log::error('Error hapus skorsing: ' . $e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menghapus data'
-            ], 500);
+            return redirect()->route('admin.riwayat')->with(
+                'error',
+                'Terjadi kesalahan saat menghapus data. Silakan coba lagi.'
+            );
         }
     }
     public function destroyGuruBk($id)
@@ -272,23 +274,40 @@ class AdminController extends Controller
     public function detailSkorsing($id)
     {
         try {
-            $skorsing = RiwayatPelanggaran::with(['siswa.user', 'siswa.kelas', 'pelanggaran'])
+
+            $skorsing = RiwayatPelanggaran::with([
+                'siswa.user',
+                'siswa.kelas',
+                'pelanggaran'
+            ])
                 ->where('id', $id)
                 ->first();
 
             if (!$skorsing) {
                 return response()->json([
-                    'error' => 'Data tidak ditemukan'
+                    'error' => 'Data skorsing tidak ditemukan'
                 ], 404);
             }
 
-            return response()->json([
+            if (!$skorsing->siswa) {
+                return response()->json([
+                    'error' => 'Data siswa tidak ditemukan'
+                ], 404);
+            }
+
+            \Log::info('=== DEBUG SKORSING ===');
+            \Log::info('Skorsing ID: ' . $id);
+            \Log::info('Siswa Data: ', $skorsing->siswa->toArray());
+            \Log::info('Score BK: ' . ($skorsing->siswa->score_bk ?? 'NULL'));
+
+            $response = [
                 'id' => $skorsing->id,
                 'siswa' => [
                     'user' => [
                         'name' => $skorsing->siswa->user->name ?? '-'
                     ],
                     'nisn' => $skorsing->siswa->nisn ?? '-',
+                    'score_bk' => $skorsing->siswa->score_bk ?? 0,
                     'kelas' => [
                         'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
                     ]
@@ -300,10 +319,16 @@ class AdminController extends Controller
                 'tanggal' => $skorsing->tanggal,
                 'keterangan' => $skorsing->keterangan,
                 'created_at' => $skorsing->created_at
-            ]);
+            ];
+
+            return response()->json($response);
         } catch (\Exception $e) {
+            \Log::error('Error in detailSkorsing: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
             return response()->json([
-                'error' => 'Terjadi kesalahan server'
+                'error' => 'Terjadi kesalahan server',
+                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
@@ -314,12 +339,14 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users,email',
             'nisn' => 'required|unique:siswa,nisn',
             'password' => 'required|string|min:6|confirmed',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'kelas_id' => 'required|exists:kelas,id',
         ], [
             'name.required' => 'Nama Wajib Diisi',
             'email.required' => 'Silahkan Masukkan Email Anda',
             'email.email' => 'Format email yang Anda masukkan tidak valid',
             'email.unique' => 'Email sudah terdaftar',
+            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
             'password.required' => 'Silahkan Masukkan Password Anda',
             'password.min' => 'Password minimal terdiri dari 6 karakter',
             'password.confirmed' => 'Konfirmasi password tidak sesuai',
@@ -330,6 +357,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'jenis_kelamin' => $request->jenis_kelamin,
             'role' => 'siswa',
         ]);
 

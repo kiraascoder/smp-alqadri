@@ -64,11 +64,15 @@ class BkController extends Controller
 
     public function pengaduan()
     {
-        $laporans = Laporan::with(['siswa', 'pelapor', 'pelanggaran',])->latest()->get();
-        $siswas = User::where('role', 'siswa')->get();
+        $laporans = Laporan::with(['siswa.kelas', 'pelapor', 'pelanggaran'])->latest()->get();
+
+        $siswas = User::where('role', 'siswa')
+            ->with(['siswa.kelas'])
+            ->get();
+
         $currentUserId = auth()->id();
         $gurus = User::where('role', 'guru_bk')->get();
-        $pelanggarans = Pelanggaran::paginate('10');
+        $pelanggarans = Pelanggaran::paginate(10);
         return view('bk.pengaduan', compact('pelanggarans', 'laporans', 'siswas', 'gurus', 'currentUserId'));
     }
     public function pelanggaran()
@@ -92,11 +96,14 @@ class BkController extends Controller
     }
     public function konseling()
     {
-        // Get current guru BK
         $currentGuruId = Auth::id();
 
-        // Get all konseling where current user is the guru_bk
-        $konselings = Konseling::with(['siswa', 'guruBk'])
+
+        $konselings = Konseling::with([
+            'siswa.siswaProfile.kelas',
+            'siswa',
+            'guruBk'
+        ])
             ->where('guru_bk_id', $currentGuruId)
             ->orderBy('tanggal', 'desc')
             ->orderBy('waktu', 'desc')
@@ -104,16 +111,22 @@ class BkController extends Controller
 
 
         $siswas = User::where('role', 'siswa')
+            ->with('siswaProfile.kelas')
             ->orderBy('name', 'asc')
             ->get();
 
         return view('bk.konseling', compact('konselings', 'siswas'));
     }
+    public function siswa()
+    {
+        $siswas = Siswa::with(['user', 'kelas'])->get();
+        return view('bk.siswa', compact('siswas'));
+    }
     public function tambahSkorsing(Request $request)
     {
         $request->validate([
             'siswa_id' => 'required|exists:siswa,id',
-            'pelanggarans_id' => 'required|exists:pelanggarans,id',
+            'pelanggaran_id' => 'required|exists:pelanggarans,id',
             'tanggal' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
@@ -122,12 +135,12 @@ class BkController extends Controller
             DB::beginTransaction();
 
             $siswa = Siswa::find($request->siswa_id);
-            $pelanggaran = Pelanggaran::find($request->pelanggarans_id);
+            $pelanggaran = Pelanggaran::find($request->pelanggaran_id);
 
 
             RiwayatPelanggaran::create([
                 'siswa_id' => $siswa->id,
-                'pelanggarans_id' => $request->pelanggarans_id,
+                'pelanggaran_id' => $request->pelanggaran_id,
                 'tanggal' => $request->tanggal,
                 'keterangan' => $request->keterangan,
             ]);
