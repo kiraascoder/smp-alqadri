@@ -499,14 +499,14 @@
 
             // Loading state
             document.getElementById('detailContent').innerHTML = `
-                <div class="flex items-center justify-center py-8">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <span class="ml-3 text-gray-600">Memuat data...</span>
-                </div>
-            `;
+        <div class="flex items-center justify-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="ml-3 text-gray-600">Memuat data...</span>
+        </div>
+    `;
 
-            // Fetch detail data - Update URL to match route
-            fetch(`/bk/skorsing/detail/${id}`, {
+            // Fetch detail data dengan error handling yang lebih baik
+            fetch(`skorsing/detail/${id}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
@@ -522,101 +522,140 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Render detail content - same as before
+                    console.log('Detail data received:', data); // Debug log
+
+                    // Validasi data dengan fallback values
+                    const siswaName = data?.siswa?.user?.name || 'Nama tidak tersedia';
+                    const siswaNisn = data?.siswa?.nisn || 'NISN tidak tersedia';
+                    const kelasName = data?.siswa?.kelas?.nama_kelas || 'Kelas tidak tersedia';
+                    const pelanggaranDesc = data?.pelanggaran?.deskripsi || 'Pelanggaran tidak tersedia';
+                    const pelanggaranSkor = data?.pelanggaran?.skor || 0;
+                    const tanggal = data?.tanggal || '';
+                    const keterangan = data?.keterangan || '';
+                    const createdAt = data?.created_at || '';
+
+                    // Render detail content dengan safe data
                     document.getElementById('detailContent').innerHTML = `
-                    <div class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-4">
-                                    <div class="bg-blue-50 rounded-xl p-4">
-                                        <h4 class="font-semibold text-blue-800 mb-2">Informasi Siswa</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <span class="text-lg font-semibold text-blue-600">
-                                                        ${data.siswa.user.name.charAt(0)}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <p class="font-semibold text-gray-900">${data.siswa.user.name}</p>
-                                                    <p class="text-sm text-gray-600">NISN: ${data.siswa.nisn}</p>
-                                                    <p class="text-sm text-gray-600">Kelas: ${data.siswa.kelas.nama_kelas}</p>                                                    
-                                                </div>
-                                            </div>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-blue-800 mb-2">Informasi Siswa</h4>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <span class="text-lg font-semibold text-blue-600">
+                                                ${siswaName.charAt(0).toUpperCase()}
+                                            </span>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="bg-red-50 rounded-xl p-4">
-                                        <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
-                                        <div class="space-y-2">
-                                            <p class="text-sm text-gray-600">Jenis Pelanggaran:</p>
-                                            <p class="font-medium text-gray-900">${data.pelanggaran.deskripsi}</p>
-                                            <div class="flex items-center gap-2 mt-2">
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                                                    data.pelanggaran.skor >= 50 ? 'bg-red-100 text-red-800' :
-                                                    data.pelanggaran.skor >= 25 ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-green-100 text-green-800'
-                                                }">
-                                                    ${data.pelanggaran.skor} poin
-                                                </span>
-                                            </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900">${siswaName}</p>
+                                            <p class="text-sm text-gray-600">NISN: ${siswaNisn}</p>
+                                            <p class="text-sm text-gray-600">Kelas: ${kelasName}</p>                                                    
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="space-y-4">
-                                    <div class="bg-green-50 rounded-xl p-4">
-                                        <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
-                                        <div class="space-y-2">
-                                            <div>
-                                                <p class="text-sm text-gray-600">Tanggal Kejadian:</p>
-                                                <p class="font-medium text-gray-900">${new Date(data.tanggal).toLocaleDateString('id-ID', {
-                                                    weekday: 'long',
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric'
-                                                })}</p>
-                                            </div>
-                                            <div>
-                                                <p class="text-sm text-gray-600">Dicatat pada:</p>
-                                                <p class="font-medium text-gray-900">${new Date(data.created_at).toLocaleDateString('id-ID', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}</p>
-                                            </div>
-                                        </div>
-                                    </div>                                    
-                                    ${data.keterangan ? `
-                                                                                                    <div class="bg-yellow-50 rounded-xl p-4">
-                                                                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                                                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                                                                                    </div>
-                                                                                                    ` : ''}
+                            </div>
+                            
+                            <div class="bg-red-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
+                                <div class="space-y-2">
+                                    <p class="text-sm text-gray-600">Jenis Pelanggaran:</p>
+                                    <p class="font-medium text-gray-900">${pelanggaranDesc}</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
+                                            pelanggaranSkor >= 50 ? 'bg-red-100 text-red-800' :
+                                            pelanggaranSkor >= 25 ? 'bg-yellow-100 text-yellow-800' :
+                                            'bg-green-100 text-green-800'
+                                        }">
+                                            ${pelanggaranSkor} poin
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                `;
+                        
+                        <div class="space-y-4">
+                            <div class="bg-green-50 rounded-xl p-4">
+                                <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
+                                <div class="space-y-2">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Tanggal Kejadian:</p>
+                                        <p class="font-medium text-gray-900">${formatDateSafe(tanggal)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">Dicatat pada:</p>
+                                        <p class="font-medium text-gray-900">${formatDateTimeSafe(createdAt)}</p>
+                                    </div>
+                                </div>
+                            </div>                                    
+                            ${keterangan ? `
+                                                <div class="bg-yellow-50 rounded-xl p-4">
+                                                    <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                    <p class="text-gray-700 text-sm leading-relaxed">${keterangan}</p>
+                                                </div>
+                                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
                 })
                 .catch(error => {
                     console.error('Error fetching detail:', error);
                     document.getElementById('detailContent').innerHTML = `
-                    <div class="text-center py-8">
-                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Gagal Memuat Data</h3>
-                        <p class="text-gray-600">Terjadi kesalahan saat memuat detail pelanggaran.</p>
-                        <button onclick="openDetailModal(${id})" 
-                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            Coba Lagi
-                        </button>
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </div>
-                `;
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Gagal Memuat Data</h3>
+                    <p class="text-gray-600">Terjadi kesalahan: ${error.message}</p>
+                    <button onclick="openDetailModal(${id})" 
+                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Coba Lagi
+                    </button>
+                </div>
+            `;
                 });
+        }
+
+
+        function formatDateSafe(dateString) {
+            if (!dateString) return 'Tanggal tidak tersedia';
+
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Format tanggal tidak valid';
+
+                return date.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return 'Format tanggal tidak valid';
+            }
+        }
+
+        function formatDateTimeSafe(dateString) {
+            if (!dateString) return 'Waktu tidak tersedia';
+
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Format waktu tidak valid';
+
+                return date.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return 'Format waktu tidak valid';
+            }
         }
 
         function closeDetailModal() {
@@ -700,7 +739,7 @@
                 }
 
                 // Perform delete request
-                const response = await fetch(`bk/skorsing/hapus/${id}`, {
+                const response = await fetch(`skorsing/hapus/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Accept': 'application/json',

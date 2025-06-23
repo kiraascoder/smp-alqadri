@@ -425,11 +425,11 @@ class BkController extends Controller
 
         return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
     }
-    
+
     public function detailSkorsing($id)
     {
         try {
-
+            // Query dengan eager loading yang lebih eksplisit
             $skorsing = RiwayatPelanggaran::with([
                 'siswa.user',
                 'siswa.kelas',
@@ -450,25 +450,46 @@ class BkController extends Controller
                 ], 404);
             }
 
-            \Log::info('=== DEBUG SKORSING ===');
+            if (!$skorsing->siswa->user) {
+                return response()->json([
+                    'error' => 'Data user siswa tidak ditemukan'
+                ], 404);
+            }
+
+            // Debug logging
+            \Log::info('=== DEBUG SKORSING BK ===');
             \Log::info('Skorsing ID: ' . $id);
-            \Log::info('Siswa Data: ', $skorsing->siswa->toArray());
-            \Log::info('Score BK: ' . ($skorsing->siswa->score_bk ?? 'NULL'));
+            \Log::info('Siswa ID: ' . ($skorsing->siswa->id ?? 'NULL'));
+            \Log::info('Kelas ID: ' . ($skorsing->siswa->kelas_id ?? 'NULL'));
+            \Log::info('Kelas Object: ' . ($skorsing->siswa->kelas ? 'EXISTS' : 'NULL'));
+            \Log::info('Kelas Name: ' . ($skorsing->siswa->kelas->nama_kelas ?? 'NULL'));
+
+            // Pastikan semua data ada sebelum membuat response
+            $kelasName = 'Tidak ada kelas';
+            if ($skorsing->siswa->kelas && isset($skorsing->siswa->kelas->nama_kelas)) {
+                $kelasName = $skorsing->siswa->kelas->nama_kelas;
+            } elseif ($skorsing->siswa->kelas_id) {
+                // Jika relasi tidak ter-load, coba query manual
+                $kelas = \App\Models\Kelas::find($skorsing->siswa->kelas_id);
+                $kelasName = $kelas ? $kelas->nama_kelas : 'Kelas tidak ditemukan';
+            }
 
             $response = [
                 'id' => $skorsing->id,
                 'siswa' => [
+                    'id' => $skorsing->siswa->id,
                     'user' => [
-                        'name' => $skorsing->siswa->user->name ?? '-'
+                        'name' => $skorsing->siswa->user->name ?? 'Nama tidak tersedia'
                     ],
-                    'nisn' => $skorsing->siswa->nisn ?? '-',
+                    'nisn' => $skorsing->siswa->nisn ?? 'NISN tidak tersedia',
                     'score_bk' => $skorsing->siswa->score_bk ?? 0,
+                    'kelas_id' => $skorsing->siswa->kelas_id ?? null,
                     'kelas' => [
-                        'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
+                        'nama_kelas' => $kelasName
                     ]
                 ],
                 'pelanggaran' => [
-                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
+                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? 'Pelanggaran tidak tersedia',
                     'skor' => $skorsing->pelanggaran->skor ?? 0
                 ],
                 'tanggal' => $skorsing->tanggal,
@@ -478,12 +499,16 @@ class BkController extends Controller
 
             return response()->json($response);
         } catch (\Exception $e) {
-            \Log::error('Error in detailSkorsing: ' . $e->getMessage());
+            \Log::error('Error in BK detailSkorsing: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'error' => 'Terjadi kesalahan server',
-                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+                'debug_info' => config('app.debug') ? [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ] : null
             ], 500);
         }
     }
