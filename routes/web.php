@@ -67,15 +67,7 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
     // Riwayat Skorsing
     Route::delete('riwayat/{id}', [AdminController::class, 'destroyRiwayat'])->name('admin.riwayat.delete');
     Route::delete('skorsing/hapus/{id}', [AdminController::class, 'destroySkorsing'])->name('admin.riwayat.delete');
-
-
-
-
-
-
-
-
-
+    Route::get('skorsing/detail/{id}', [AdminController::class, 'detailSkorsing'])->name('admin.skorsing.detail');
 
 
     Route::get('laporan', [AdminController::class, 'laporan'])->name('admin.laporan');

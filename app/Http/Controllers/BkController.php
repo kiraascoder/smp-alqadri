@@ -58,7 +58,7 @@ class BkController extends Controller
             'avatar' => $avatarPath
         ]);
 
-        return redirect()->route('guru.profil')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('bk.profil')->with('success', 'Profil berhasil diperbarui.');
     }
 
 
@@ -425,29 +425,47 @@ class BkController extends Controller
 
         return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
     }
-
-    // File: app/Http/Controllers/bkController.php
-
+    
     public function detailSkorsing($id)
     {
         try {
-            $skorsing = RiwayatPelanggaran::with(['siswa.user', 'pelanggaran'])
+
+            $skorsing = RiwayatPelanggaran::with([
+                'siswa.user',
+                'siswa.kelas',
+                'pelanggaran'
+            ])
                 ->where('id', $id)
                 ->first();
 
             if (!$skorsing) {
                 return response()->json([
-                    'error' => 'Data tidak ditemukan'
+                    'error' => 'Data skorsing tidak ditemukan'
                 ], 404);
             }
 
-            return response()->json([
+            if (!$skorsing->siswa) {
+                return response()->json([
+                    'error' => 'Data siswa tidak ditemukan'
+                ], 404);
+            }
+
+            \Log::info('=== DEBUG SKORSING ===');
+            \Log::info('Skorsing ID: ' . $id);
+            \Log::info('Siswa Data: ', $skorsing->siswa->toArray());
+            \Log::info('Score BK: ' . ($skorsing->siswa->score_bk ?? 'NULL'));
+
+            $response = [
                 'id' => $skorsing->id,
                 'siswa' => [
                     'user' => [
                         'name' => $skorsing->siswa->user->name ?? '-'
                     ],
-                    'nisn' => $skorsing->siswa->nisn ?? '-'
+                    'nisn' => $skorsing->siswa->nisn ?? '-',
+                    'score_bk' => $skorsing->siswa->score_bk ?? 0,
+                    'kelas' => [
+                        'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
+                    ]
                 ],
                 'pelanggaran' => [
                     'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
@@ -456,13 +474,20 @@ class BkController extends Controller
                 'tanggal' => $skorsing->tanggal,
                 'keterangan' => $skorsing->keterangan,
                 'created_at' => $skorsing->created_at
-            ]);
+            ];
+
+            return response()->json($response);
         } catch (\Exception $e) {
+            \Log::error('Error in detailSkorsing: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
             return response()->json([
-                'error' => 'Terjadi kesalahan server'
+                'error' => 'Terjadi kesalahan server',
+                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
+
 
     public function destroySkorsing($id)
     {

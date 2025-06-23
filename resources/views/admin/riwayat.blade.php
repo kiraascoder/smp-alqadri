@@ -552,7 +552,7 @@
             document.body.style.overflow = 'hidden';
 
             // Fetch detail data (you'll need to implement the route)
-            fetch(`admin/skorsing/detail/${id}`)
+            fetch(`skorsing/detail/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('detailContent').innerHTML = `
@@ -622,11 +622,11 @@
                                     </div>
                                     
                                     ${data.keterangan ? `
-                                                                                            <div class="bg-yellow-50 rounded-xl p-4">
-                                                                                                <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                                                                <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                                                                            </div>
-                                                                                            ` : ''}
+                                                                                                <div class="bg-yellow-50 rounded-xl p-4">
+                                                                                                    <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                                                                    <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                                                                                </div>
+                                                                                                ` : ''}
                                 </div>
                             </div>
                         </div>

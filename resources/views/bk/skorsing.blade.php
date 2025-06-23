@@ -525,67 +525,78 @@
                     // Render detail content - same as before
                     document.getElementById('detailContent').innerHTML = `
                     <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 rounded-xl p-4">
-                                    <h4 class="font-semibold text-blue-800 mb-2">Informasi Siswa</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <span class="text-lg font-semibold text-blue-600">
-                                                    ${(data.siswa?.user?.name || 'N').charAt(0).toUpperCase()}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div class="bg-blue-50 rounded-xl p-4">
+                                        <h4 class="font-semibold text-blue-800 mb-2">Informasi Siswa</h4>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <span class="text-lg font-semibold text-blue-600">
+                                                        ${data.siswa.user.name.charAt(0)}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-gray-900">${data.siswa.user.name}</p>
+                                                    <p class="text-sm text-gray-600">NISN: ${data.siswa.nisn}</p>
+                                                    <p class="text-sm text-gray-600">Kelas: ${data.siswa.kelas.nama_kelas}</p>                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 rounded-xl p-4">
+                                        <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
+                                        <div class="space-y-2">
+                                            <p class="text-sm text-gray-600">Jenis Pelanggaran:</p>
+                                            <p class="font-medium text-gray-900">${data.pelanggaran.deskripsi}</p>
+                                            <div class="flex items-center gap-2 mt-2">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
+                                                    data.pelanggaran.skor >= 50 ? 'bg-red-100 text-red-800' :
+                                                    data.pelanggaran.skor >= 25 ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-green-100 text-green-800'
+                                                }">
+                                                    ${data.pelanggaran.skor} poin
                                                 </span>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 rounded-xl p-4">
+                                        <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
+                                        <div class="space-y-2">
                                             <div>
-                                                <p class="font-semibold text-gray-900">${data.siswa?.user?.name || 'Nama tidak tersedia'}</p>
-                                                <p class="text-sm text-gray-600">NISN: ${data.siswa?.nisn || 'Tidak tersedia'}</p>
+                                                <p class="text-sm text-gray-600">Tanggal Kejadian:</p>
+                                                <p class="font-medium text-gray-900">${new Date(data.tanggal).toLocaleDateString('id-ID', {
+                                                    weekday: 'long',
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
+                                                })}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-gray-600">Dicatat pada:</p>
+                                                <p class="font-medium text-gray-900">${new Date(data.created_at).toLocaleDateString('id-ID', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}</p>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>                                    
+                                    ${data.keterangan ? `
+                                                                                                    <div class="bg-yellow-50 rounded-xl p-4">
+                                                                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                                                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                                                                                    </div>
+                                                                                                    ` : ''}
                                 </div>
-                                
-                                <div class="bg-red-50 rounded-xl p-4">
-                                    <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
-                                    <div class="space-y-2">
-                                        <p class="text-sm text-gray-600">Jenis Pelanggaran:</p>
-                                        <p class="font-medium text-gray-900">${data.pelanggaran?.deskripsi || 'Tidak tersedia'}</p>
-                                        <div class="flex items-center gap-2 mt-2">
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                                                (data.pelanggaran?.skor || 0) >= 50 ? 'bg-red-100 text-red-800' :
-                                                (data.pelanggaran?.skor || 0) >= 25 ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-green-100 text-green-800'
-                                            }">
-                                                ${data.pelanggaran?.skor || 0} poin
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <div class="bg-green-50 rounded-xl p-4">
-                                    <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
-                                    <div class="space-y-2">
-                                        <div>
-                                            <p class="text-sm text-gray-600">Tanggal Kejadian:</p>
-                                            <p class="font-medium text-gray-900">${formatDate(data.tanggal, 'full')}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-gray-600">Dicatat pada:</p>
-                                            <p class="font-medium text-gray-900">${formatDate(data.created_at, 'datetime')}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                ${data.keterangan ? `
-                                        <div class="bg-yellow-50 rounded-xl p-4">
-                                            <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                            <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                        </div>
-                                        ` : ''}
                             </div>
                         </div>
-                    </div>
                 `;
                 })
                 .catch(error => {
