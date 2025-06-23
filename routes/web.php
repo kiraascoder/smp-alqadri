@@ -6,6 +6,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KonselingController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PelanggaranController;
+use App\Http\Controllers\PWAController;
 use App\Http\Controllers\SesiController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TestingAPIController;
@@ -104,6 +105,8 @@ Route::prefix('guru')->middleware('admin:guru')->group(function () {
     // Lihat Siswa
     Route::get('/siswa', [GuruController::class, 'siswa'])
         ->name('guru.siswa');
+    Route::get('/skorsing', [GuruController::class, 'skorsing'])
+        ->name('guru.skorsing');
     //  Skorsing
     Route::get('skorsing/detail/{id}', [BkController::class, 'detailSkorsing'])->name('guru.skorsing.detail');
     Route::delete('skorsing/hapus/{id}', [BkController::class, 'destroySkorsing'])->name('bk.skorsing.delete');
@@ -218,3 +221,84 @@ Route::get('/serviceworker.js', function () {
 Route::get('/pwa/install', function () {
     return view('pwa.install');
 })->name('pwa.install');
+
+
+Route::prefix('pwa')->group(function () {
+    // Manifest dinamis
+    Route::get('/manifest.json', [PWAController::class, 'manifest'])->name('pwa.manifest.dynamic');
+
+    // PWA Compatibility Check
+    Route::get('/compatibility', [PWAController::class, 'checkCompatibility'])->name('pwa.compatibility');
+
+    // Cached pages info
+    Route::get('/cached-pages', [PWAController::class, 'getCachedPages'])->name('pwa.cached.pages');
+});
+
+// API Routes untuk PWA (dalam group api middleware)
+Route::prefix('api')->group(function () {
+    // Analytics untuk PWA install events
+    Route::post('/analytics/pwa-install', [PWAController::class, 'trackInstallEvent'])->name('api.pwa.track');
+
+    // PWA Statistics (untuk admin)
+    Route::get('/analytics/pwa-stats', [PWAController::class, 'getInstallStats'])
+        ->middleware('admin:admin')
+        ->name('api.pwa.stats');
+
+    // Offline data sync
+    Route::post('/sync/offline-data', [PWAController::class, 'syncOfflineData'])
+        ->middleware('auth')
+        ->name('api.sync.offline');
+
+    // Push notification subscription
+    Route::post('/push/subscribe', [PWAController::class, 'subscribePushNotification'])
+        ->middleware('auth')
+        ->name('api.push.subscribe');
+
+    // Connection status check
+    Route::get('/connection/status', function () {
+        return response()->json([
+            'online' => true,
+            'timestamp' => now()->toISOString(),
+            'server' => 'BK SMP AL QADRI'
+        ]);
+    })->name('api.connection.status');
+});
+
+// Fallback route untuk PWA offline handling
+Route::fallback(function (Illuminate\Http\Request $request) {
+    // Jika request dari PWA dan halaman tidak ditemukan
+    if (
+        $request->header('Accept', '') === 'text/html' ||
+        $request->expectsHtml()
+    ) {
+
+        // Redirect ke offline page dengan informasi route yang diminta
+        return redirect('/offline.html#route=' . urlencode($request->getPathInfo()));
+    }
+
+    // Untuk API requests, return JSON error
+    return response()->json([
+        'error' => 'Not Found',
+        'message' => 'The requested resource was not found',
+        'offline_mode' => true
+    ], 404);
+});
+
+// Service Worker route (sudah ada, tapi pastikan cache headers yang tepat)
+Route::get('/serviceworker.js', function () {
+    $content = file_get_contents(public_path('serviceworker.js'));
+
+    return response($content, 200, [
+        'Content-Type' => 'application/javascript',
+        'Cache-Control' => 'public, max-age=86400, must-revalidate',
+        'Service-Worker-Allowed' => '/'
+    ]);
+})->name('pwa.serviceworker');
+
+// PWA Install page
+Route::get('/install', function () {
+    return view('pwa.install', [
+        'user' => auth()->user(),
+        'role' => auth()->user()->role ?? 'guest'
+    ]);
+})->name('pwa.install.page');

@@ -1,67 +1,542 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="title" content="InfyBonus">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Offline - BK SMP AL QADRI</title>
 
-    <style>
-        .error_body {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            height: 100vh;
-            width: 100%;
-            background: #f9f9f9;
-        }
-
-        .error_container .error_heading {
-            color: transparent;
-            font-size: 160px;
-            margin: 0;
-            font-weight: 900;
-            letter-spacing: 20px;
-            background-size: 100% 100%;
-            background: linear-gradient(90deg, #6b719b 38%, #9da3cc 53%, #979dce 65%);
-            -webkit-background-clip: text;
-            -moz-background-clip: text;
-            -ms-background-clip: text;
-        }
-
-        @media (max-width: 540px) {
-            .error_container .error_heading {
-                font-size: 120px;
-                letter-spacing: 10px;
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-        }
 
-        .error_container .error_btn {
-            background-color: #6e749e !important;
-            border: none;
-            outline: none;
-        }
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                color: #333;
+            }
 
-        .error_container .error_btn:focus {
-            box-shadow: none !important;
-        }
+            .offline-container {
+                background: white;
+                border-radius: 20px;
+                padding: 40px 30px;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                max-width: 500px;
+                width: 100%;
+                position: relative;
+                overflow: hidden;
+            }
 
-        .error_container .error_message,
-        .error_container .error_paragraph {
-            color: #787878;
-        }
-    </style>
-</head>
-<body>
-<div class="error_body">
-    <div
-        class="container error_container d-flex justify-content-center align-items-center flex-column w-100 h-100 p-5 text-center">
-        <h2 class="error_message text-center mb-3">Boo! You don't have an internet connection</h2>
-        <p class="error_paragraph text-center mb-5">
-            Please check your network connection and try again.
-        </p>
-        <a href="/" class="btn btn-primary error_btn">Back to Home Page</a>
-    </div>
-</div>
-</body>
+            .offline-container::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+            }
+
+            .offline-icon {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 30px;
+                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 50px;
+                color: white;
+                box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            .offline-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #2c3e50;
+                margin-bottom: 16px;
+            }
+
+            .offline-subtitle {
+                font-size: 18px;
+                color: #667eea;
+                margin-bottom: 24px;
+                font-weight: 600;
+            }
+
+            .offline-message {
+                font-size: 16px;
+                color: #7f8c8d;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+
+            .offline-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 30px;
+            }
+
+            .btn {
+                padding: 14px 24px;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            }
+
+            .btn-secondary {
+                background: #f8f9fc;
+                color: #667eea;
+                border: 2px solid #e3e8f0;
+            }
+
+            .btn-secondary:hover {
+                background: #667eea;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+            .network-status {
+                background: #f8f9fc;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .status-indicator {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+
+            .status-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #ff6b6b;
+                animation: blink 1.5s infinite;
+            }
+
+            .status-dot.online {
+                background: #4ecdc4;
+                animation: none;
+            }
+
+            @keyframes blink {
+                0%,
+                50% {
+                    opacity: 1;
+                }
+                51%,
+                100% {
+                    opacity: 0.3;
+                }
+            }
+
+            .cached-pages {
+                text-align: left;
+                margin-top: 20px;
+            }
+
+            .cached-pages h4 {
+                color: #2c3e50;
+                margin-bottom: 12px;
+                font-size: 16px;
+            }
+
+            .cached-list {
+                list-style: none;
+                padding: 0;
+            }
+
+            .cached-list li {
+                padding: 8px 0;
+                border-bottom: 1px solid #e3e8f0;
+                color: #7f8c8d;
+                font-size: 14px;
+            }
+
+            .cached-list li:last-child {
+                border-bottom: none;
+            }
+
+            .cached-list li a {
+                color: #667eea;
+                text-decoration: none;
+            }
+
+            .cached-list li a:hover {
+                text-decoration: underline;
+            }
+
+            .tips-section {
+                background: #fff3cd;
+                border-radius: 12px;
+                padding: 16px;
+                margin-top: 20px;
+                border-left: 4px solid #ffc107;
+            }
+
+            .tips-section h4 {
+                color: #856404;
+                margin-bottom: 8px;
+                font-size: 16px;
+            }
+
+            .tips-section p {
+                color: #856404;
+                font-size: 14px;
+                margin: 0;
+            }
+
+            .footer-info {
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e3e8f0;
+                color: #95a5a6;
+                font-size: 14px;
+            }
+
+            .connection-details {
+                font-size: 12px;
+                color: #bdc3c7;
+                margin-top: 10px;
+            }
+
+            @media (max-width: 480px) {
+                .offline-container {
+                    padding: 30px 20px;
+                    margin: 10px;
+                }
+
+                .offline-icon {
+                    width: 100px;
+                    height: 100px;
+                    font-size: 40px;
+                }
+
+                .offline-title {
+                    font-size: 24px;
+                }
+
+                .offline-subtitle {
+                    font-size: 16px;
+                }
+            }
+
+            /* Animation untuk loading retry */
+            .loading {
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="offline-container">
+            <div class="offline-icon">📡</div>
+
+            <h1 class="offline-title">Tidak Ada Koneksi</h1>
+            <p class="offline-subtitle">BK SMP AL QADRI</p>
+
+            <div class="network-status">
+                <div class="status-indicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="connectionStatus"
+                        >Offline - Tidak ada koneksi internet</span
+                    >
+                </div>
+                <div class="connection-details" id="connectionDetails">
+                    Checking connection...
+                </div>
+            </div>
+
+            <p class="offline-message">
+                Halaman yang Anda cari memerlukan koneksi internet. Silakan
+                periksa koneksi Anda atau coba akses halaman yang sudah
+                tersimpan di cache.
+            </p>
+
+            <div class="offline-actions">
+                <button class="btn btn-primary" onclick="retryConnection()">
+                    <span id="retryIcon">🔄</span>
+                    <span id="retryText">Coba Lagi</span>
+                </button>
+
+                <a href="/" class="btn btn-secondary">
+                    🏠 Kembali ke Beranda
+                </a>
+            </div>
+
+            <div class="cached-pages">
+                <h4>Halaman Tersedia Offline:</h4>
+                <ul class="cached-list" id="cachedPagesList">
+                    <li><a href="/">🏠 Beranda</a></li>
+                    <li><a href="/login">🔐 Login</a></li>
+                    <li>Loading cache info...</li>
+                </ul>
+            </div>
+
+            <div class="tips-section">
+                <h4>💡 Tips:</h4>
+                <p>
+                    Install aplikasi BK untuk pengalaman offline yang lebih
+                    baik. Beberapa fitur akan tetap bisa digunakan tanpa koneksi
+                    internet.
+                </p>
+            </div>
+
+            <div class="footer-info">
+                <p>Sistem Bimbingan Konseling</p>
+                <p>SMP AL QADRI</p>
+                <div class="connection-details">
+                    Last updated: <span id="lastUpdated"></span>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Check connection status
+            function updateConnectionStatus() {
+                const statusDot = document.getElementById("statusDot");
+                const connectionStatus =
+                    document.getElementById("connectionStatus");
+                const connectionDetails =
+                    document.getElementById("connectionDetails");
+
+                if (navigator.onLine) {
+                    statusDot.classList.add("online");
+                    connectionStatus.textContent = "Online - Koneksi tersedia";
+                    connectionDetails.textContent = `Connection: ${
+                        navigator.connection?.effectiveType || "Unknown"
+                    } | Last check: ${new Date().toLocaleTimeString()}`;
+
+                    // Redirect ke halaman yang diminta jika online
+                    setTimeout(() => {
+                        if (document.referrer) {
+                            window.location.href = document.referrer;
+                        } else {
+                            window.location.href = "/";
+                        }
+                    }, 2000);
+                } else {
+                    statusDot.classList.remove("online");
+                    connectionStatus.textContent =
+                        "Offline - Tidak ada koneksi internet";
+                    connectionDetails.textContent = `Last check: ${new Date().toLocaleTimeString()} | Click retry to check again`;
+                }
+            }
+
+            // Retry connection
+            function retryConnection() {
+                const retryIcon = document.getElementById("retryIcon");
+                const retryText = document.getElementById("retryText");
+
+                retryIcon.classList.add("loading");
+                retryText.textContent = "Checking...";
+
+                // Simulate checking
+                setTimeout(() => {
+                    updateConnectionStatus();
+                    retryIcon.classList.remove("loading");
+                    retryText.textContent = "Coba Lagi";
+
+                    if (navigator.onLine) {
+                        retryText.textContent = "Redirecting...";
+                    }
+                }, 1500);
+            }
+
+            // Load cached pages list
+            async function loadCachedPages() {
+                try {
+                    if ("caches" in window) {
+                        const cacheNames = await caches.keys();
+                        const cache = await caches.open(
+                            cacheNames[0] || "bk-alqadri-v1.2"
+                        );
+                        const requests = await cache.keys();
+
+                        const cachedList =
+                            document.getElementById("cachedPagesList");
+                        cachedList.innerHTML = "";
+
+                        // Filter dan tampilkan halaman penting
+                        const importantPages = [
+                            { url: "/", name: "🏠 Beranda", available: false },
+                            {
+                                url: "/login",
+                                name: "🔐 Login",
+                                available: false,
+                            },
+                            {
+                                url: "/siswa/dashboard",
+                                name: "👨‍🎓 Dashboard Siswa",
+                                available: false,
+                            },
+                            {
+                                url: "/siswa/profil-siswa",
+                                name: "👤 Profil Siswa",
+                                available: false,
+                            },
+                            {
+                                url: "/guru/dashboard",
+                                name: "👨‍🏫 Dashboard Guru",
+                                available: false,
+                            },
+                            {
+                                url: "/bk/dashboard",
+                                name: "🎯 Dashboard BK",
+                                available: false,
+                            },
+                        ];
+
+                        // Check ketersediaan setiap halaman
+                        for (const request of requests) {
+                            const url = new URL(request.url).pathname;
+                            const page = importantPages.find(
+                                (p) => p.url === url
+                            );
+                            if (page) {
+                                page.available = true;
+                            }
+                        }
+
+                        // Render list
+                        importantPages.forEach((page) => {
+                            const li = document.createElement("li");
+                            if (page.available) {
+                                li.innerHTML = `<a href="${page.url}">${page.name}</a>`;
+                            } else {
+                                li.innerHTML = `${page.name} <span style="color: #bdc3c7;">(Tidak tersedia offline)</span>`;
+                                li.style.opacity = "0.6";
+                            }
+                            cachedList.appendChild(li);
+                        });
+
+                        // Tambah info cache lainnya
+                        const otherCached =
+                            requests.length -
+                            importantPages.filter((p) => p.available).length;
+                        if (otherCached > 0) {
+                            const li = document.createElement("li");
+                            li.innerHTML = `<span style="color: #95a5a6;">+ ${otherCached} file lainnya tersimpan</span>`;
+                            cachedList.appendChild(li);
+                        }
+                    }
+                } catch (error) {
+                    console.log("Error loading cached pages:", error);
+                    const cachedList =
+                        document.getElementById("cachedPagesList");
+                    cachedList.innerHTML =
+                        '<li style="color: #e74c3c;">Error loading cache info</li>';
+                }
+            }
+
+            // Event listeners
+            window.addEventListener("online", updateConnectionStatus);
+            window.addEventListener("offline", updateConnectionStatus);
+
+            // Initialize page
+            document.addEventListener("DOMContentLoaded", () => {
+                updateConnectionStatus();
+                loadCachedPages();
+
+                // Update timestamp
+                document.getElementById("lastUpdated").textContent =
+                    new Date().toLocaleString("id-ID");
+
+                // Periodic connection check
+                setInterval(updateConnectionStatus, 30000); // Check every 30 seconds
+            });
+
+            // Auto retry when connection detected
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.addEventListener("message", (event) => {
+                    if (
+                        event.data &&
+                        event.data.type === "CONNECTIVITY_CHANGED"
+                    ) {
+                        updateConnectionStatus();
+                    }
+                });
+            }
+
+            // Handle back button
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted) {
+                    updateConnectionStatus();
+                }
+            });
+
+            // Try to connect to specific route if available in URL hash
+            if (
+                window.location.hash &&
+                window.location.hash.startsWith("#route=")
+            ) {
+                const targetRoute = decodeURIComponent(
+                    window.location.hash.substring(7)
+                );
+                console.log("Target route detected:", targetRoute);
+
+                // Check if we're online and can navigate
+                if (navigator.onLine) {
+                    setTimeout(() => {
+                        window.location.href = targetRoute;
+                    }, 3000);
+                }
+            }
+        </script>
+    </body>
 </html>

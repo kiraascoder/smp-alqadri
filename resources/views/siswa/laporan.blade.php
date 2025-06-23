@@ -78,7 +78,7 @@
                                             </div>
                                             <div class="ml-3">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    {{ $laporan->siswa->name ?? '-' }}
+                                                    {{ $laporan->siswa->user->name ?? '-' }}
                                                 </div>
                                             </div>
                                         </div>
@@ -124,7 +124,7 @@
                                                             <label
                                                                 class="text-xs font-semibold text-gray-500 uppercase">Siswa</label>
                                                             <p class="text-sm font-medium text-gray-900">
-                                                                {{ $laporan->siswa->name ?? '-' }}</p>
+                                                                {{ $laporan->siswa->user->name ?? '-' }}</p>
                                                         </div>
                                                         <div>
                                                             <label
@@ -179,7 +179,7 @@
                                             <p class="text-sm text-gray-600 mb-6">
                                                 Yakin ingin menghapus laporan untuk siswa
                                                 <span
-                                                    class="font-semibold text-gray-900">{{ $laporan->siswa->name ?? '-' }}</span>?
+                                                    class="font-semibold text-gray-900">{{ $laporan->siswa->user->name ?? '-' }}</span>?
                                                 <br><span class="text-red-500">Tindakan ini tidak dapat dibatalkan.</span>
                                             </p>
                                         </div>

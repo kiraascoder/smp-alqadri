@@ -167,7 +167,7 @@ class GuruController extends Controller
 
             DB::commit();
 
-            return redirect()->route('bk.skorsing')->with(
+            return redirect()->route('guru.skorsing')->with(
                 'success',
                 "Skorsing berhasil ditambahkan. Skor {$siswa->user->name} sekarang: {$siswa->score_bk} poin"
             );
