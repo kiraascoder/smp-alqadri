@@ -317,7 +317,6 @@
             <div class="flex-1 overflow-y-auto p-6">
                 <form id="addSiswaForm" action="{{ route('admin.orang.register') }}" method="POST" class="space-y-6">
                     @csrf
-
                     <!-- Personal Information Section -->
                     <div class="space-y-4">
                         <div class="flex items-center gap-3 pb-3 border-b border-gray-200">
@@ -360,27 +359,7 @@
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                                 placeholder="contoh@email.com">
                             <div class="text-red-500 text-sm mt-1 hidden" id="email-error"></div>
-                        </div>
-                        <!-- Jenis Kelamin -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Jenis Kelamin <span class="text-red-500">*</span>
-                            </label>
-                            <div class="flex items-center gap-6">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="jenis_kelamin" value="Laki-laki" required
-                                        class="text-blue-600 focus:ring-blue-500 border-gray-300">
-                                    <span class="ml-2 text-gray-700">Laki-laki</span>
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="jenis_kelamin" value="Perempuan" required
-                                        class="text-blue-600 focus:ring-blue-500 border-gray-300">
-                                    <span class="ml-2 text-gray-700">Perempuan</span>
-                                </label>
-                            </div>
-                            <div class="text-red-500 text-sm mt-1 hidden" id="jenis_kelamin-error"></div>
-                        </div>
-
+                        </div>                        
                     </div>
                     <!-- Security Information Section -->
                     <div class="space-y-4">

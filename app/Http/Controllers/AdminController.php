@@ -383,7 +383,6 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'no_hp' => 'nullable|string|max:20',
-            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'password' => 'required|string|min:6|confirmed',
             'anak' => 'required|array',
             'anak.*' => 'exists:siswa,id',
@@ -392,13 +391,11 @@ class AdminController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'jenis_kelamin' => $request->jenis_kelamin,
+            'no_hp' => $request->no_hp,            
             'password' => Hash::make($request->password),
             'role' => 'orang_tua',
         ]);
 
-        // Update siswa dan set orang_tua_id
         Siswa::whereIn('id', $request->anak)->update(['orang_tua_id' => $user->id]);
 
         return redirect()->route('admin.orang')->with('success', 'Orang tua berhasil ditambahkan dan berhasil ditautkan dengan siswa!');
