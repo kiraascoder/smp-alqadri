@@ -27,6 +27,8 @@ class RedirectIfAuthenticated
                     return redirect()->route('bk.dashboard');
                 } elseif ($user->role === 'siswa') {
                     return redirect()->route('siswa.profil');
+                } elseif ($user->role === 'orang_tua') {
+                    return redirect()->route('ortu.profil');
                 } else {
                     return redirect('/');
                 }

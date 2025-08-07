@@ -49,6 +49,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function anakSiswa()
+    {
+        return $this->hasMany(Siswa::class, 'orang_tua_id');
+    }
+
+    public function anak()
+    {
+        return $this->hasMany(Siswa::class, 'orang_tua_id');
+    }
     public function siswa()
     {
         return $this->hasOne(Siswa::class, 'user_id');

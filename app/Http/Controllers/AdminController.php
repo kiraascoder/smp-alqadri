@@ -260,6 +260,10 @@ class AdminController extends Controller
         }
     }
 
+
+
+
+
     public function siswa()
     {
         $siswas = Siswa::with('user')
@@ -270,6 +274,7 @@ class AdminController extends Controller
         $kelasList = Kelas::all();
         return view('admin.siswa', compact('siswas', 'kelasList'));
     }
+
 
     public function detailSkorsing($id)
     {
@@ -372,6 +377,62 @@ class AdminController extends Controller
 
         return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil ditambahkan!');
     }
+    public function registerOrtu(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'no_hp' => 'nullable|string|max:20',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
+            'password' => 'required|string|min:6|confirmed',
+            'anak' => 'required|array',
+            'anak.*' => 'exists:siswa,id',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'password' => Hash::make($request->password),
+            'role' => 'orang_tua',
+        ]);
+
+        // Update siswa dan set orang_tua_id
+        Siswa::whereIn('id', $request->anak)->update(['orang_tua_id' => $user->id]);
+
+        return redirect()->route('admin.orang')->with('success', 'Orang tua berhasil ditambahkan dan berhasil ditautkan dengan siswa!');
+    }
+
+    // Method orangTua - Perbaikan eager loading
+    public function orangTua()
+    {
+        $ortu = User::with(['anakSiswa.user']) // perbaiki relasi
+            ->where('role', 'orang_tua')
+            ->paginate(10);
+        $siswaList = Siswa::with('user')->whereNull('orang_tua_id')->get();
+        return view('admin.orang-tua', compact('ortu', 'siswaList'));
+    }
+
+    // Method destroyOrangTua tetap sama
+    public function destroyOrangTua($id)
+    {
+        try {
+            $ortu = User::where('role', 'orang_tua')->findOrFail($id);
+
+            foreach ($ortu->anakSiswa as $anak) {
+                $anak->orang_tua_id = null;
+                $anak->save();
+            }
+
+            $ortu->delete();
+
+            return redirect()->route('admin.orang')->with('success', 'Orang Tua berhasil dihapus dan relasi dengan siswa telah diputus.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.orang')->with('error', 'Gagal menghapus Orang Tua.');
+        }
+    }
+
 
     public function bk()
     {

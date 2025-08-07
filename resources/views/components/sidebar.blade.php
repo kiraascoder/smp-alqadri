@@ -20,7 +20,7 @@
 </header>
 
 <!-- Sidebar Overlay (Mobile Only) -->
-<div id="sidebar-overlay" class="fixed inset-0  z-40 lg:hidden opacity-0 invisible transition-opacity duration-300">
+<div id="sidebar-overlay" class="fixed inset-0 z-40 lg:hidden opacity-0 invisible transition-opacity duration-300">
 </div>
 
 <!-- Sidebar -->
@@ -43,6 +43,7 @@
     @php
         $role = Auth::user()->role;
     @endphp
+
     <!-- Navigation Menu -->
     <nav class="flex-1 p-4 overflow-y-auto">
         <ul class="space-y-2">
@@ -120,13 +121,25 @@
                         <span class="text-sm font-medium">Siswa</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.orang') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors group">
+                        <!-- Parents Icon -->
+                        <svg class="w-5 h-5 text-blue-300 group-hover:text-white" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        </svg>
+                        <span class="text-sm font-medium">Orang Tua</span>
+                    </a>
+                </li>
             @elseif($role === 'guru')
                 <li>
                     <a href="{{ route('guru.profil') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors group">
                         <!-- Profile Icon -->
-                        <svg class="w-5 h-5 text-blue-300 group-hover:text-white" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-blue-300 group-hover:text-white" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
@@ -291,11 +304,36 @@
                         <span class="text-sm font-medium">Laporan</span>
                     </a>
                 </li>
+            @elseif($role === 'orang_tua')
+                <li>
+                    <a href="{{ route('ortu.anak') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors group">
+                        <!-- Profile Icon -->
+                        <svg class="w-5 h-5 text-blue-300 group-hover:text-white" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span class="text-sm font-medium">Profil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('ortu.pelanggaran') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors group">
+                        <!-- Warning/Violation Icon -->
+                        <svg class="w-5 h-5 text-blue-300 group-hover:text-white" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        <span class="text-sm font-medium">Pelanggaran</span>
+                    </a>
+                </li>
             @endif
         </ul>
     </nav>
 
-
+    <!-- Logout Section -->
     <div class="p-6 border-t border-blue-700">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
@@ -310,28 +348,8 @@
         </form>
     </div>
 </aside>
-<script>
-    function toggleSidebar() {
-        const isOpen = sidebar.classList.contains('translate-x-0');
 
-        if (isOpen) {
-            sidebar.classList.remove('translate-x-0');
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('opacity-0', 'invisible');
-            sidebarOverlay.classList.remove('opacity-100');
-            hamburgerIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-            body.classList.remove('no-scroll');
-        } else {
-            sidebar.classList.remove('-translate-x-full');
-            sidebar.classList.add('translate-x-0');
-            sidebarOverlay.classList.remove('opacity-0', 'invisible');
-            sidebarOverlay.classList.add('opacity-100');
-            hamburgerIcon.classList.add('hidden');
-            closeIcon.classList.remove('hidden');
-            body.classList.add('no-scroll');
-        }
-    }
+<script>
     document.addEventListener("DOMContentLoaded", function() {
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
@@ -362,6 +380,7 @@
 
         hamburgerBtn.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', toggleSidebar);
+
         document.addEventListener('click', (e) => {
             if (window.innerWidth < 1024) {
                 if (!sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {

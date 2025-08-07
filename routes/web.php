@@ -5,6 +5,7 @@ use App\Http\Controllers\BkController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KonselingController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PelanggaranController;
 use App\Http\Controllers\PWAController;
 use App\Http\Controllers\SesiController;
@@ -52,6 +53,11 @@ Route::prefix('admin')->middleware('admin:admin')->group(function () {
     Route::post('siswa/register', [AdminController::class, 'register'])->name('admin.siswa.register');
     Route::delete('siswa/{id}', [AdminController::class, 'destroySiswa'])->name('admin.siswa.delete');
 
+
+    // Orang Tua
+    Route::get('orang-tua', [AdminController::class, 'orangTua'])->name('admin.orang');
+    Route::post('orang-tua/register', [AdminController::class, 'registerOrtu'])->name('admin.orang.register');
+    Route::delete('orang-tua/{id}', [AdminController::class, 'destroyOrangTua'])->name('admin.orang.delete');
 
 
     // BK Route
@@ -115,6 +121,13 @@ Route::prefix('guru')->middleware('admin:guru')->group(function () {
     // Pelanggaran Siswa
     Route::get('/pelanggaran', [GuruController::class, 'pelanggaran'])
         ->name('guru.pelanggaran');
+});
+
+Route::prefix('orang-tua')->middleware('admin:orang_tua')->group(function () {
+    Route::get('/anak-saya', [OrangTuaController::class, 'anak'])
+        ->name('ortu.anak');
+    Route::get('/pelanggaran', [OrangTuaController::class, 'pelanggaran'])
+        ->name('ortu.pelanggaran');
 });
 // Guru Bk Route
 Route::prefix('bk')->middleware('admin:guru_bk')->group(function () {
@@ -302,3 +315,7 @@ Route::get('/install', function () {
         'role' => auth()->user()->role ?? 'guest'
     ]);
 })->name('pwa.install.page');
+
+Route::get('/pwa-test', function () {
+    return view('pwa.test');
+})->name('pwa.test');

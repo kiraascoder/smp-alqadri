@@ -463,4 +463,4 @@ async function syncProfileData() {
     } catch (error) {
         console.error("[BK Service Worker] Profile sync failed:", error);
     }
-}
+} 
