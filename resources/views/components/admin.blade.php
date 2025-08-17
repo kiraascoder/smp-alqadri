@@ -30,8 +30,6 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="/images/icons/icon-192x192.png" as="image" type="image/png">
 
-    @vite('resources/css/app.css')
-
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
