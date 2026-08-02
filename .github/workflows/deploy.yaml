@@ -1,4 +1,4 @@
-name: Deploy Smp Al Qadri
+name: Deploy SMP Al-Qadri
 
 on:
   push:
@@ -7,22 +7,38 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to Hostinger
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-
-      - name: Upload Files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy Files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /smp-alqadri/
+
+          protocol: ftp
+          port: 21
+
           local-dir: ./
+          server-dir: /domains/smpalqadri.sch.id/smp-alqadri/
+
+          dangerous-clean-slate: false
+
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.env
+            **/.env.*
+            **/vendor/**
+            **/node_modules/**
+            **/storage/**
+            **/bootstrap/cache/**
+            **/tests/**
+            **/phpunit.xml
+            **/README.md
