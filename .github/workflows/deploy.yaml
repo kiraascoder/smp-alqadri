@@ -36,9 +36,9 @@ jobs:
       - name: Upload Files to Hostinger
         uses: appleboy/scp-action@v1
         with:
-          host: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
           port: 65002
           source: "."
           target: "/home/${{ secrets.SSH_USERNAME }}/domains/smpalqadri.sch.id/smp-alqadri/"
