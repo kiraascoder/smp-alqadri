@@ -1,4 +1,4 @@
-name: Deploy SMP Al-Qadri
+name: Deploy SMP Al-Qadri to Hostinger
 
 on:
   push:
