@@ -1,3 +1,4 @@
+
 @props(['route', 'label', 'icon'])
 
 <a href="{{ $route }}"

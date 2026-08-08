@@ -83,7 +83,7 @@
                                     Pelanggaran</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    Skor</th>
+                                    pengurangan_score</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Tanggal</th>
@@ -131,11 +131,11 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold 
-                                            @if (($item->pelanggaran->skor ?? 0) >= 50) bg-red-100 text-red-800
-                                            @elseif(($item->pelanggaran->skor ?? 0) >= 25) bg-yellow-100 text-yellow-800
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+                                            @if (($item->pelanggaran->pengurangan_score ?? 0) >= 50) bg-red-100 text-red-800
+                                            @elseif(($item->pelanggaran->pengurangan_score ?? 0) >= 25) bg-yellow-100 text-yellow-800
                                             @else bg-green-100 text-green-800 @endif">
-                                            {{ $item->pelanggaran->skor ?? '-' }} poin
+                                            {{ $item->pelanggaran->pengurangan_score ?? '-' }} poin
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -343,7 +343,7 @@
                                 @foreach ($pelanggarans as $pelanggaran)
                                     <option value="{{ $pelanggaran->id }}">
                                         {{ $pelanggaran->deskripsi }}
-                                        <span class="text-red-600">({{ $pelanggaran->skor }} poin)</span>
+                                        <span class="text-red-600">({{ $pelanggaran->pengurangan_score }} poin)</span>
                                     </option>
                                 @endforeach
                             </select>
@@ -571,12 +571,12 @@
                                                 <div>
                                                     <p class="font-semibold text-gray-900">${data.siswa.user.name}</p>
                                                     <p class="text-sm text-gray-600">NISN: ${data.siswa.nisn}</p>
-                                                    <p class="text-sm text-gray-600">Kelas: ${data.siswa.kelas.nama_kelas}</p>                                                    
+                                                    <p class="text-sm text-gray-600">Kelas: ${data.siswa.kelas.nama_kelas}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="bg-red-50 rounded-xl p-4">
                                         <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
                                         <div class="space-y-2">
@@ -584,17 +584,17 @@
                                             <p class="font-medium text-gray-900">${data.pelanggaran.deskripsi}</p>
                                             <div class="flex items-center gap-2 mt-2">
                                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                                                    data.pelanggaran.skor >= 50 ? 'bg-red-100 text-red-800' :
-                                                    data.pelanggaran.skor >= 25 ? 'bg-yellow-100 text-yellow-800' :
+                                                    data.pelanggaran.pengurangan_score >= 50 ? 'bg-red-100 text-red-800' :
+                                                    data.pelanggaran.pengurangan_score >= 25 ? 'bg-yellow-100 text-yellow-800' :
                                                     'bg-green-100 text-green-800'
                                                 }">
-                                                    ${data.pelanggaran.skor} poin
+                                                    ${data.pelanggaran.pengurangan_score} poin
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="space-y-4">
                                     <div class="bg-green-50 rounded-xl p-4">
                                         <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
@@ -620,13 +620,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     ${data.keterangan ? `
-                                                                                                <div class="bg-yellow-50 rounded-xl p-4">
-                                                                                                    <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                                                                    <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                                                                                </div>
-                                                                                                ` : ''}
+                                                                                                    <div class="bg-yellow-50 rounded-xl p-4">
+                                                                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                                                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                                                                                    </div>
+                                                                                                    ` : ''}
                                 </div>
                             </div>
                         </div>

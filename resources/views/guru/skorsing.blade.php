@@ -98,7 +98,7 @@
                                     Pelanggaran</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    Skor</th>
+                                    pengurangan_score</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Tanggal</th>
@@ -147,11 +147,11 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold 
-                                            @if (($item->pelanggaran->skor ?? 0) >= 50) bg-red-100 text-red-800
-                                            @elseif(($item->pelanggaran->skor ?? 0) >= 25) bg-yellow-100 text-yellow-800
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+                                            @if (($item->pelanggaran->pengurangan_score ?? 0) >= 50) bg-red-100 text-red-800
+                                            @elseif(($item->pelanggaran->pengurangan_score ?? 0) >= 25) bg-yellow-100 text-yellow-800
                                             @else bg-green-100 text-green-800 @endif">
-                                            {{ $item->pelanggaran->skor ?? '-' }} poin
+                                            {{ $item->pelanggaran->pengurangan_score ?? '-' }} poin
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -281,7 +281,7 @@
                                 @foreach ($pelanggarans as $pelanggaran)
                                     <option value="{{ $pelanggaran->id }}">
                                         {{ $pelanggaran->deskripsi }}
-                                        <span class="text-red-600">({{ $pelanggaran->skor }} poin)</span>
+                                        <span class="text-red-600">({{ $pelanggaran->pengurangan_score }} poin)</span>
                                     </option>
                                 @endforeach
                             </select>
@@ -477,12 +477,12 @@
                                             </div>
                                             <div>
                                                 <p class="font-semibold text-gray-900">${data.siswa?.user?.name || 'Nama tidak tersedia'}</p>
-                                                <p class="text-sm text-gray-600">NISN: ${data.siswa?.nisn || 'Tidak tersedia'}</p>                                                
+                                                <p class="text-sm text-gray-600">NISN: ${data.siswa?.nisn || 'Tidak tersedia'}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="bg-red-50 rounded-xl p-4">
                                     <h4 class="font-semibold text-red-800 mb-2">Detail Pelanggaran</h4>
                                     <div class="space-y-2">
@@ -490,17 +490,17 @@
                                         <p class="font-medium text-gray-900">${data.pelanggaran?.deskripsi || 'Tidak tersedia'}</p>
                                         <div class="flex items-center gap-2 mt-2">
                                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                                                (data.pelanggaran?.skor || 0) >= 50 ? 'bg-red-100 text-red-800' :
-                                                (data.pelanggaran?.skor || 0) >= 25 ? 'bg-yellow-100 text-yellow-800' :
+                                                (data.pelanggaran?.pengurangan_score || 0) >= 50 ? 'bg-red-100 text-red-800' :
+                                                (data.pelanggaran?.pengurangan_score || 0) >= 25 ? 'bg-yellow-100 text-yellow-800' :
                                                 'bg-green-100 text-green-800'
                                             }">
-                                                ${data.pelanggaran?.skor || 0} poin
+                                                ${data.pelanggaran?.pengurangan_score || 0} poin
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="space-y-4">
                                 <div class="bg-green-50 rounded-xl p-4">
                                     <h4 class="font-semibold text-green-800 mb-2">Informasi Waktu</h4>
@@ -515,13 +515,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 ${data.keterangan ? `
-                                                                                    <div class="bg-yellow-50 rounded-xl p-4">
-                                                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                                                        <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
-                                                                                    </div>
-                                                                                    ` : ''}
+                                                                                        <div class="bg-yellow-50 rounded-xl p-4">
+                                                                                            <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                                                            <p class="text-gray-700 text-sm leading-relaxed">${data.keterangan}</p>
+                                                                                        </div>
+                                                                                        ` : ''}
                             </div>
                         </div>
                     </div>
@@ -538,7 +538,7 @@
                         </div>
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">Gagal Memuat Data</h3>
                         <p class="text-gray-600">Terjadi kesalahan saat memuat detail pelanggaran.</p>
-                        <button onclick="openDetailModal(${id})" 
+                        <button onclick="openDetailModal(${id})"
                                 class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                             Coba Lagi
                         </button>
@@ -799,7 +799,7 @@
             showNotification('success', message);
         }
 
-        // Error notification  
+        // Error notification
         function showErrorNotification(message) {
             showNotification('error', message);
         }
@@ -820,7 +820,7 @@
                 <div class="flex items-center gap-3">
                     <div class="flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            ${type === 'success' ? 
+                            ${type === 'success' ?
                                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' :
                                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />'
                             }

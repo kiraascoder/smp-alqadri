@@ -18,7 +18,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left font-medium">Kategori</th>
                         <th class="px-6 py-3 text-left font-medium">Deskripsi</th>
-                        <th class="px-6 py-3 text-left font-medium">Skor</th>
+                        <th class="px-6 py-3 text-left font-medium">pengurangan_score</th>
                         <th class="px-6 py-3 text-left font-medium">Aksi</th>
                     </tr>
                 </thead>
@@ -27,10 +27,10 @@
                         <tr class="border-t hover:bg-gray-50">
                             <td class="px-6 py-4">{{ $pelanggaran->kategori }}</td>
                             <td class="px-6 py-4">{{ Str::limit($pelanggaran->deskripsi, 50) }}</td>
-                            <td class="px-6 py-4">{{ $pelanggaran->skor }}</td>
+                            <td class="px-6 py-4">{{ $pelanggaran->pengurangan_score }}</td>
                             <td class="px-6 py-4 space-x-2">
                                 <button
-                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->skor }}`)"
+                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->pengurangan_score }}`)"
                                     class="text-blue-600 hover:underline">
                                     Detail
                                 </button>
@@ -57,7 +57,7 @@
             <h3 class="text-xl font-bold mb-4">Detail Pelanggaran</h3>
             <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
             <p><strong>Deskripsi:</strong> <span id="modalDeskripsi"></span></p>
-            <p><strong>Skor:</strong> <span id="modalSkor"></span></p>
+            <p><strong>pengurangan_score:</strong> <span id="modalSkor"></span></p>
             <div class="mt-6 text-right">
                 <button onclick="tutupModalDetail()" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Tutup</button>
             </div>
@@ -73,10 +73,10 @@
             document.getElementById('modal-tambah')?.classList.add('hidden');
         }
 
-        function showDetailModal(kategori, deskripsi, skor) {
+        function showDetailModal(kategori, deskripsi, pengurangan_score) {
             document.getElementById('modalKategori').textContent = kategori;
             document.getElementById('modalDeskripsi').textContent = deskripsi;
-            document.getElementById('modalSkor').textContent = skor;
+            document.getElementById('modalSkor').textContent = pengurangan_score;
             document.getElementById('modal-detail').classList.remove('hidden');
         }
 

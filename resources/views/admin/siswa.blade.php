@@ -120,7 +120,7 @@
                                     No HP</th>
                                 <th
                                     class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                    Skor BK</th>
+                                    pengurangan_score BK</th>
                                 <th
                                     class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                     Aksi</th>
@@ -176,7 +176,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
                                             @if (($item->score_bk ?? 0) >= 80) bg-red-100 text-red-800
                                             @elseif(($item->score_bk ?? 0) >= 50) bg-yellow-100 text-yellow-800
                                             @else bg-green-100 text-green-800 @endif">
@@ -405,7 +405,7 @@
 
                     </div>
 
-                    
+
                     <div class="space-y-4">
                         <div class="flex items-center gap-3 pb-3 border-b border-gray-200">
                             <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -703,7 +703,7 @@
                 }
             }
 
-            // Tentukan warna skor
+            // Tentukan warna pengurangan_score
             const score = parseInt(data.score) || 0;
             let scoreColor = 'text-green-600 bg-green-100';
             if (score >= 80) scoreColor = 'text-red-600 bg-red-100';
@@ -723,7 +723,7 @@
                         </div>
                         <div class="ml-auto">
                             <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${scoreColor}">
-                                Skor BK: ${data.score} poin
+                                pengurangan_score BK: ${data.score} poin
                             </span>
                         </div>
                     </div>
@@ -733,39 +733,39 @@
                         <!-- Personal Information -->
                         <div class="space-y-4">
                             <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Informasi Pribadi</h5>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Nama Lengkap</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.name}</p>
                             </div>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">NISN</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.nisn}</p>
                             </div>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Jenis Kelamin</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.jenisKelamin === 'L' ? 'Laki-laki' : data.jenisKelamin === 'P' ? 'Perempuan' : data.jenisKelamin}</p>
-                            </div>                                                        
+                            </div>
                         </div>
 
                         <!-- Contact & Academic Information -->
                         <div class="space-y-4">
                             <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Kontak & Akademik</h5>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Email</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.email}</p>
                             </div>
-                                                    
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Kelas</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.kelas}</p>
                             </div>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
-                                <label class="text-sm font-medium text-gray-500">Skor BK</label>
+                                <label class="text-sm font-medium text-gray-500">pengurangan_score BK</label>
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${scoreColor} mt-1">
                                     ${data.score} poin
                                 </span>
@@ -773,62 +773,62 @@
                         </div>
                     </div>
 
-                    
+
 
                     <!-- Score Status -->
                     <div class="p-4 rounded-lg ${score >= 80 ? 'bg-red-50 border border-red-200' : score >= 50 ? 'bg-yellow-50 border border-yellow-200' : 'bg-green-50 border border-green-200'}">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full ${score >= 80 ? 'bg-red-100' : score >= 50 ? 'bg-yellow-100' : 'bg-green-100'} flex items-center justify-center">
-                                ${score >= 80 ? 
+                                ${score >= 80 ?
                                     '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>' :
                                 score >= 50 ?
                                     '<svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>' :
                                     '<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
                                 }
-                            </div>                          
+                            </div>
                             <div>
                                 <p class="font-semibold ${score >= 150 ? 'text-red-800' : score >= 100 ? 'text-orange-800' : score >= 50 ? 'text-yellow-800' : 'text-green-800'}">
-                                    ${score >= 150 ? 'Sangat Memerlukan Perhatian Khusus' : 
-                                    score >= 100 ? 'Perlu Perhatian Khusus' : 
-                                    score >= 50 ? 'Perlu Bimbingan' : 
+                                    ${score >= 150 ? 'Sangat Memerlukan Perhatian Khusus' :
+                                    score >= 100 ? 'Perlu Perhatian Khusus' :
+                                    score >= 50 ? 'Perlu Bimbingan' :
                                     'Kondisi Baik'}
                                 </p>
                                 <p class="text-sm ${score >= 150 ? 'text-red-700' : score >= 100 ? 'text-orange-700' : score >= 50 ? 'text-yellow-700' : 'text-green-700'}">
-                                    ${score >= 150 ? 'Skor BK sangat tinggi (≥150), diperlukan konseling intensif dan tindakan khusus' : 
-                                    score >= 100 ? 'Skor BK tinggi (100-149), diperlukan konseling dan monitoring ketat' : 
-                                    score >= 50 ? 'Skor BK sedang (50-99), diperlukan bimbingan dan monitoring reguler' : 
-                                    'Skor BK rendah (0-49), siswa dalam kondisi baik'}
+                                    ${score >= 150 ? 'pengurangan_score BK sangat tinggi (≥150), diperlukan konseling intensif dan tindakan khusus' :
+                                    score >= 100 ? 'pengurangan_score BK tinggi (100-149), diperlukan konseling dan monitoring ketat' :
+                                    score >= 50 ? 'pengurangan_score BK sedang (50-99), diperlukan bimbingan dan monitoring reguler' :
+                                    'pengurangan_score BK rendah (0-49), siswa dalam kondisi baik'}
                                 </p>
-                                
+
                                 <!-- Progress bar visual untuk score BK -->
                                 <div class="mt-3">
                                     <div class="flex items-center justify-between text-xs mb-1">
-                                        <span class="text-gray-600">Skor BK</span>
+                                        <span class="text-gray-600">pengurangan_score BK</span>
                                         <span class="font-semibold ${score >= 150 ? 'text-red-600' : score >= 100 ? 'text-orange-600' : score >= 50 ? 'text-yellow-600' : 'text-green-600'}">
                                             ${score}/200
                                         </span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="h-2 rounded-full transition-all duration-300 ${
-                                            score >= 150 ? 'bg-gradient-to-r from-red-500 to-red-600' : 
-                                            score >= 100 ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
-                                            score >= 50 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 
+                                            score >= 150 ? 'bg-gradient-to-r from-red-500 to-red-600' :
+                                            score >= 100 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                                            score >= 50 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
                                             'bg-gradient-to-r from-green-500 to-green-600'
                                         }" style="width: ${Math.min((score / 200) * 100, 100)}%"></div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Badge kategori -->
                                 <div class="mt-2">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                        score >= 150 ? 'bg-red-100 text-red-800' : 
-                                        score >= 100 ? 'bg-orange-100 text-orange-800' : 
-                                        score >= 50 ? 'bg-yellow-100 text-yellow-800' : 
+                                        score >= 150 ? 'bg-red-100 text-red-800' :
+                                        score >= 100 ? 'bg-orange-100 text-orange-800' :
+                                        score >= 50 ? 'bg-yellow-100 text-yellow-800' :
                                         'bg-green-100 text-green-800'
                                     }">
-                                        ${score >= 150 ? '🚨 Kritis' : 
-                                        score >= 100 ? '⚠️ Tinggi' : 
-                                        score >= 50 ? '⚡ Sedang' : 
+                                        ${score >= 150 ? '🚨 Kritis' :
+                                        score >= 100 ? '⚠️ Tinggi' :
+                                        score >= 50 ? '⚡ Sedang' :
                                         '✅ Baik'}
                                     </span>
                                 </div>

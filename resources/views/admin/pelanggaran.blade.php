@@ -31,7 +31,7 @@
                     <tr>
                         <th class="px-6 py-4">Kategori</th>
                         <th class="px-6 py-4">Deskripsi</th>
-                        <th class="px-6 py-4">Skor</th>
+                        <th class="px-6 py-4">pengurangan_score</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -40,10 +40,10 @@
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 capitalize font-medium text-gray-900">{{ $pelanggaran->kategori }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ Str::limit($pelanggaran->deskripsi, 50) }}</td>
-                            <td class="px-6 py-4 font-semibold text-blue-600">{{ $pelanggaran->skor }}</td>
+                            <td class="px-6 py-4 font-semibold text-blue-600">{{ $pelanggaran->pengurangan_score }}</td>
                             <td class="px-6 py-4 text-center">
                                 <button
-                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->skor }}`)"
+                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->pengurangan_score }}`)"
                                     class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-600 rounded-lg transition">
                                     Detail
                                 </button>
@@ -126,16 +126,18 @@
                         <div class="text-red-500 text-sm mt-1 hidden" id="deskripsi-error"></div>
                     </div>
 
-                    <!-- Skor -->
+                    <!-- pengurangan_score -->
                     <div>
-                        <label for="skor" class="block text-sm font-medium text-gray-700 mb-2">
-                            Skor Pelanggaran <span class="text-red-500">*</span>
+                        <label for="pengurangan_score" class="block text-sm font-medium text-gray-700 mb-2">
+                            pengurangan_score Pelanggaran <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" id="skor" name="skor" min="0" max="100" required
+                        <input type="number" id="pengurangan_score" name="pengurangan_score" min="0" max="100"
+                            required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                            placeholder="Masukkan skor (0-100)">
-                        <div class="text-red-500 text-sm mt-1 hidden" id="skor-error"></div>
-                        <p class="text-xs text-gray-500 mt-1">Skor 0-25: Ringan, 26-50: Sedang, 51-75: Berat, 76-100: Sangat
+                            placeholder="Masukkan pengurangan_score (0-100)">
+                        <div class="text-red-500 text-sm mt-1 hidden" id="pengurangan_score-error"></div>
+                        <p class="text-xs text-gray-500 mt-1">pengurangan_score 0-25: Ringan, 26-50: Sedang, 51-75: Berat,
+                            76-100: Sangat
                             Berat</p>
                     </div>
 
@@ -168,7 +170,7 @@
             <div class="space-y-4 text-gray-700">
                 <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
                 <p><strong>Deskripsi:</strong> <span id="modalDeskripsi"></span></p>
-                <p><strong>Skor:</strong> <span id="modalSkor"></span></p>
+                <p><strong>pengurangan_score:</strong> <span id="modalSkor"></span></p>
             </div>
             <div class="mt-8 text-right">
                 <button onclick="tutupModalDetail()"
@@ -194,10 +196,10 @@
 
     <script>
         // Function untuk menampilkan modal detail
-        function showDetailModal(kategori, deskripsi, skor) {
+        function showDetailModal(kategori, deskripsi, pengurangan_score) {
             document.getElementById('modalKategori').textContent = kategori;
             document.getElementById('modalDeskripsi').textContent = deskripsi;
-            document.getElementById('modalSkor').textContent = skor;
+            document.getElementById('modalSkor').textContent = pengurangan_score;
             document.getElementById('modal-detail').classList.remove('hidden');
         }
 
@@ -247,22 +249,22 @@
             // Validate required fields
             const kategori = document.getElementById('kategori');
             const kategoriError = document.getElementById('kategori-error');
-            const skor = document.getElementById('skor');
-            const skorError = document.getElementById('skor-error');
+            const pengurangan_score = document.getElementById('pengurangan_score');
+            const skorError = document.getElementById('pengurangan_score-error');
 
             if (!kategori.value.trim()) {
                 showError(kategori, kategoriError, 'Kategori wajib dipilih');
                 isValid = false;
             }
 
-            if (!skor.value.trim()) {
-                showError(skor, skorError, 'Skor wajib diisi');
+            if (!pengurangan_score.value.trim()) {
+                showError(pengurangan_score, skorError, 'pengurangan_score wajib diisi');
                 isValid = false;
-            } else if (parseInt(skor.value) < 0) {
-                showError(skor, skorError, 'Skor tidak boleh negatif');
+            } else if (parseInt(pengurangan_score.value) < 0) {
+                showError(pengurangan_score, skorError, 'pengurangan_score tidak boleh negatif');
                 isValid = false;
-            } else if (parseInt(skor.value) > 100) {
-                showError(skor, skorError, 'Skor maksimal 100');
+            } else if (parseInt(pengurangan_score.value) > 100) {
+                showError(pengurangan_score, skorError, 'pengurangan_score maksimal 100');
                 isValid = false;
             }
 

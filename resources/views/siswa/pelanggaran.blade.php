@@ -18,7 +18,7 @@
                     <tr>
                         <th class="px-6 py-4">Kategori</th>
                         <th class="px-6 py-4">Deskripsi</th>
-                        <th class="px-6 py-4">Skor</th>
+                        <th class="px-6 py-4">pengurangan_score</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -27,10 +27,10 @@
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 capitalize font-medium text-gray-900">{{ $pelanggaran->kategori }}</td>
                             <td class="px-6 py-4 text-gray-700">{{ Str::limit($pelanggaran->deskripsi, 50) }}</td>
-                            <td class="px-6 py-4 font-semibold text-blue-600">{{ $pelanggaran->skor }}</td>
+                            <td class="px-6 py-4 font-semibold text-blue-600">{{ $pelanggaran->pengurangan_score }}</td>
                             <td class="px-6 py-4 text-center">
                                 <button
-                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->skor }}`)"
+                                    onclick="showDetailModal(`{{ $pelanggaran->kategori }}`, `{{ $pelanggaran->deskripsi }}`, `{{ $pelanggaran->pengurangan_score }}`)"
                                     class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-600 rounded-lg transition">
                                     Detail
                                 </button>
@@ -59,7 +59,7 @@
             <div class="space-y-4 text-gray-700">
                 <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
                 <p><strong>Deskripsi:</strong> <span id="modalDeskripsi"></span></p>
-                <p><strong>Skor:</strong> <span id="modalSkor"></span></p>
+                <p><strong>pengurangan_score:</strong> <span id="modalSkor"></span></p>
             </div>
             <div class="mt-8 text-right">
                 <button onclick="tutupModalDetail()"
@@ -71,10 +71,10 @@
     </div>
 
     <script>
-        function showDetailModal(kategori, deskripsi, skor) {
+        function showDetailModal(kategori, deskripsi, pengurangan_score) {
             document.getElementById('modalKategori').textContent = kategori;
             document.getElementById('modalDeskripsi').textContent = deskripsi;
-            document.getElementById('modalSkor').textContent = skor;
+            document.getElementById('modalSkor').textContent = pengurangan_score;
             document.getElementById('modal-detail').classList.remove('hidden');
         }
 

@@ -38,8 +38,8 @@
                         <div class="flex flex-col sm:flex-row gap-3">
                             <div class="relative">
                                 <input x-model="searchTerm" type="text" placeholder="Cari siswa..."
-                                    class="w-full sm:w-64 pl-12 pr-4 py-3 bg-white/90 border border-gray-200 rounded-2xl 
-                                              focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 
+                                    class="w-full sm:w-64 pl-12 pr-4 py-3 bg-white/90 border border-gray-200 rounded-2xl
+                                              focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500
                                               transition-all duration-300 shadow-lg">
                                 <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
@@ -50,8 +50,8 @@
                                 </div>
                             </div>
                             <button @click="showFilters = !showFilters"
-                                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-2xl 
-                                           hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 
+                                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-2xl
+                                           hover:from-blue-600 hover:to-indigo-600 transition-all duration-300
                                            shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold">
                                 🔍 Filter
                             </button>
@@ -89,10 +89,10 @@
                         </thead>
                         <tbody class="bg-white/50 backdrop-blur-sm divide-y divide-gray-100">
                             @forelse ($siswas as $index => $siswa)
-                                <tr class="group hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 
+                                <tr class="group hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
                                           transition-all duration-300 transform hover:scale-[1.01]"
-                                    x-show="searchTerm === '' || '{{ strtolower($siswa->user->name ?? '') }}'.includes(searchTerm.toLowerCase()) || 
-                                            '{{ strtolower($siswa->kelas->nama_kelas) }}'.includes(searchTerm.toLowerCase()) || 
+                                    x-show="searchTerm === '' || '{{ strtolower($siswa->user->name ?? '') }}'.includes(searchTerm.toLowerCase()) ||
+                                            '{{ strtolower($siswa->kelas->nama_kelas) }}'.includes(searchTerm.toLowerCase()) ||
                                             '{{ $siswa->nisn }}'.includes(searchTerm)"
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 transform translate-y-4"
@@ -101,7 +101,7 @@
                                     <td class="px-8 py-6">
                                         <div class="flex items-center gap-4">
                                             <div
-                                                class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 
+                                                class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500
                                                         rounded-2xl flex items-center justify-center text-white font-bold text-lg
                                                         shadow-lg group-hover:shadow-xl transition-all duration-300">
                                                 {{ substr($siswa->user->name ?? 'N', 0, 1) }}
@@ -134,10 +134,10 @@
 
                                     <td class="px-8 py-6">
                                         <button @click="openDetail({{ $siswa->id }})"
-                                            class="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold 
-                                                       text-white bg-gradient-to-r from-blue-500 to-indigo-500 
+                                            class="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold
+                                                       text-white bg-gradient-to-r from-blue-500 to-indigo-500
                                                        hover:from-blue-600 hover:to-indigo-600 rounded-2xl
-                                                       shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                                                       shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
                                                        transition-all duration-300">
                                             <svg class="w-4 h-4 group-hover:rotate-12 transition-transform duration-300"
                                                 fill="currentColor" viewBox="0 0 20 20">
@@ -198,7 +198,7 @@
                             {{-- Modal Header --}}
                             <div class="flex items-center justify-between mb-8">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600
                                                 rounded-3xl flex items-center justify-center text-white font-bold text-2xl
                                                 shadow-lg"
                                         x-text="getSelectedSiswa()?.user?.name ? getSelectedSiswa().user.name.charAt(0) : 'N'">
@@ -212,7 +212,7 @@
                                     </div>
                                 </div>
                                 <button @click="closeDetail()"
-                                    class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-2xl 
+                                    class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-2xl
                                                flex items-center justify-center transition-all duration-200
                                                hover:scale-110">
                                     <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor"
@@ -322,7 +322,7 @@
                                             <p class="text-gray-600">Evaluasi perilaku dan kedisiplinan siswa</p>
                                         </div>
 
-                                        {{-- Badge Kritis untuk skor tinggi --}}
+                                        {{-- Badge Kritis untuk pengurangan_score tinggi --}}
                                         <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 150">
                                             <div class="animate-bounce">
                                                 <span
@@ -333,11 +333,12 @@
                                         </template>
                                     </div>
 
-                                    {{-- Skor dan Progress Bar --}}
+                                    {{-- pengurangan_score dan Progress Bar --}}
                                     <div class="space-y-6">
-                                        {{-- Skor Utama --}}
+                                        {{-- pengurangan_score Utama --}}
                                         <div class="flex justify-between items-center">
-                                            <span class="text-gray-700 font-semibold text-lg">Skor Pelanggaran</span>
+                                            <span class="text-gray-700 font-semibold text-lg">pengurangan_score
+                                                Pelanggaran</span>
                                             <div class="flex items-center gap-3">
                                                 <span class="px-4 py-2 rounded-xl font-bold text-2xl shadow-lg"
                                                     :class="{
@@ -379,7 +380,7 @@
                                                         'bg-gradient-to-r from-green-500 to-green-600': (
                                                             getSelectedSiswa()?.score_bk || 0) < 50
                                                     }">
-                                                    {{-- Shimmer effect untuk skor tinggi --}}
+                                                    {{-- Shimmer effect untuk pengurangan_score tinggi --}}
                                                     <template x-if="(getSelectedSiswa()?.score_bk || 0) >= 100">
                                                         <div
                                                             class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse">
@@ -451,7 +452,8 @@
                                                             </h5>
                                                         </div>
                                                         <p class="text-red-700 mb-4 leading-relaxed">
-                                                            Siswa memiliki skor pelanggaran sangat tinggi (≥150). Diperlukan
+                                                            Siswa memiliki pengurangan_score pelanggaran sangat tinggi
+                                                            (≥150). Diperlukan
                                                             tindakan segera dan intensif.
                                                         </p>
                                                         <div class="bg-red-100 rounded-lg p-4">
@@ -477,7 +479,8 @@
                                                                 Khusus</h5>
                                                         </div>
                                                         <p class="text-orange-700 mb-4 leading-relaxed">
-                                                            Skor pelanggaran tinggi (100-149). Diperlukan bimbingan intensif
+                                                            pengurangan_score pelanggaran tinggi (100-149). Diperlukan
+                                                            bimbingan intensif
                                                             dan monitoring ketat.
                                                         </p>
                                                         <div class="bg-orange-100 rounded-lg p-4">
@@ -503,7 +506,8 @@
                                                             </h5>
                                                         </div>
                                                         <p class="text-yellow-700 mb-4 leading-relaxed">
-                                                            Skor pelanggaran sedang (50-99). Diperlukan bimbingan dan
+                                                            pengurangan_score pelanggaran sedang (50-99). Diperlukan
+                                                            bimbingan dan
                                                             monitoring reguler.
                                                         </p>
                                                         <div class="bg-yellow-100 rounded-lg p-4">
@@ -521,7 +525,7 @@
                                             </div>
                                         </template>
 
-                                        {{-- Pesan Positif untuk skor baik --}}
+                                        {{-- Pesan Positif untuk pengurangan_score baik --}}
                                         <template x-if="(getSelectedSiswa()?.score_bk || 0) < 50">
                                             <div
                                                 class="mt-6 p-5 bg-green-50 border-l-4 border-green-500 rounded-xl shadow-lg">
@@ -530,7 +534,8 @@
                                                     <h5 class="font-bold text-green-800 text-lg">Kondisi Baik</h5>
                                                 </div>
                                                 <p class="text-green-700 leading-relaxed">
-                                                    Siswa memiliki skor pelanggaran rendah (0-49). Terus pertahankan
+                                                    Siswa memiliki pengurangan_score pelanggaran rendah (0-49). Terus
+                                                    pertahankan
                                                     perilaku positif dan kedisiplinan yang baik.
                                                 </p>
                                                 <div class="bg-green-100 rounded-lg p-4 mt-4">
@@ -551,7 +556,7 @@
                             {{-- Modal Footer --}}
                             <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
                                 <button @click="closeDetail()"
-                                    class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 
+                                    class="px-8 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200
                                                rounded-2xl font-semibold transition-all duration-200
                                                hover:scale-105 shadow-md hover:shadow-lg">
                                     Tutup
