@@ -4,31 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Pelanggaran;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PelanggaranController extends Controller
 {
-    public function pelanggaran()
-    {
-        $pelanggarans = Pelanggaran::paginate(10);
-        return view('siswa.pelanggaran', compact('pelanggarans'));
-    }
     public function store(Request $request)
     {
-        $request->validate([
-            'kategori' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'skor' => 'required|integer|min:0',
+        $data = $request->validate([
+            'kategori' => ['required', Rule::in(['ringan', 'sedang', 'berat'])],
+            'deskripsi' => ['required', 'string', 'max:2000'],
+            'skor' => ['required', 'integer', 'min:1'],
         ]);
 
-        Pelanggaran::create($request->all());
+        Pelanggaran::create($data);
+        return back()->with('success', 'Jenis pelanggaran berhasil ditambahkan.');
+    }
 
-        return redirect()->route('admin.pelanggaran')->with('success', 'Pelanggaran berhasil ditambahkan.');
+    public function update(Request $request, Pelanggaran $pelanggaran)
+    {
+        $data = $request->validate([
+            'kategori' => ['required', Rule::in(['ringan', 'sedang', 'berat'])],
+            'deskripsi' => ['required', 'string', 'max:2000'],
+            'skor' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $pelanggaran->update($data);
+        return back()->with('success', 'Jenis pelanggaran berhasil diperbarui.');
     }
 
     public function destroy(Pelanggaran $pelanggaran)
     {
-        $pelanggaran->delete();
+        if ($pelanggaran->riwayat()->exists()) {
+            return back()->with('error', 'Jenis pelanggaran sudah digunakan dan tidak dapat dihapus.');
+        }
 
-        return redirect()->route('siswa.pelanggaran')->with('success', 'Pelanggaran berhasil dihapus.');
+        $pelanggaran->delete();
+        return back()->with('success', 'Jenis pelanggaran berhasil dihapus.');
     }
 }

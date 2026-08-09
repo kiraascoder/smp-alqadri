@@ -4,39 +4,51 @@ namespace App\Http\Controllers;
 
 use App\Models\Pelanggaran;
 use App\Models\RiwayatPelanggaran;
-use App\Models\Siswa;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrangTuaController extends Controller
 {
+    private function profile()
+    {
+        return Auth::user()->orangTuaProfile()->firstOrFail();
+    }
+
+    public function dashboard()
+    {
+        $ortu = $this->profile();
+        $anak = $ortu->siswa()->with('kelas')->orderBy('nama')->get();
+        $anakIds = $anak->pluck('id');
+        $totalSkor = $anak->sum('score_bk');
+        $totalSkorsing = RiwayatPelanggaran::whereIn('siswa_id', $anakIds)->count();
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
+            ->whereIn('siswa_id', $anakIds)
+            ->latest('tanggal')
+            ->take(8)
+            ->get();
+
+        return view('orangtua.dashboard', compact('anak', 'totalSkor', 'totalSkorsing', 'riwayat'));
+    }
+
     public function anak()
     {
-        $user = Auth::user();
-
-        if ($user->role !== 'orang_tua') {
-            abort(403);
-        }
-        $anak = $user->anakSiswa()->with('user')->get();
-
-
+        $anak = $this->profile()->siswa()->with('kelas')->orderBy('nama')->get();
         return view('orangtua.anak', compact('anak'));
     }
 
     public function pelanggaran()
     {
-        $user = Auth::user();
-        $anakIds = $user->anak->pluck('id'); 
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
+        $pelanggarans = Pelanggaran::orderBy('kategori')->paginate(15);
+        return view('orangtua.pelanggaran', compact('pelanggarans'));
+    }
+
+    public function skorsing()
+    {
+        $anakIds = $this->profile()->siswa()->pluck('id');
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
             ->whereIn('siswa_id', $anakIds)
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
+            ->latest('tanggal')
+            ->paginate(15);
 
-
-        $siswas = $user->anak()->with('kelas')->get();
-
-        $pelanggarans = Pelanggaran::all();
-
-        return view('orangtua.pelanggaran', compact('siswas', 'riwayat', 'pelanggarans'));
+        return view('orangtua.skorsing', compact('riwayat'));
     }
 }

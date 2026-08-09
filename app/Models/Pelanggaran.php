@@ -10,11 +10,6 @@ class Pelanggaran extends Model
 
     public function riwayat()
     {
-        return $this->hasMany(RiwayatPelanggaran::class);
-    }
-
-    public function laporan()
-    {
-        return $this->hasMany(Laporan::class);
+        return $this->hasMany(RiwayatPelanggaran::class, 'pelanggaran_id');
     }
 }

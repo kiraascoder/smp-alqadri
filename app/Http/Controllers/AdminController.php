@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\Kelas;
+use App\Models\OrangTua;
 use App\Models\Pelanggaran;
 use App\Models\RiwayatPelanggaran;
 use App\Models\Siswa;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -19,468 +21,303 @@ class AdminController extends Controller
     {
         $guruCount = Guru::count();
         $siswaCount = Siswa::count();
-        $pelanggaranCount = RiwayatPelanggaran::where('created_at', '>=', Carbon::now()->subMonth())->count();
-        $guruBkCount = User::where('role', 'guru_bk')->count();
-        $pelanggaranTerbaru = RiwayatPelanggaran::latest()->take(5)->get();
-        $siswas = Siswa::with(['user', 'kelas'])->get();
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
-        $pelanggarans = Pelanggaran::all();
-        return view('admin.dashboard', compact('guruCount', 'siswaCount', 'pelanggaranCount', 'guruBkCount', 'riwayat'));
-    }
+        $orangTuaCount = OrangTua::count();
+        $skorsingBulanIniCount = RiwayatPelanggaran::whereDate('tanggal', '>=', Carbon::now()->startOfMonth())->count();
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
+            ->latest('tanggal')
+            ->take(8)
+            ->get();
 
+        return view('admin.dashboard', compact(
+            'guruCount',
+            'siswaCount',
+            'orangTuaCount',
+            'skorsingBulanIniCount',
+            'riwayat'
+        ));
+    }
 
     public function guru()
     {
-        $gurus = Guru::with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'guru');
-            })
-            ->paginate(10);
-
+        $gurus = Guru::with('user')->latest()->paginate(10);
         return view('admin.guru', compact('gurus'));
     }
 
     public function storeGuru(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'no_hp' => 'nullable|string|max:20',
-            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
-            'password' => 'required|string|min:6|confirmed',
-        ], [
-            'name.required' => 'Nama Wajib Diisi',
-            'email.required' => 'Silahkan Masukkan Email Anda',
-            'email.email' => 'Format email yang Anda masukkan tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'password.required' => 'Silahkan Masukkan Password Anda',
-            'password.min' => 'Password minimal terdiri dari 6 karakter',
-            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
-            'password.confirmed' => 'Konfirmasi password tidak sesuai',
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'no_hp' => ['nullable', 'string', 'max:20'],
+            'jenis_kelamin' => ['nullable', Rule::in(['Laki-Laki', 'Perempuan'])],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'password' => Hash::make($request->password),
-            'role' => 'guru',
-        ]);
+        DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'no_hp' => $data['no_hp'] ?? null,
+                'jenis_kelamin' => $data['jenis_kelamin'] ?? null,
+                'password' => Hash::make($data['password']),
+                'role' => User::ROLE_GURU,
+            ]);
 
-        Guru::create([
-            'user_id' => $user->id,
-        ]);
+            Guru::create(['user_id' => $user->id]);
+        });
 
-        return redirect()->route('admin.guru')->with('success', 'Guru berhasil ditambahkan.');
+        return back()->with('success', 'Guru berhasil ditambahkan.');
     }
-    public function storeGuruBk(Request $request)
+
+    public function editGuru(Request $request, int $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'no_hp' => 'nullable|string|max:20',
-            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
-            'password' => 'required|string|min:6|confirmed',
-        ], [
-            'name.required' => 'Nama Wajib Diisi',
-            'email.required' => 'Silahkan Masukkan Email Anda',
-            'email.email' => 'Format email yang Anda masukkan tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'password.required' => 'Silahkan Masukkan Password Anda',
-            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
-            'password.min' => 'Password minimal terdiri dari 6 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak sesuai',
+        $guru = Guru::with('user')->findOrFail($id);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($guru->user_id)],
+            'no_hp' => ['nullable', 'string', 'max:20'],
+            'jenis_kelamin' => ['nullable', Rule::in(['Laki-Laki', 'Perempuan'])],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'password' => Hash::make($request->password),
-            'role' => 'guru_bk',
-        ]);
+        $guru->user->update($data);
 
-
-        Guru::create([
-            'user_id' => $user->id,
-        ]);
-
-        return redirect()->route('admin.bk')->with('success', 'Guru berhasil ditambahkan.');
+        return back()->with('success', 'Data guru berhasil diperbarui.');
     }
 
-    public function editGuru(Request $request, $id)
+    public function destroyGuru(int $id)
     {
-        $guru = Guru::find($id);
+        $guru = Guru::with('user')->findOrFail($id);
+        $guru->user->delete();
 
-        if (!$guru) {
-            return redirect()->back()->withErrors('User tidak ditemukan.');
-        }
+        return back()->with('success', 'Guru berhasil dihapus.');
+    }
 
-        $user = $guru->user;
+    public function kelas()
+    {
+        $kelasList = Kelas::withCount('siswa')->orderBy('nama_kelas')->paginate(15);
+        return view('admin.kelas', compact('kelasList'));
+    }
 
-        if (!$guru) {
-            return redirect()->back()->withErrors('Data guru tidak ditemukan untuk user ini.');
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'no_hp' => 'nullable|string|max:20',
+    public function storeKelas(Request $request)
+    {
+        $data = $request->validate([
+            'nama_kelas' => ['required', 'string', 'max:100', 'unique:kelas,nama_kelas'],
         ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
+        Kelas::create($data);
+        return back()->with('success', 'Kelas berhasil ditambahkan.');
+    }
+
+    public function updateKelas(Request $request, Kelas $kelas)
+    {
+        $data = $request->validate([
+            'nama_kelas' => ['required', 'string', 'max:100', Rule::unique('kelas', 'nama_kelas')->ignore($kelas->id)],
         ]);
 
-
-        return redirect()->route('admin.guru')->with('success', 'Profil berhasil diperbarui.');
+        $kelas->update($data);
+        return back()->with('success', 'Kelas berhasil diperbarui.');
     }
 
-    public function editGurubk(Request $request, $id)
+    public function destroyKelas(Kelas $kelas)
     {
-        $guru = Guru::find($id);
-
-        if (!$guru) {
-            return redirect()->back()->withErrors('User tidak ditemukan.');
+        if ($kelas->siswa()->exists()) {
+            return back()->with('error', 'Kelas masih digunakan oleh siswa dan tidak dapat dihapus.');
         }
 
-        $user = $guru->user;
-
-        if (!$guru) {
-            return redirect()->back()->withErrors('Data guru tidak ditemukan untuk user ini.');
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'no_hp' => 'nullable|string|max:20',
-
-        ]);
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-        ]);
-
-
-
-        return redirect()->route('admin.bk')->with('success', 'Profil berhasil diperbarui.');
+        $kelas->delete();
+        return back()->with('success', 'Kelas berhasil dihapus.');
     }
-
-    public function destroySkorsing($id)
-    {
-        try {
-            $skorsing = RiwayatPelanggaran::with(['siswa.user', 'pelanggaran'])
-                ->where('id', $id)
-                ->first();
-
-            if (!$skorsing) {
-                return redirect()->route('skorsing.index')->with(
-                    'error',
-                    'Data pelanggaran tidak ditemukan'
-                );
-            }
-
-            $siswa = $skorsing->siswa;
-            $siswaName = $siswa->user->name ?? 'Siswa';
-            $pelanggaranDesc = $skorsing->pelanggaran->deskripsi ?? 'Pelanggaran';
-            $poin = $skorsing->pelanggaran->skor ?? 0;
-
-            // Update score_bk siswa (mengurangi poin)
-            if ($siswa && $siswa->score_bk !== null) {
-                $siswa->score_bk -= $poin;
-                $siswa->save();
-            }
-
-
-            $skorsing->delete();
-
-
-            return redirect()->route('admin.riwayat')->with(
-                'success',
-                "Data pelanggaran {$pelanggaranDesc} untuk siswa {$siswaName} berhasil dihapus"
-            );
-        } catch (\Exception $e) {
-            \Log::error('Error hapus skorsing: ' . $e->getMessage());
-
-            return redirect()->route('admin.riwayat')->with(
-                'error',
-                'Terjadi kesalahan saat menghapus data. Silakan coba lagi.'
-            );
-        }
-    }
-    public function destroyGuruBk($id)
-    {
-        try {
-            $guru = Guru::findOrFail($id);
-            if ($guru->user) {
-                $guru->user->delete();
-            }
-            $guru->delete();
-
-            return redirect()->route('admin.bk')->with('success', 'Guru BK berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.bk')->with('error', 'Gagal menghapus guru BK.');
-        }
-    }
-    public function destroyGuru($id)
-    {
-        try {
-            $guru = Guru::findOrFail($id);
-            if ($guru->user) {
-                $guru->user->delete();
-            }
-            $guru->delete();
-
-            return redirect()->route('admin.guru')->with('success', 'Guru berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.guru')->with('error', 'Gagal menghapus guru.');
-        }
-    }
-
-    public function destroySiswa($id)
-    {
-        try {
-            $siswa = Siswa::findOrFail($id);
-            if ($siswa->user) {
-                $siswa->user->delete();
-            }
-            $siswa->delete();
-
-            return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.siswa')->with('error', 'Gagal menghapus siswa.');
-        }
-    }
-
-
-
-
 
     public function siswa()
     {
-        $siswas = Siswa::with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'siswa');
-            })
-            ->paginate(10);
-        $kelasList = Kelas::all();
-        return view('admin.siswa', compact('siswas', 'kelasList'));
+        $siswas = Siswa::with(['kelas', 'orangTua.user'])->latest()->paginate(10);
+        $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $orangTuaList = OrangTua::with('user')->get()->sortBy(fn ($ortu) => $ortu->user?->name);
+
+        return view('admin.siswa', compact('siswas', 'kelasList', 'orangTuaList'));
     }
 
-
-    public function detailSkorsing($id)
+    public function storeSiswa(Request $request)
     {
-        try {
+        $data = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'kelas_id' => ['required', 'exists:kelas,id'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'orang_tua_id' => ['nullable', 'exists:orang_tua,id'],
+        ]);
 
-            $skorsing = RiwayatPelanggaran::with([
-                'siswa.user',
-                'siswa.kelas',
-                'pelanggaran'
-            ])
-                ->where('id', $id)
-                ->first();
+        Siswa::create($data + ['score_bk' => 0]);
 
-            if (!$skorsing) {
-                return response()->json([
-                    'error' => 'Data skorsing tidak ditemukan'
-                ], 404);
-            }
-
-            if (!$skorsing->siswa) {
-                return response()->json([
-                    'error' => 'Data siswa tidak ditemukan'
-                ], 404);
-            }
-
-            \Log::info('=== DEBUG SKORSING ===');
-            \Log::info('Skorsing ID: ' . $id);
-            \Log::info('Siswa Data: ', $skorsing->siswa->toArray());
-            \Log::info('Score BK: ' . ($skorsing->siswa->score_bk ?? 'NULL'));
-
-            $response = [
-                'id' => $skorsing->id,
-                'siswa' => [
-                    'user' => [
-                        'name' => $skorsing->siswa->user->name ?? '-'
-                    ],
-                    'nisn' => $skorsing->siswa->nisn ?? '-',
-                    'score_bk' => $skorsing->siswa->score_bk ?? 0,
-                    'kelas' => [
-                        'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
-                    ]
-                ],
-                'pelanggaran' => [
-                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
-                    'skor' => $skorsing->pelanggaran->skor ?? 0
-                ],
-                'tanggal' => $skorsing->tanggal,
-                'keterangan' => $skorsing->keterangan,
-                'created_at' => $skorsing->created_at
-            ];
-
-            return response()->json($response);
-        } catch (\Exception $e) {
-            \Log::error('Error in detailSkorsing: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'error' => 'Terjadi kesalahan server',
-                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-            ], 500);
-        }
+        return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
-    public function register(Request $request)
+
+    public function updateSiswa(Request $request, int $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'nisn' => 'required|unique:siswa,nisn',
-            'password' => 'required|string|min:6|confirmed',
-            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
-            'kelas_id' => 'required|exists:kelas,id',
-        ], [
-            'name.required' => 'Nama Wajib Diisi',
-            'email.required' => 'Silahkan Masukkan Email Anda',
-            'email.email' => 'Format email yang Anda masukkan tidak valid',
-            'email.unique' => 'Email sudah terdaftar',
-            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih',
-            'password.required' => 'Silahkan Masukkan Password Anda',
-            'password.min' => 'Password minimal terdiri dari 6 karakter',
-            'password.confirmed' => 'Konfirmasi password tidak sesuai',
-            'kelas_id.required' => 'Kelas harus dipilih',
+        $siswa = Siswa::findOrFail($id);
+
+        $data = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'kelas_id' => ['required', 'exists:kelas,id'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'orang_tua_id' => ['nullable', 'exists:orang_tua,id'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'role' => 'siswa',
-        ]);
+        $siswa->update($data);
 
-
-        Siswa::create([
-            'user_id' => $user->id,
-            'nisn' => $request->nisn,
-            'nama' => $request->name,
-            'kelas_id' => $request->kelas_id,
-            'score_bk' => 0,
-        ]);
-
-        return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil ditambahkan!');
+        return back()->with('success', 'Data siswa berhasil diperbarui.');
     }
-    public function registerOrtu(Request $request)
+
+    public function destroySiswa(int $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'no_hp' => 'nullable|string|max:20',
-            'password' => 'required|string|min:6|confirmed',
-            'anak' => 'required|array',
-            'anak.*' => 'exists:siswa,id',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,            
-            'password' => Hash::make($request->password),
-            'role' => 'orang_tua',
-        ]);
-
-        Siswa::whereIn('id', $request->anak)->update(['orang_tua_id' => $user->id]);
-
-        return redirect()->route('admin.orang')->with('success', 'Orang tua berhasil ditambahkan dan berhasil ditautkan dengan siswa!');
+        Siswa::findOrFail($id)->delete();
+        return back()->with('success', 'Siswa berhasil dihapus.');
     }
 
-    // Method orangTua - Perbaikan eager loading
     public function orangTua()
     {
-        $ortu = User::with(['anakSiswa.user']) // perbaiki relasi
-            ->where('role', 'orang_tua')
-            ->paginate(10);
-        $siswaList = Siswa::with('user')->whereNull('orang_tua_id')->get();
+        $ortu = OrangTua::with(['user', 'siswa.kelas'])->latest()->paginate(10);
+        $siswaList = Siswa::with('kelas')->whereNull('orang_tua_id')->orderBy('nama')->get();
+
         return view('admin.orang-tua', compact('ortu', 'siswaList'));
     }
 
-    // Method destroyOrangTua tetap sama
-    public function destroyOrangTua($id)
+    public function registerOrtu(Request $request)
     {
-        try {
-            $ortu = User::where('role', 'orang_tua')->findOrFail($id);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'no_hp' => ['nullable', 'string', 'max:20'],
+            'jenis_kelamin' => ['nullable', Rule::in(['Laki-Laki', 'Perempuan'])],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'anak' => ['nullable', 'array'],
+            'anak.*' => ['integer', Rule::exists('siswa', 'id')->whereNull('orang_tua_id')],
+        ]);
 
-            foreach ($ortu->anakSiswa as $anak) {
-                $anak->orang_tua_id = null;
-                $anak->save();
+        DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'no_hp' => $data['no_hp'] ?? null,
+                'jenis_kelamin' => $data['jenis_kelamin'] ?? null,
+                'password' => Hash::make($data['password']),
+                'role' => User::ROLE_ORANG_TUA,
+            ]);
+
+            $ortu = OrangTua::create(['user_id' => $user->id]);
+
+            if (! empty($data['anak'])) {
+                Siswa::whereIn('id', $data['anak'])->update(['orang_tua_id' => $ortu->id]);
             }
+        });
 
-            $ortu->delete();
-
-            return redirect()->route('admin.orang')->with('success', 'Orang Tua berhasil dihapus dan relasi dengan siswa telah diputus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.orang')->with('error', 'Gagal menghapus Orang Tua.');
-        }
+        return back()->with('success', 'Akun orang tua berhasil dibuat.');
     }
 
-
-    public function bk()
+    public function destroyOrangTua(int $id)
     {
-        $gurus = Guru::with('user')
-            ->whereHas('user', function ($query) {
-                $query->where('role', 'guru_bk');
-            })
-            ->paginate(10);
-        return view('admin.bk', compact('gurus'));
-    }
+        $ortu = OrangTua::with('user')->findOrFail($id);
+        $ortu->user->delete();
 
-    public function konseling()
-    {
-        return view('admin.konseling');
+        return back()->with('success', 'Orang tua berhasil dihapus. Relasi anak dilepas otomatis.');
     }
 
     public function pelanggaran()
     {
-        $pelanggarans = Pelanggaran::paginate(10);
+        $pelanggarans = Pelanggaran::latest()->paginate(10);
         return view('admin.pelanggaran', compact('pelanggarans'));
     }
 
-    public function riwayat()
+    public function skorsing()
     {
-        $siswas = Siswa::with(['user', 'kelas'])->get();
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
-        $pelanggarans = Pelanggaran::all();
-        return view('admin.riwayat', compact('siswas', 'riwayat', 'pelanggarans'));
+        $siswas = Siswa::with('kelas')->orderBy('nama')->get();
+        $pelanggarans = Pelanggaran::orderBy('kategori')->orderBy('deskripsi')->get();
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
+            ->latest('tanggal')
+            ->paginate(15);
+
+        return view('admin.skorsing', compact('siswas', 'pelanggarans', 'riwayat'));
     }
 
-
-    public function detailRiwayat()
+    public function tambahSkorsing(Request $request)
     {
-        $siswas = Siswa::with(['user', 'kelas'])->get();
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
-        $pelanggarans = Pelanggaran::all();
-        return view('admin.detail-riwayat', compact('siswas', 'riwayat', 'pelanggarans'));
+        $data = $request->validate([
+            'siswa_id' => ['required', 'exists:siswa,id'],
+            'pelanggaran_id' => ['required', 'exists:pelanggarans,id'],
+            'tanggal' => ['required', 'date'],
+            'keterangan' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        DB::transaction(function () use ($data) {
+            $siswa = Siswa::lockForUpdate()->findOrFail($data['siswa_id']);
+            $pelanggaran = Pelanggaran::findOrFail($data['pelanggaran_id']);
+
+            RiwayatPelanggaran::create($data + [
+                'created_by' => auth()->id(),
+                'skor' => $pelanggaran->skor,
+            ]);
+            $siswa->increment('score_bk', $pelanggaran->skor);
+        });
+
+        return back()->with('success', 'Skorsing berhasil ditambahkan.');
     }
 
-    public function destroyRiwayat($id)
+    public function destroySkorsing(int $id)
     {
-        try {
-            $riwayat = RiwayatPelanggaran::findOrFail($id);
+        DB::transaction(function () use ($id) {
+            $riwayat = RiwayatPelanggaran::with('pelanggaran')->lockForUpdate()->findOrFail($id);
+            $siswa = Siswa::lockForUpdate()->findOrFail($riwayat->siswa_id);
+            $siswa->score_bk = max(0, $siswa->score_bk - $riwayat->skor);
+            $siswa->save();
             $riwayat->delete();
-            return redirect()->route('admin.riwayat')->with('success', 'Riwayat berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.riwayat')->with('error', 'Gagal menghapus riwayat.');
-        }
+        });
+
+        return back()->with('success', 'Skorsing berhasil dihapus dan skor siswa disesuaikan.');
+    }
+
+    public function detailSkorsing(int $id)
+    {
+        $skorsing = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])->findOrFail($id);
+
+        return response()->json([
+            'id' => $skorsing->id,
+            'siswa' => [
+                'nama' => $skorsing->siswa?->nama,
+                'kelas' => $skorsing->siswa?->kelas?->nama_kelas,
+                'score_bk' => $skorsing->siswa?->score_bk,
+            ],
+            'pelanggaran' => [
+                'kategori' => $skorsing->pelanggaran?->kategori,
+                'deskripsi' => $skorsing->pelanggaran?->deskripsi,
+                'skor' => $skorsing->skor,
+            ],
+            'tanggal' => optional($skorsing->tanggal)->format('Y-m-d'),
+            'keterangan' => $skorsing->keterangan,
+            'dibuat_oleh' => $skorsing->creator?->name ?? 'User dihapus',
+        ]);
+    }
+
+    public function rekapSkorsing(Request $request)
+    {
+        $query = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator']);
+
+        $query->when($request->filled('tanggal_mulai'), fn ($q) => $q->whereDate('tanggal', '>=', $request->tanggal_mulai));
+        $query->when($request->filled('tanggal_selesai'), fn ($q) => $q->whereDate('tanggal', '<=', $request->tanggal_selesai));
+        $query->when($request->filled('pembuat_id'), fn ($q) => $q->where('created_by', $request->pembuat_id));
+        $query->when($request->filled('siswa_id'), fn ($q) => $q->where('siswa_id', $request->siswa_id));
+        $query->when($request->filled('pelanggaran_id'), fn ($q) => $q->where('pelanggaran_id', $request->pelanggaran_id));
+        $query->when($request->filled('kelas_id'), function ($q) use ($request) {
+            $q->whereHas('siswa', fn ($s) => $s->where('kelas_id', $request->kelas_id));
+        });
+
+        $rekap = $query->latest('tanggal')->paginate(25)->withQueryString();
+        $pembuatList = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_GURU])->orderBy('name')->get();
+        $siswaList = Siswa::orderBy('nama')->get();
+        $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $pelanggaranList = Pelanggaran::orderBy('deskripsi')->get();
+
+        return view('admin.rekap-skorsing', compact(
+            'rekap', 'pembuatList', 'siswaList', 'kelasList', 'pelanggaranList'
+        ));
     }
 }

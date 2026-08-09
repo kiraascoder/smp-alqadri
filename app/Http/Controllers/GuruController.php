@@ -16,166 +16,128 @@ class GuruController extends Controller
 {
     public function index()
     {
-        return view('guru.dashboard');
+        $skorsingCount = RiwayatPelanggaran::where('created_by', Auth::id())->count();
+        $skorsingBulanIni = RiwayatPelanggaran::where('created_by', Auth::id())
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->count();
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran'])
+            ->where('created_by', Auth::id())
+            ->latest('tanggal')
+            ->take(8)
+            ->get();
+
+        return view('guru.dashboard', compact('skorsingCount', 'skorsingBulanIni', 'riwayat'));
     }
 
-    public function siswa()
-    {
-        $siswas = Siswa::with(['user', 'kelas'])->get();
-        return view('guru.siswa', compact('siswas'));
-    }
     public function profil()
     {
-        $guru = Guru::with(['user'])->where('user_id', Auth::id())->first();
+        $guru = Guru::with('user')->where('user_id', Auth::id())->firstOrFail();
         return view('guru.profil', compact('guru'));
     }
 
     public function edit(Request $request)
     {
-        $user = auth()->user();
-        $guru = $user->guru;
+        $user = Auth::user();
 
-        // Validation rules
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'no_hp' => 'nullable|string|max:20',
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'no_hp' => ['nullable', 'string', 'max:20'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
-        $avatarPath = $user->avatar;
-        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
 
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
+        $user->update($data);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_hp' => $request->no_hp,
-            'avatar' => $avatarPath
-        ]);
-
-        return redirect()->route('guru.profil')->with('success', 'Profil berhasil diperbarui.');
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
-    public function detailSkorsing($id)
-    {
-        try {
-
-            $skorsing = RiwayatPelanggaran::with([
-                'siswa.user',
-                'siswa.kelas',
-                'pelanggaran'
-            ])
-                ->where('id', $id)
-                ->first();
-
-            if (!$skorsing) {
-                return response()->json([
-                    'error' => 'Data skorsing tidak ditemukan'
-                ], 404);
-            }
-
-            if (!$skorsing->siswa) {
-                return response()->json([
-                    'error' => 'Data siswa tidak ditemukan'
-                ], 404);
-            }
-
-            \Log::info('=== DEBUG SKORSING ===');
-            \Log::info('Skorsing ID: ' . $id);
-            \Log::info('Siswa Data: ', $skorsing->siswa->toArray());
-            \Log::info('Score BK: ' . ($skorsing->siswa->score_bk ?? 'NULL'));
-
-            $response = [
-                'id' => $skorsing->id,
-                'siswa' => [
-                    'user' => [
-                        'name' => $skorsing->siswa->user->name ?? '-'
-                    ],
-                    'nisn' => $skorsing->siswa->nisn ?? '-',
-                    'score_bk' => $skorsing->siswa->score_bk ?? 0,
-                    'kelas' => [
-                        'nama_kelas' => $skorsing->siswa->kelas->nama_kelas ?? '-'
-                    ]
-                ],
-                'pelanggaran' => [
-                    'deskripsi' => $skorsing->pelanggaran->deskripsi ?? '-',
-                    'skor' => $skorsing->pelanggaran->skor ?? 0
-                ],
-                'tanggal' => $skorsing->tanggal,
-                'keterangan' => $skorsing->keterangan,
-                'created_at' => $skorsing->created_at
-            ];
-
-            return response()->json($response);
-        } catch (\Exception $e) {
-            \Log::error('Error in detailSkorsing: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'error' => 'Terjadi kesalahan server',
-                'message' => config('app.debug') ? $e->getMessage() : 'Internal server error'
-            ], 500);
-        }
-    }
-    public function skorsing()
-    {
-        $siswas = Siswa::with(['user', 'kelas'])->get();
-        $riwayat = RiwayatPelanggaran::with(['siswa', 'pelanggaran'])
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
-        $pelanggarans = Pelanggaran::all();
-        return view('guru.skorsing', compact('siswas', 'riwayat', 'pelanggarans'));
-    }
     public function pelanggaran()
     {
-        $pelanggarans = Pelanggaran::paginate(10);
+        $pelanggarans = Pelanggaran::orderBy('kategori')->paginate(10);
         return view('guru.pelanggaran', compact('pelanggarans'));
+    }
+
+    public function skorsing()
+    {
+        $siswas = Siswa::with('kelas')->orderBy('nama')->get();
+        $pelanggarans = Pelanggaran::orderBy('kategori')->orderBy('deskripsi')->get();
+        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran'])
+            ->where('created_by', Auth::id())
+            ->latest('tanggal')
+            ->paginate(15);
+
+        return view('guru.skorsing', compact('siswas', 'riwayat', 'pelanggarans'));
     }
 
     public function tambahSkorsing(Request $request)
     {
-        $request->validate([
-            'siswa_id' => 'required|exists:siswa,id',
-            'pelanggaran_id' => 'required|exists:pelanggarans,id',
-            'tanggal' => 'required|date',
-            'keterangan' => 'nullable|string',
+        $data = $request->validate([
+            'siswa_id' => ['required', 'exists:siswa,id'],
+            'pelanggaran_id' => ['required', 'exists:pelanggarans,id'],
+            'tanggal' => ['required', 'date'],
+            'keterangan' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        try {
-            DB::beginTransaction();
+        $siswa = DB::transaction(function () use ($data) {
+            $siswa = Siswa::lockForUpdate()->findOrFail($data['siswa_id']);
+            $pelanggaran = Pelanggaran::findOrFail($data['pelanggaran_id']);
 
-            $siswa = Siswa::find($request->siswa_id);
-            $pelanggaran = Pelanggaran::find($request->pelanggaran_id);
-
-
-            RiwayatPelanggaran::create([
-                'siswa_id' => $siswa->id,
-                'pelanggaran_id' => $request->pelanggaran_id,
-                'tanggal' => $request->tanggal,
-                'keterangan' => $request->keterangan,
+            RiwayatPelanggaran::create($data + [
+                'created_by' => Auth::id(),
+                'skor' => $pelanggaran->skor,
             ]);
+            $siswa->increment('score_bk', $pelanggaran->skor);
 
+            return $siswa->fresh();
+        });
 
-            $siswa->score_bk = ($siswa->score_bk ?? 0) + $pelanggaran->skor;
+        return back()->with('success', "Skorsing {$siswa->nama} berhasil ditambahkan.");
+    }
+
+    public function detailSkorsing(int $id)
+    {
+        $skorsing = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran'])
+            ->where('created_by', Auth::id())
+            ->findOrFail($id);
+
+        return response()->json([
+            'id' => $skorsing->id,
+            'siswa' => [
+                'nama' => $skorsing->siswa?->nama,
+                'kelas' => $skorsing->siswa?->kelas?->nama_kelas,
+                'score_bk' => $skorsing->siswa?->score_bk,
+            ],
+            'pelanggaran' => [
+                'deskripsi' => $skorsing->pelanggaran?->deskripsi,
+                'skor' => $skorsing->skor,
+            ],
+            'tanggal' => optional($skorsing->tanggal)->format('Y-m-d'),
+            'keterangan' => $skorsing->keterangan,
+        ]);
+    }
+
+    public function destroySkorsing(int $id)
+    {
+        DB::transaction(function () use ($id) {
+            $riwayat = RiwayatPelanggaran::with('pelanggaran')
+                ->where('created_by', Auth::id())
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            $siswa = Siswa::lockForUpdate()->findOrFail($riwayat->siswa_id);
+            $siswa->score_bk = max(0, $siswa->score_bk - $riwayat->skor);
             $siswa->save();
+            $riwayat->delete();
+        });
 
-            DB::commit();
-
-            return redirect()->route('guru.skorsing')->with(
-                'success',
-                "Skorsing berhasil ditambahkan. Skor {$siswa->user->name} sekarang: {$siswa->score_bk} poin"
-            );
-        } catch (\Exception $e) {
-            DB::rollback();
-            \Log::error('Error tambah skorsing: ' . $e->getMessage());
-
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menambah skorsing.');
-        }
+        return back()->with('success', 'Skorsing berhasil dihapus.');
     }
 }

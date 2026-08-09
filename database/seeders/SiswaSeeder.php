@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+
 
 class SiswaSeeder extends Seeder
 {
@@ -324,7 +324,7 @@ class SiswaSeeder extends Seeder
     private function generateRandomScoreBK()
     {
         // 70% siswa score 0-20 (baik)
-        // 20% siswa score 21-60 (sedang) 
+        // 20% siswa score 21-60 (sedang)
         // 8% siswa score 61-100 (tinggi)
         // 2% siswa score 101-150 (sangat tinggi)
 

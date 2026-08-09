@@ -3,23 +3,29 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class AdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin Utama',
-            'email' => 'adminsmpalqadri@gmail.com',
-            'password' => Hash::make('adminsmpalqadri'),
-            'no_hp' => '08123456789',
-            'role' => 'admin',
-        ]);
+        $email = env('ADMIN_EMAIL');
+        $password = env('ADMIN_PASSWORD');
+
+        if (! $email || ! $password) {
+            throw new RuntimeException('Set ADMIN_EMAIL dan ADMIN_PASSWORD di .env sebelum menjalankan database seeder.');
+        }
+
+        User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => env('ADMIN_NAME', 'Administrator'),
+                'no_hp' => env('ADMIN_PHONE'),
+                'password' => Hash::make($password),
+                'role' => User::ROLE_ADMIN,
+            ]
+        );
     }
 }
