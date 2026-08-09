@@ -1,4 +1,4 @@
-// Service Worker Testing Script untuk BK SMP AL QADRI
+// Service Worker Testing Script untuk BK SMP AL QADRI ISLAMIC SCHOOL
 // Jalankan di Console Browser atau tambahkan ke file testing.js
 
 class ServiceWorkerTester {
@@ -38,13 +38,13 @@ class ServiceWorkerTester {
                 isRegistered,
                 isRegistered
                     ? `${registrations.length} SW registered`
-                    : "No SW found"
+                    : "No SW found",
             );
         } catch (error) {
             return this.log(
                 "Service Worker Registration",
                 false,
-                error.message
+                error.message,
             );
         }
     }
@@ -61,7 +61,7 @@ class ServiceWorkerTester {
                 return this.log(
                     "Cache Creation",
                     true,
-                    `Cache exists with ${cachedRequests.length} items`
+                    `Cache exists with ${cachedRequests.length} items`,
                 );
             } else {
                 return this.log(
@@ -69,7 +69,7 @@ class ServiceWorkerTester {
                     false,
                     `Cache '${
                         this.cacheName
-                    }' not found. Available: ${cacheNames.join(", ")}`
+                    }' not found. Available: ${cacheNames.join(", ")}`,
                 );
             }
         } catch (error) {
@@ -90,7 +90,7 @@ class ServiceWorkerTester {
                 isOfflinePageAvailable,
                 isOfflinePageAvailable
                     ? "Offline page accessible"
-                    : "Offline page not available"
+                    : "Offline page not available",
             );
         } catch (error) {
             return this.log("Offline Page", false, error.message);
@@ -125,7 +125,7 @@ class ServiceWorkerTester {
         return this.log(
             "Cache Strategy",
             cachedCount > 0,
-            `${cachedCount}/${this.testUrls.length} URLs cached`
+            `${cachedCount}/${this.testUrls.length} URLs cached`,
         );
     }
 
@@ -147,13 +147,13 @@ class ServiceWorkerTester {
                 return this.log(
                     "Background Sync",
                     true,
-                    "Sync events registered successfully"
+                    "Sync events registered successfully",
                 );
             } else {
                 return this.log(
                     "Background Sync",
                     false,
-                    "Background Sync not supported"
+                    "Background Sync not supported",
                 );
             }
         } catch (error) {
@@ -177,20 +177,20 @@ class ServiceWorkerTester {
                             body: "Service Worker test successful",
                             icon: "/logo.png",
                             tag: "sw-test",
-                        }
+                        },
                     );
                 }
 
                 return this.log(
                     "Push Notifications",
                     isSupported,
-                    `Permission: ${permission}`
+                    `Permission: ${permission}`,
                 );
             } else {
                 return this.log(
                     "Push Notifications",
                     false,
-                    "Notifications not supported"
+                    "Notifications not supported",
                 );
             }
         } catch (error) {
@@ -208,13 +208,13 @@ class ServiceWorkerTester {
                 return this.log(
                     "Update Mechanism",
                     true,
-                    "Update check completed"
+                    "Update check completed",
                 );
             } else {
                 return this.log(
                     "Update Mechanism",
                     false,
-                    "No registration found"
+                    "No registration found",
                 );
             }
         } catch (error) {
@@ -238,7 +238,7 @@ class ServiceWorkerTester {
             return this.log(
                 "Network Interception",
                 true,
-                `Request completed (${testFetch.status})`
+                `Request completed (${testFetch.status})`,
             );
         } catch (error) {
             return this.log("Network Interception", false, error.message);
@@ -272,8 +272,8 @@ class ServiceWorkerTester {
                 "Performance Metrics",
                 true,
                 `${totalCachedItems} items cached, ~${Math.round(
-                    totalCacheSize / 1024
-                )}KB`
+                    totalCacheSize / 1024,
+                )}KB`,
             );
         } catch (error) {
             return this.log("Performance Metrics", false, error.message);
@@ -292,7 +292,7 @@ class ServiceWorkerTester {
                 true,
                 isInstallable
                     ? "PWA installable or already installed"
-                    : "PWA install not available"
+                    : "PWA install not available",
             );
         } catch (error) {
             return this.log("PWA Install", false, error.message);
@@ -302,7 +302,7 @@ class ServiceWorkerTester {
     // Run All Tests
     async runAllTests() {
         console.log(
-            "🚀 Starting Service Worker Tests for BK SMP AL QADRI...\n"
+            "🚀 Starting Service Worker Tests for BK SMP AL QADRI ISLAMIC SCHOOL...\n",
         );
 
         const tests = [
@@ -332,18 +332,18 @@ class ServiceWorkerTester {
         console.log("=".repeat(50));
 
         const passed = this.testResults.filter(
-            (r) => r.status === "PASS"
+            (r) => r.status === "PASS",
         ).length;
         const failed = this.testResults.filter(
-            (r) => r.status === "FAIL"
+            (r) => r.status === "FAIL",
         ).length;
 
         console.log(`✅ Tests Passed: ${passed}`);
         console.log(`❌ Tests Failed: ${failed}`);
         console.log(
             `📈 Success Rate: ${Math.round(
-                (passed / (passed + failed)) * 100
-            )}%`
+                (passed / (passed + failed)) * 100,
+            )}%`,
         );
 
         console.log("\nDetailed Results:");
@@ -358,7 +358,7 @@ class ServiceWorkerTester {
             console.log("- Fix failing tests before production");
             if (
                 this.testResults.find(
-                    (r) => r.test === "Cache Creation" && r.status === "FAIL"
+                    (r) => r.test === "Cache Creation" && r.status === "FAIL",
                 )
             ) {
                 console.log("- Check service worker installation");
@@ -366,14 +366,14 @@ class ServiceWorkerTester {
             if (
                 this.testResults.find(
                     (r) =>
-                        r.test === "Push Notifications" && r.status === "FAIL"
+                        r.test === "Push Notifications" && r.status === "FAIL",
                 )
             ) {
                 console.log("- Enable notifications for full PWA experience");
             }
         } else {
             console.log(
-                "- All tests passed! Service Worker is working correctly"
+                "- All tests passed! Service Worker is working correctly",
             );
             console.log("- Consider running these tests regularly");
         }
@@ -435,7 +435,7 @@ const quickTests = {
     // Test offline mode
     goOffline: () => {
         console.log(
-            "💡 Go to Network tab > Throttling > Offline to test offline mode"
+            "💡 Go to Network tab > Throttling > Offline to test offline mode",
         );
     },
 

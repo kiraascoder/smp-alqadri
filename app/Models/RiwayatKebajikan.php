@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RiwayatPelanggaran extends Model
+class RiwayatKebajikan extends Model
 {
-    protected $table = 'riwayat_pelanggaran';
+    protected $table = 'riwayat_kebajikan';
 
     protected $fillable = [
         'siswa_id',
-        'pelanggaran_id',
+        'kebajikan_id',
         'created_by',
         'tanggal',
         'skor',
@@ -27,21 +27,16 @@ class RiwayatPelanggaran extends Model
 
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id', 'id');
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
-    public function pelanggaran()
+    public function kebajikan()
     {
-        return $this->belongsTo(Pelanggaran::class, 'pelanggaran_id', 'id');
+        return $this->belongsTo(Kebajikan::class, 'kebajikan_id');
     }
 
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function kelas()
-    {
-        return $this->hasOneThrough(Kelas::class, Siswa::class, 'id', 'id', 'siswa_id', 'kelas_id');
     }
 }

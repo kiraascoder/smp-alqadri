@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Offline - BK SMP AL QADRI</title>
+        <title>Offline - BK SMP AL QADRI ISLAMIC SCHOOL</title>
 
         <style>
             * {
@@ -288,7 +288,7 @@
             <div class="offline-icon">📡</div>
 
             <h1 class="offline-title">Tidak Ada Koneksi</h1>
-            <p class="offline-subtitle">BK SMP AL QADRI</p>
+            <p class="offline-subtitle">BK SMP AL QADRI ISLAMIC SCHOOL</p>
 
             <div class="network-status">
                 <div class="status-indicator">
@@ -339,7 +339,7 @@
 
             <div class="footer-info">
                 <p>Sistem Bimbingan Konseling</p>
-                <p>SMP AL QADRI</p>
+                <p>SMP AL QADRI ISLAMIC SCHOOL</p>
                 <div class="connection-details">
                     Last updated: <span id="lastUpdated"></span>
                 </div>
@@ -404,7 +404,7 @@
                     if ("caches" in window) {
                         const cacheNames = await caches.keys();
                         const cache = await caches.open(
-                            cacheNames[0] || "bk-alqadri-v1.2"
+                            cacheNames[0] || "bk-alqadri-v1.2",
                         );
                         const requests = await cache.keys();
 
@@ -446,7 +446,7 @@
                         for (const request of requests) {
                             const url = new URL(request.url).pathname;
                             const page = importantPages.find(
-                                (p) => p.url === url
+                                (p) => p.url === url,
                             );
                             if (page) {
                                 page.available = true;
@@ -526,7 +526,7 @@
                 window.location.hash.startsWith("#route=")
             ) {
                 const targetRoute = decodeURIComponent(
-                    window.location.hash.substring(7)
+                    window.location.hash.substring(7),
                 );
                 console.log("Target route detected:", targetRoute);
 

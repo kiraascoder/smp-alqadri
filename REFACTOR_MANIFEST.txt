@@ -1,0 +1,44 @@
+SMP AL-QADRI REFACTOR OVERLAY
+
+Controllers:
+- app/Http/Controllers/GuruController.php
+- app/Http/Controllers/KebajikanController.php
+- app/Http/Controllers/PelanggaranController.php
+
+Models:
+- app/Models/Kebajikan.php
+- app/Models/RiwayatKebajikan.php
+- app/Models/RiwayatPelanggaran.php
+- app/Models/Siswa.php
+- app/Models/User.php
+
+Migrations:
+- database/migrations/2026_08_09_220000_normalize_pelanggarans_table.php
+- database/migrations/2026_08_09_220001_create_kebajikans_table.php
+- database/migrations/2026_08_09_220002_create_riwayat_kebajikan_table.php
+- database/migrations/2026_08_09_220003_add_tracking_to_riwayat_pelanggaran_table.php
+- database/migrations/2026_08_09_220004_ensure_siswa_account_columns.php
+
+Seeders:
+- database/seeders/DatabaseSeeder.php
+- database/seeders/PelanggaranSeeder.php
+- database/seeders/KebajikanSeeder.php
+- database/seeders/DummyGuruSeeder.php
+- database/seeders/DummySiswaSeeder.php
+- database/seeders/DummyOrangTuaSeeder.php
+
+Views:
+- resources/views/components/sidebar.blade.php
+- resources/views/admin/pelanggaran.blade.php
+- resources/views/admin/kebajikan.blade.php
+- resources/views/guru/profil.blade.php
+- resources/views/guru/skorsing.blade.php
+- resources/views/guru/pelanggaran.blade.php
+- resources/views/guru/kebajikan.blade.php
+
+Routes:
+- routes/web.php
+
+Docs:
+- README_REFACTOR.md
+- REFACTOR_MANIFEST.txt

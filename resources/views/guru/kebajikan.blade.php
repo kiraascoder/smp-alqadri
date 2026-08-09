@@ -1,23 +1,17 @@
 @extends('components.admin')
 
-@section('title', 'Skorsing Guru')
+@section('title', 'Poin Kebajikan')
 
 @section('content')
 <div class="py-8 space-y-6">
     <div>
-        <h1 class="text-3xl font-bold text-slate-900">Skorsing</h1>
-        <p class="mt-1 text-slate-500">Catat pelanggaran siswa. Riwayat di bawah hanya menampilkan data yang Anda buat.</p>
+        <h1 class="text-3xl font-bold text-slate-900">Poin Kebajikan</h1>
+        <p class="mt-1 text-slate-500">Berikan apresiasi positif kepada peserta didik dan lihat riwayat yang Anda buat.</p>
     </div>
 
     @if (session('success'))
         <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
             {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-            {{ session('error') }}
         </div>
     @endif
 
@@ -33,32 +27,32 @@
 
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <div class="mb-5">
-            <h2 class="text-lg font-semibold text-slate-900">Tambah Skorsing</h2>
-            <p class="text-sm text-slate-500">Pilih siswa dan jenis pelanggaran yang dilakukan.</p>
+            <h2 class="text-lg font-semibold text-slate-900">Berikan Poin Kebajikan</h2>
+            <p class="text-sm text-slate-500">Pilih siswa dan bentuk kebajikan atau prestasi yang telah dilakukan.</p>
         </div>
 
-        <form method="POST" action="{{ route('guru.skorsing.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <form method="POST" action="{{ route('guru.kebajikan.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
             @csrf
 
             <div>
                 <label class="block mb-2 text-sm font-medium text-slate-700">Peserta Didik</label>
-                <select name="siswa_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                <select name="siswa_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500">
                     <option value="">Pilih siswa</option>
-                    @foreach ($siswas as $s)
-                        <option value="{{ $s->id }}" @selected(old('siswa_id') == $s->id)>
-                            {{ $s->nama ?? $s->user?->name ?? 'Siswa' }} — {{ $s->kelas?->nama_kelas ?? '-' }}
+                    @foreach ($siswas as $siswa)
+                        <option value="{{ $siswa->id }}" @selected(old('siswa_id') == $siswa->id)>
+                            {{ $siswa->nama ?? $siswa->user?->name ?? 'Siswa' }} — {{ $siswa->kelas?->nama_kelas ?? '-' }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
             <div>
-                <label class="block mb-2 text-sm font-medium text-slate-700">Jenis Pelanggaran</label>
-                <select name="pelanggaran_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-                    <option value="">Pilih pelanggaran</option>
-                    @foreach ($pelanggarans as $p)
-                        <option value="{{ $p->id }}" @selected(old('pelanggaran_id') == $p->id)>
-                            [{{ $p->kategori }}] {{ $p->deskripsi }} ({{ $p->skor }} poin)
+                <label class="block mb-2 text-sm font-medium text-slate-700">Bentuk Kebajikan / Prestasi</label>
+                <select name="kebajikan_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500">
+                    <option value="">Pilih kebajikan</option>
+                    @foreach ($kebajikans as $kebajikan)
+                        <option value="{{ $kebajikan->id }}" @selected(old('kebajikan_id') == $kebajikan->id)>
+                            {{ $kebajikan->deskripsi }} (+{{ $kebajikan->skor }})
                         </option>
                     @endforeach
                 </select>
@@ -67,18 +61,18 @@
             <div>
                 <label class="block mb-2 text-sm font-medium text-slate-700">Tanggal</label>
                 <input type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required
-                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500">
             </div>
 
             <div>
                 <label class="block mb-2 text-sm font-medium text-slate-700">Keterangan</label>
                 <input name="keterangan" value="{{ old('keterangan') }}" placeholder="Keterangan tambahan (opsional)"
-                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
+                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500">
             </div>
 
             <div class="md:col-span-2 flex justify-end">
-                <button type="submit" class="rounded-xl bg-red-600 px-6 py-3 font-medium text-white hover:bg-red-700">
-                    Tambah Skorsing
+                <button type="submit" class="rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white hover:bg-emerald-700">
+                    Berikan Poin Kebajikan
                 </button>
             </div>
         </form>
@@ -86,8 +80,8 @@
 
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="border-b border-slate-200 px-6 py-5">
-            <h2 class="text-lg font-semibold text-slate-900">Riwayat Skorsing Saya</h2>
-            <p class="text-sm text-slate-500">Hanya data yang dicatat oleh akun Anda.</p>
+            <h2 class="text-lg font-semibold text-slate-900">Riwayat Poin Kebajikan Saya</h2>
+            <p class="text-sm text-slate-500">Riwayat di bawah hanya menampilkan poin kebajikan yang Anda berikan.</p>
         </div>
 
         <div class="overflow-x-auto">
@@ -96,7 +90,7 @@
                     <tr>
                         <th class="p-4 text-left font-semibold text-slate-700">Tanggal</th>
                         <th class="p-4 text-left font-semibold text-slate-700">Siswa</th>
-                        <th class="p-4 text-left font-semibold text-slate-700">Pelanggaran</th>
+                        <th class="p-4 text-left font-semibold text-slate-700">Kebajikan</th>
                         <th class="p-4 text-center font-semibold text-slate-700">Poin</th>
                         <th class="p-4 text-left font-semibold text-slate-700">Keterangan</th>
                         <th class="p-4 text-center font-semibold text-slate-700">Aksi</th>
@@ -110,22 +104,15 @@
                                 <div class="font-medium text-slate-900">{{ $item->siswa?->nama ?? $item->siswa?->user?->name ?? '-' }}</div>
                                 <div class="text-xs text-slate-500">{{ $item->siswa?->kelas?->nama_kelas ?? '-' }}</div>
                             </td>
-                            <td class="p-4 max-w-lg">
-                                <div class="text-slate-700">{{ $item->pelanggaran?->deskripsi ?? '-' }}</div>
-                                @if ($item->pelanggaran?->kategori)
-                                    <span class="mt-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-                                        {{ $item->pelanggaran->kategori }}
-                                    </span>
-                                @endif
-                            </td>
+                            <td class="p-4 max-w-lg text-slate-700">{{ $item->kebajikan?->deskripsi ?? '-' }}</td>
                             <td class="p-4 text-center">
-                                <span class="inline-flex min-w-[54px] justify-center rounded-full bg-red-100 px-3 py-1 font-bold text-red-700">
-                                    {{ $item->skor ?? $item->pelanggaran?->skor ?? 0 }}
+                                <span class="inline-flex min-w-[54px] justify-center rounded-full bg-emerald-100 px-3 py-1 font-bold text-emerald-700">
+                                    +{{ $item->skor }}
                                 </span>
                             </td>
                             <td class="p-4 text-slate-600">{{ $item->keterangan ?: '-' }}</td>
                             <td class="p-4 text-center">
-                                <form method="POST" action="{{ route('guru.skorsing.delete', $item->id) }}" onsubmit="return confirm('Hapus skorsing ini? Poin pelanggaran siswa akan disesuaikan.')">
+                                <form method="POST" action="{{ route('guru.kebajikan.delete', $item) }}" onsubmit="return confirm('Hapus riwayat poin kebajikan ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="font-medium text-red-600 hover:text-red-800">Hapus</button>
@@ -134,7 +121,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-10 text-center text-slate-500">Belum ada skorsing yang Anda buat.</td>
+                            <td colspan="6" class="p-10 text-center text-slate-500">Belum ada poin kebajikan yang Anda berikan.</td>
                         </tr>
                     @endforelse
                 </tbody>
