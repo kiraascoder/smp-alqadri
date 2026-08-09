@@ -48,10 +48,6 @@
                         href="{{ route('ortu.dashboard') }}">Dashboard</a></li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('ortu.pelanggaran') ? 'bg-blue-700' : '' }}"
                         href="{{ route('ortu.pelanggaran') }}">Jenis Pelanggaran</a></li>
-                <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('ortu.anak') ? 'bg-blue-700' : '' }}"
-                        href="{{ route('ortu.anak') }}">Anak</a></li>
-                <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('ortu.skorsing') ? 'bg-blue-700' : '' }}"
-                        href="{{ route('ortu.skorsing') }}">Skorsing</a></li>
             @endif
         </ul>
     </nav>

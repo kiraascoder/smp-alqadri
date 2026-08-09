@@ -23,10 +23,6 @@
         </div>
 
         <section class="bg-white border rounded-2xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-semibold text-lg">Anak Saya</h2><a href="{{ route('ortu.anak') }}"
-                    class="text-sm text-blue-700">Lihat semua</a>
-            </div>
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 @forelse($anak as $siswa)
                     <div class="rounded-xl border border-slate-200 p-4">
