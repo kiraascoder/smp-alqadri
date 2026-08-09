@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pelanggarans', function (Blueprint $table) {
             $table->id();
-            $table->enum('kategori', ['ringan', 'sedang', 'berat']);
+            $table->enum('kategori', ['ringan', 'sedang', 'sangat berat']);
             $table->text('deskripsi');
             $table->unsignedInteger('skor');
             $table->timestamps();
