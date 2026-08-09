@@ -623,8 +623,8 @@
                         </div>
                         <div>
                             <h4 class="text-2xl font-bold text-gray-900">${data.name || '-'}</h4>
-                            <p class="text-gray-600">Guru BK</p>                            
-                        </div>                        
+                            <p class="text-gray-600">Guru BK</p>
+                        </div>
                     </div>
 
                     <!-- Information Grid -->
@@ -632,31 +632,31 @@
                         <!-- Personal Information -->
                         <div class="space-y-4">
                             <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Informasi Pribadi</h5>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Nama Lengkap</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.name || '-'}</p>
                             </div>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Email</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.email || '-'}</p>
-                            </div>                                                                                                    
+                            </div>
                         </div>
 
                         <!-- Contact Information -->
                         <div class="space-y-4">
                             <h5 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Kontak</h5>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">No. HP</label>
                                 <p class="text-gray-900 font-semibold mt-1">${data.telepon}</p>
                             </div>
-                            
+
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <label class="text-sm font-medium text-gray-500">Role</label>
                                 <p class="text-gray-900 font-semibold mt-1">Guru BK</p>
-                            </div>                                                                                
+                            </div>
                         </div>
                     </div>
                 </div>

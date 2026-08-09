@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SMP Al Qadri</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-950 via-blue-800 to-indigo-700 flex items-center justify-center p-4">
+
+<body
+    class="min-h-screen bg-gradient-to-br from-blue-950 via-blue-800 to-indigo-700 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
         <div class="text-center mb-8">
             <div class="text-5xl mb-3">🎓</div>
@@ -25,11 +28,14 @@
             @csrf
             <div>
                 <label class="block text-sm font-medium mb-2">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required autofocus class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="email@contoh.com">
+                <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                    class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500"
+                    placeholder="email@contoh.com">
             </div>
             <div>
                 <label class="block text-sm font-medium mb-2">Password</label>
-                <input type="password" name="password" required class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="Password">
+                <input type="password" name="password" required
+                    class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500" placeholder="Password">
             </div>
             <div class="flex items-center justify-between text-sm">
                 <label class="flex items-center gap-2"><input type="checkbox" name="remember"> Ingat saya</label>
@@ -39,4 +45,5 @@
         </form>
     </div>
 </body>
+
 </html>

@@ -590,11 +590,11 @@
                                 </div>
                             </div>
                             ${keterangan ? `
-                                                    <div class="bg-yellow-50 rounded-xl p-4">
-                                                        <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
-                                                        <p class="text-gray-700 text-sm leading-relaxed">${keterangan}</p>
-                                                    </div>
-                                                ` : ''}
+                                                        <div class="bg-yellow-50 rounded-xl p-4">
+                                                            <h4 class="font-semibold text-yellow-800 mb-2">Keterangan</h4>
+                                                            <p class="text-gray-700 text-sm leading-relaxed">${keterangan}</p>
+                                                        </div>
+                                                    ` : ''}
                         </div>
                     </div>
                 </div>
