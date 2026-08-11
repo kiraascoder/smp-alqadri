@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Bimbingan Konseling') - SMP AL QADRI ISLAMIC SCHOOL Islamic School</title>
+    <title>@yield('title', 'Bimbingan Konseling') - SMP AL QADRI Islamic School</title>
 
     <!-- PWA Meta Tags untuk Portal BK -->
     <meta name="description"
-        content="Portal Bimbingan dan Konseling SMP AL QADRI ISLAMIC SCHOOL Islamic School - Layanan konseling Islami untuk prestasi akademik dan pembentukan akhlaq mulia">
-    <meta name="keywords"
-        content="bimbingan konseling, islamic school, SMP AL QADRI ISLAMIC SCHOOL, konseling islami, pendidikan islam">
+        content="Portal Bimbingan dan Konseling SMP AL QADRI Islamic School - Layanan konseling Islami untuk prestasi akademik dan pembentukan akhlaq mulia">
+    <meta name="keywords" content="bimbingan konseling, islamic school, SMP AL QADRI, konseling islami, pendidikan islam">
     <meta name="theme-color" content="#059669">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

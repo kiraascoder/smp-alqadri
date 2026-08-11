@@ -12,36 +12,28 @@ class RiwayatPelanggaran extends Model
         'siswa_id',
         'pelanggaran_id',
         'created_by',
-        'tanggal',
         'skor',
+        'tanggal',
         'keterangan',
     ];
 
     protected function casts(): array
     {
-        return [
-            'tanggal' => 'date',
-            'skor' => 'integer',
-        ];
+        return ['tanggal' => 'date'];
     }
 
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class, 'siswa_id', 'id');
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
     public function pelanggaran()
     {
-        return $this->belongsTo(Pelanggaran::class, 'pelanggaran_id', 'id');
+        return $this->belongsTo(Pelanggaran::class, 'pelanggaran_id');
     }
 
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function kelas()
-    {
-        return $this->hasOneThrough(Kelas::class, Siswa::class, 'id', 'id', 'siswa_id', 'kelas_id');
     }
 }

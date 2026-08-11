@@ -4,7 +4,7 @@
             <!-- Logo -->
             <a href="/" class="flex items-center">
                 <img src="https://demo.themesberg.com/landwind/images/logo.svg" class="h-8 mr-3" alt="SmartTrans Logo" />
-                <span class="text-xl font-semibold text-white">SMP AL QADRI ISLAMIC SCHOOL</span>
+                <span class="text-xl font-semibold text-white">SMP AL Qadri</span>
             </a>
 
             <!-- Kanan: Masuk -->

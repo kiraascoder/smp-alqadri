@@ -110,9 +110,9 @@ class PWAController extends Controller
 
         // Customize manifest berdasarkan role user
         $manifest = [
-            "name" => "BK SMP AL QADRI ISLAMIC SCHOOL",
+            "name" => "BK SMP AL QADRI",
             "short_name" => "BK AL QADRI",
-            "description" => "Sistem Bimbingan Konseling SMP AL QADRI ISLAMIC SCHOOL",
+            "description" => "Sistem Bimbingan Konseling SMP AL QADRI",
             "start_url" => $this->getStartUrl($role),
             "display" => "standalone",
             "background_color" => "#6777ef",

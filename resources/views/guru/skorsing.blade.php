@@ -1,149 +1,69 @@
 @extends('components.admin')
-
 @section('title', 'Skorsing Guru')
-
 @section('content')
-<div class="py-8 space-y-6">
-    <div>
-        <h1 class="text-3xl font-bold text-slate-900">Skorsing</h1>
-        <p class="mt-1 text-slate-500">Catat pelanggaran siswa. Riwayat di bawah hanya menampilkan data yang Anda buat.</p>
-    </div>
-
-    @if (session('success'))
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
-            {{ session('success') }}
+    <div class="py-8 space-y-6">
+        <div>
+            <h1 class="text-3xl font-bold">Skorsing</h1>
+            <p class="text-gray-500">Riwayat di bawah hanya menampilkan skorsing yang Anda buat.</p>
         </div>
-    @endif
-
-    @if (session('error'))
-        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div class="mb-5">
-            <h2 class="text-lg font-semibold text-slate-900">Tambah Skorsing</h2>
-            <p class="text-sm text-slate-500">Pilih siswa dan jenis pelanggaran yang dilakukan.</p>
-        </div>
-
-        <form method="POST" action="{{ route('guru.skorsing.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            @csrf
-
-            <div>
-                <label class="block mb-2 text-sm font-medium text-slate-700">Peserta Didik</label>
-                <select name="siswa_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-                    <option value="">Pilih siswa</option>
-                    @foreach ($siswas as $s)
-                        <option value="{{ $s->id }}" @selected(old('siswa_id') == $s->id)>
-                            {{ $s->nama ?? $s->user?->name ?? 'Siswa' }} — {{ $s->kelas?->nama_kelas ?? '-' }}
-                        </option>
-                    @endforeach
-                </select>
+        @if (session('success'))
+            <div class="p-4 bg-green-50 text-green-700 rounded-xl">{{ session('success') }}</div>
+            @endif @if ($errors->any())
+                <div class="p-4 bg-red-50 text-red-700 rounded-xl">{{ $errors->first() }}</div>
+            @endif
+            <div class="bg-white rounded-2xl shadow p-6">
+                <form method="POST" action="{{ route('guru.skorsing.store') }}" class="grid md:grid-cols-2 gap-4">@csrf<select
+                        name="siswa_id" required class="border rounded-xl px-4 py-3">
+                        <option value="">Pilih siswa</option>
+                        @foreach ($siswas as $s)
+                            <option value="{{ $s->id }}">{{ $s->nama }} — {{ $s->kelas?->nama_kelas }}</option>
+                        @endforeach
+                    </select>
+                    <select name="pelanggaran_id" required class="border rounded-xl px-4 py-3">
+                        <option value="">Pilih pelanggaran</option>
+                        @foreach ($pelanggarans as $p)
+                            <option value="{{ $p->id }}">{{ $p->deskripsi }} (+{{ $p->skor }})</option>
+                        @endforeach
+                    </select>
+                    <input type="date" name="tanggal" value="{{ now()->toDateString() }}" required
+                        class="border rounded-xl px-4 py-3"><input name="keterangan" class="border rounded-xl px-4 py-3"
+                        placeholder="Keterangan"><button class="md:col-span-2 bg-red-600 text-white rounded-xl py-3">Tambah
+                        Skorsing</button>
+                </form>
             </div>
-
-            <div>
-                <label class="block mb-2 text-sm font-medium text-slate-700">Jenis Pelanggaran</label>
-                <select name="pelanggaran_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-                    <option value="">Pilih pelanggaran</option>
-                    @foreach ($pelanggarans as $p)
-                        <option value="{{ $p->id }}" @selected(old('pelanggaran_id') == $p->id)>
-                            [{{ $p->kategori }}] {{ $p->deskripsi }} ({{ $p->skor }} poin)
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="block mb-2 text-sm font-medium text-slate-700">Tanggal</label>
-                <input type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required
-                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <div>
-                <label class="block mb-2 text-sm font-medium text-slate-700">Keterangan</label>
-                <input name="keterangan" value="{{ old('keterangan') }}" placeholder="Keterangan tambahan (opsional)"
-                    class="w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <div class="md:col-span-2 flex justify-end">
-                <button type="submit" class="rounded-xl bg-red-600 px-6 py-3 font-medium text-white hover:bg-red-700">
-                    Tambah Skorsing
-                </button>
-            </div>
-        </form>
-    </section>
-
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="border-b border-slate-200 px-6 py-5">
-            <h2 class="text-lg font-semibold text-slate-900">Riwayat Skorsing Saya</h2>
-            <p class="text-sm text-slate-500">Hanya data yang dicatat oleh akun Anda.</p>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-slate-50">
-                    <tr>
-                        <th class="p-4 text-left font-semibold text-slate-700">Tanggal</th>
-                        <th class="p-4 text-left font-semibold text-slate-700">Siswa</th>
-                        <th class="p-4 text-left font-semibold text-slate-700">Pelanggaran</th>
-                        <th class="p-4 text-center font-semibold text-slate-700">Poin</th>
-                        <th class="p-4 text-left font-semibold text-slate-700">Keterangan</th>
-                        <th class="p-4 text-center font-semibold text-slate-700">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($riwayat as $item)
-                        <tr class="border-t border-slate-100 hover:bg-slate-50">
-                            <td class="p-4 whitespace-nowrap">{{ $item->tanggal?->format('d/m/Y') }}</td>
-                            <td class="p-4">
-                                <div class="font-medium text-slate-900">{{ $item->siswa?->nama ?? $item->siswa?->user?->name ?? '-' }}</div>
-                                <div class="text-xs text-slate-500">{{ $item->siswa?->kelas?->nama_kelas ?? '-' }}</div>
-                            </td>
-                            <td class="p-4 max-w-lg">
-                                <div class="text-slate-700">{{ $item->pelanggaran?->deskripsi ?? '-' }}</div>
-                                @if ($item->pelanggaran?->kategori)
-                                    <span class="mt-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-                                        {{ $item->pelanggaran->kategori }}
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="inline-flex min-w-[54px] justify-center rounded-full bg-red-100 px-3 py-1 font-bold text-red-700">
-                                    {{ $item->skor ?? $item->pelanggaran?->skor ?? 0 }}
-                                </span>
-                            </td>
-                            <td class="p-4 text-slate-600">{{ $item->keterangan ?: '-' }}</td>
-                            <td class="p-4 text-center">
-                                <form method="POST" action="{{ route('guru.skorsing.delete', $item->id) }}" onsubmit="return confirm('Hapus skorsing ini? Poin pelanggaran siswa akan disesuaikan.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="font-medium text-red-600 hover:text-red-800">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
+            <div class="bg-white rounded-2xl shadow overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <td colspan="6" class="p-10 text-center text-slate-500">Belum ada skorsing yang Anda buat.</td>
+                            <th class="p-4 text-left">Tanggal</th>
+                            <th class="p-4 text-left">Siswa</th>
+                            <th class="p-4 text-left">Pelanggaran</th>
+                            <th class="p-4 text-left">Skor</th>
+                            <th class="p-4">Aksi</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        @if ($riwayat->hasPages())
-            <div class="border-t border-slate-200 p-4">{{ $riwayat->links() }}</div>
-        @endif
-    </section>
-</div>
+                    </thead>
+                    <tbody>
+                        @forelse($riwayat as $item)
+                            <tr class="border-t">
+                                <td class="p-4">{{ $item->tanggal?->format('d/m/Y') }}</td>
+                                <td class="p-4">{{ $item->siswa?->nama }}<div class="text-xs text-gray-500">
+                                        {{ $item->siswa?->kelas?->nama_kelas }}</div>
+                                </td>
+                                <td class="p-4">{{ $item->pelanggaran?->deskripsi }}</td>
+                                <td class="p-4">+{{ $item->skor }}</td>
+                                <td class="p-4 text-center">
+                                    <form method="POST" action="{{ route('guru.skorsing.delete', $item->id) }}"
+                                        onsubmit="return confirm('Hapus skorsing ini?')">@csrf @method('DELETE')<button
+                                            class="text-red-600">Hapus</button></form>
+                                </td>
+                        </tr>@empty<tr>
+                                <td colspan="5" class="p-8 text-center text-gray-500">Belum ada skorsing yang Anda buat.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <div class="p-4">{{ $riwayat->links() }}</div>
+            </div>
+    </div>
 @endsection

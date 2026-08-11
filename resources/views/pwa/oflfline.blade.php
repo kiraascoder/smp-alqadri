@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>BK SMP AL QADRI ISLAMIC SCHOOL - Offline</title>
+    <title>BK SMP AL QADRI - Offline</title>
 
     <style>
         * {
@@ -199,7 +199,7 @@
         <div class="school-logo">🕌</div>
 
         <h1 class="offline-title">Offline</h1>
-        <h2 class="offline-subtitle">BK SMP AL QADRI ISLAMIC SCHOOL Islamic School</h2>
+        <h2 class="offline-subtitle">BK SMP AL QADRI Islamic School</h2>
 
         <div class="status-indicator">
             <div class="status-dot"></div>

@@ -49,7 +49,7 @@ self.addEventListener("install", (event) => {
             .open(CACHE_NAME)
             .then((cache) => {
                 console.log(
-                    "[BK Service Worker] Caching app shell and essential pages",
+                    "[BK Service Worker] Caching app shell and essential pages"
                 );
                 return cache.addAll(
                     urlsToCache.map((url) => {
@@ -58,7 +58,7 @@ self.addEventListener("install", (event) => {
                             credentials: "same-origin",
                         });
                         return request;
-                    }),
+                    })
                 );
             })
             .catch((error) => {
@@ -67,7 +67,7 @@ self.addEventListener("install", (event) => {
                 return caches.open(CACHE_NAME).then((cache) => {
                     return cache.addAll(["/", "/offline.html"]);
                 });
-            }),
+            })
     );
     self.skipWaiting();
 });
@@ -83,16 +83,16 @@ self.addEventListener("activate", (event) => {
                         if (cacheName !== CACHE_NAME) {
                             console.log(
                                 "[BK Service Worker] Deleting old cache:",
-                                cacheName,
+                                cacheName
                             );
                             return caches.delete(cacheName);
                         }
-                    }),
+                    })
                 );
             }),
             // Claim clients immediately
             self.clients.claim(),
-        ]),
+        ])
     );
 });
 
@@ -223,7 +223,7 @@ async function handleStaticAssetRequest(request) {
         const networkResponse = await Promise.race([
             fetch(request),
             new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Timeout")), 3000),
+                setTimeout(() => reject(new Error("Timeout")), 3000)
             ),
         ]);
 
@@ -283,7 +283,7 @@ async function handleApiRequest(request) {
                 status: 503,
                 statusText: "Service Unavailable",
                 headers: { "Content-Type": "application/json" },
-            },
+            }
         );
     }
 }
@@ -371,7 +371,7 @@ self.addEventListener("push", (event) => {
     console.log("[BK Service Worker] Push received");
 
     let notificationData = {
-        title: "BK SMP AL QADRI ISLAMIC SCHOOL",
+        title: "BK SMP AL QADRI",
         body: "Ada update baru dari Bimbingan Konseling",
         icon: "/images/icons/icon-192x192.png",
         badge: "/images/icons/icon-96x96.png",
@@ -401,7 +401,7 @@ self.addEventListener("push", (event) => {
         } catch (e) {
             console.log(
                 "[BK Service Worker] Error parsing notification data:",
-                e,
+                e
             );
         }
     }
@@ -409,8 +409,8 @@ self.addEventListener("push", (event) => {
     event.waitUntil(
         self.registration.showNotification(
             notificationData.title,
-            notificationData,
-        ),
+            notificationData
+        )
     );
 });
 
@@ -422,15 +422,15 @@ self.addEventListener("notificationclick", (event) => {
     if (event.action === "view") {
         event.waitUntil(
             clients.openWindow(
-                event.notification.data?.url || "/siswa/dashboard",
-            ),
+                event.notification.data?.url || "/siswa/dashboard"
+            )
         );
     } else if (event.action === "dismiss") {
         // Just close, no action needed
     } else {
         // Default click
         event.waitUntil(
-            clients.openWindow(event.notification.data?.url || "/"),
+            clients.openWindow(event.notification.data?.url || "/")
         );
     }
 });
@@ -463,4 +463,4 @@ async function syncProfileData() {
     } catch (error) {
         console.error("[BK Service Worker] Profile sync failed:", error);
     }
-}
+} 

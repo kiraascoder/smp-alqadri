@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#172554">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
-    <title>@yield('title', 'SMP AL QADRI ISLAMIC SCHOOL') - SMP AL QADRI ISLAMIC SCHOOL</title>
+    <title>@yield('title', 'SMP Al Qadri') - SMP Al Qadri</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>

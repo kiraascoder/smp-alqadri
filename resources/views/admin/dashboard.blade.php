@@ -4,7 +4,7 @@
     <div class="py-8 space-y-6">
         <div class="bg-white rounded-2xl shadow p-6">
             <h1 class="text-3xl font-bold">Dashboard Admin</h1>
-            <p class="text-gray-500 mt-1">Ringkasan data SMP AL QADRI ISLAMIC SCHOOL.</p>
+            <p class="text-gray-500 mt-1">Ringkasan data SMP Al Qadri.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             @foreach ([['Guru', $guruCount, 'blue'], ['Siswa', $siswaCount, 'green'], ['Orang Tua', $orangTuaCount, 'purple'], ['Skorsing Bulan Ini', $skorsingBulanIniCount, 'red']] as [$label, $value, $color])
