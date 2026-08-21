@@ -16,23 +16,40 @@ class Siswa extends Model
         'score_bk',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+        'score_bk' => 'integer',
+    ];
+
+    public function kelas()
     {
-        return ['tanggal_lahir' => 'date'];
+        return $this->belongsTo(
+            Kelas::class,
+            'kelas_id'
+        );
     }
 
     public function orangTua()
     {
-        return $this->belongsTo(OrangTua::class, 'orang_tua_id');
-    }
-
-    public function kelas()
-    {
-        return $this->belongsTo(Kelas::class, 'kelas_id');
+        return $this->belongsTo(
+            OrangTua::class,
+            'orang_tua_id'
+        );
     }
 
     public function riwayatPelanggaran()
     {
-        return $this->hasMany(RiwayatPelanggaran::class, 'siswa_id');
+        return $this->hasMany(
+            RiwayatPelanggaran::class,
+            'siswa_id'
+        );
+    }
+
+    public function riwayatKebajikan()
+    {
+        return $this->hasMany(
+            RiwayatKebajikan::class,
+            'siswa_id'
+        );
     }
 }

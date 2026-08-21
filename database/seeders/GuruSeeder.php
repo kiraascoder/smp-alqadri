@@ -2,281 +2,151 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Guru;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class GuruSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Data guru dari Surat Keputusan dengan identifikasi gender
-        $guruData = [
+        $dataGuru = [
             [
-                "NO" => 1,
-                "NAMA" => "KAMIL, S.Pd",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Fiqih Aqidah Akhlak",
+                'nama' => 'HASRIANI, S.Pd.,Gr',
+                'email' => 'anih15363@gmail.com',
+                'no_hp' => '+62 852-9895-2241',
             ],
             [
-                "NO" => 2,
-                "NAMA" => "NUR ALIAH, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "Matematika Prakarya Bahasa Indonesia",
+                'nama' => 'ADE RAFIKA YUSRI, S.T',
+                'email' => 'aderafikayusri12@gmail.com',
+                'no_hp' => '+62 853-9419-8496',
             ],
             [
-                "NO" => 3,
-                "NAMA" => "MUAMMAR EKO SHIDIQ YUSUF, S.Pd",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Bahasa Arab Sejarah Islam",
+                'nama' => 'KAMIL, S.Pd.,Gr',
+                'email' => 'abdullahkamil604@gmail.com',
+                'no_hp' => '+62 853-9759-7959',
             ],
             [
-                "NO" => 4,
-                "NAMA" => "MUZAYYANAH, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "Tahfidzul Qur'an",
+                'nama' => 'ABU BAKAR, S.E',
+                'email' => 'abubakar84254@gmail.com',
+                'no_hp' => '+62 853-4869-0844',
             ],
             [
-                "NO" => 5,
-                "NAMA" => "ABU BAKAR, S.E",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Tahfidzul Qur'an",
+                'nama' => 'HASRUDI, S.Sos',
+                'email' => 'nuriftahul31@gmail.com',
+                'no_hp' => '+62 813-4782-7202',
             ],
             [
-                "NO" => 6,
-                "NAMA" => "HASRUDI, S.Sos",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Tahfidzul Qur'an Tahfidzul Do'a",
+                'nama' => 'SITTI SULEHA SYARIFUDDIN, S.Pd',
+                'email' => 'sittisuleha17@gmail.com',
+                'no_hp' => '+62 823-4821-6936',
             ],
             [
-                "NO" => 7,
-                "NAMA" => "MUHAMMAD AL-QADRI",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Hadits",
+                'nama' => 'Gr. HASMAWATI, S.Pd',
+                'email' => 'hasmawatiyamin@gmail.com',
+                'no_hp' => '+62 831-2148-1167',
             ],
             [
-                "NO" => 8,
-                "NAMA" => "HASBIANI, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "PKN",
+                'nama' => 'MUHAMMAD MUQTADIR JAMALUDDIN, S.Ag',
+                'email' => 'muqtadirmuhammad11@gmail.com',
+                'no_hp' => '+62 823-5953-4979',
             ],
             [
-                "NO" => 9,
-                "NAMA" => "HASMAYANTI, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "IPS",
+                'nama' => 'ANUGRAH YUSUF ARISMAN, S.Pd.,M.Pd',
+                'email' => 'anugrahyusuf238@gmail.com',
+                'no_hp' => '+62 823-4534-1668',
             ],
             [
-                "NO" => 10,
-                "NAMA" => "MUH. MUQTADIR JAMALUDDIN, S.Ag",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Qiraatul Qur'an",
+                'nama' => 'ANDI MULIA, S.Pd',
+                'email' => 'andimulia2313@gmail.com',
+                'no_hp' => '+62 812-4222-3428',
             ],
             [
-                "NO" => 11,
-                "NAMA" => "SITTI SULEHA SYARIFUDDIN, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "Bahasa Inggris Bahasa Indonesia",
+                'nama' => 'MUH.SALIM FARHAN, B.A',
+                'email' => 'salimfarhan0409@gmail.com',
+                'no_hp' => '+967 777 658 361',
             ],
             [
-                "NO" => 12,
-                "NAMA" => "JUMAIDAH, S.Pd",
-                "JK" => "P",
-                "MATA_PELAJARAN" => "PKN",
+                'nama' => 'NURFASURA, S.Pd',
+                'email' => 'nurfasura47@gmail.com',
+                'no_hp' => '+62 882-0195-42857',
             ],
             [
-                "NO" => 13,
-                "NAMA" => "SYARIFUDDIN, S.Pd",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "PAI",
+                'nama' => 'ARHAM AKRAMULLAH, S.Pd.,Gr',
+                'email' => 'arhamakramullah22@gmail.com',
+                'no_hp' => '+62 821-1133-3969',
             ],
             [
-                "NO" => 14,
-                "NAMA" => "R. NUGRAHA PRATAMA",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "Bimbingan Konseling",
+                'nama' => 'HASBUNIAR, S.Kom',
+                'email' => 'hasbuniarbakri@gmail.com',
+                'no_hp' => '+62 852-5555-9525',
             ],
             [
-                "NO" => 15,
-                "NAMA" => "ANUGRAH YUSUF ARISMAN, S.Pd",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "IPA",
+                'nama' => 'NUR SAFITRI, S.Pd.,Gr',
+                'email' => 'nursafitri9906@gmail.com',
+                'no_hp' => '+62 852-4270-9770',
             ],
             [
-                "NO" => 16,
-                "NAMA" => "HABUNIAR, S.Kom",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "PJOK QIRAATUL QUR'AN",
+                'nama' => 'SINAR, S.Pd.,Gr',
+                'email' => 'sinar120998@gmail.com',
+                'no_hp' => '+62 822-9310-4626',
             ],
             [
-                "NO" => 17,
-                "NAMA" => "WAHYUDI, S.Pd",
-                "JK" => "L",
-                "MATA_PELAJARAN" => "PJOK",
-            ]
+                'nama' => 'VANI INDAH LESTARI',
+                'email' => 'vaniindahlestari393@gmail.com',
+                'no_hp' => '+62 823-4919-5755',
+            ],
+            [
+                'nama' => 'WAHYUDI SYAMSUL, S.Pd',
+                'email' => 'wahyudisyamsul29@gmail.com',
+                'no_hp' => '+62 823-9432-0921',
+            ],
+            [
+                'nama' => 'NUR HASYIKIN, S.Hum.,M.Hum',
+                'email' => 'nhasyikin017@gmail.com',
+                'no_hp' => '+62 823-4642-4024',
+            ],
+            [
+                'nama' => 'ABDUL RAHMAT HADI',
+                'email' => 'abdrahmathadi@gmail.com',
+                'no_hp' => '+62 823-3711-8680',
+            ],
         ];
 
-        $this->command->info("🚀 Memulai proses seeding data guru...\n");
+        // Password hanya dipakai saat akun guru pertama kali dibuat.
+        // Jalankan dengan SEED_GURU_PASSWORD di .env jika ingin mengganti default.
+        $defaultPassword = env('SEED_GURU_PASSWORD', 'Guru@12345');
 
-        // Counters untuk statistik
-        $berhasil = 0;
-        $dilewati = 0;
-        $gagal = 0;
-        $lakiLaki = 0;
-        $perempuan = 0;
+        foreach ($dataGuru as $data) {
+            DB::transaction(function () use ($data, $defaultPassword) {
+                $user = User::where('email', $data['email'])->first();
 
-        // Progress tracking
-        $total = count($guruData);
-        $processed = 0;
-
-        $this->command->info("👩‍🏫 Memproses data guru...\n");
-
-        foreach ($guruData as $data) {
-            $processed++;
-            $progress = round(($processed / $total) * 100);
-
-            // Skip jika guru sudah ada
-            if (User::where('name', $data['NAMA'])->where('role', 'guru')->exists()) {
-                $this->command->warn("[{$progress}%] ⚠️  Guru {$data['NAMA']} sudah ada, dilewati.");
-                $dilewati++;
-                continue;
-            }
-
-            try {
-                // Generate email berdasarkan nama guru
-                $email = $this->generateEmail($data['NAMA']);
-
-                // Password default: guru123 + nomor urut (2 digit)
-                $defaultPassword = 'guru123' . str_pad($data['NO'], 2, '0', STR_PAD_LEFT);
-
-                // Konversi jenis kelamin
-                $jenisKelamin = $data['JK'] === 'L' ? 'Laki-laki' : 'Perempuan';
-
-                // Buat user guru dengan jenis kelamin
-                $user = User::create([
-                    'name' => $data['NAMA'],
-                    'email' => $email,
-                    'password' => Hash::make($defaultPassword),
-                    'role' => 'guru',
-                    'jenis_kelamin' => $jenisKelamin,
-                    'email_verified_at' => now(), // Auto verify
-                ]);
-
-                // Buat data guru hanya dengan user_id
-                Guru::create([
-                    'user_id' => $user->id,
-                ]);
-
-                // Update counters
-                $berhasil++;
-                if ($data['JK'] === 'L') {
-                    $lakiLaki++;
+                if (! $user) {
+                    $user = User::create([
+                        'name' => $data['nama'],
+                        'email' => $data['email'],
+                        'password' => Hash::make($defaultPassword),
+                        'role' => 'guru',
+                        'no_hp' => $data['no_hp'],
+                        'email_verified_at' => now(),
+                    ]);
                 } else {
-                    $perempuan++;
+                    // Update data profil tanpa mereset password yang sudah diganti guru.
+                    $user->update([
+                        'name' => $data['nama'],
+                        'role' => 'guru',
+                        'no_hp' => $data['no_hp'],
+                    ]);
                 }
 
-                $gender = $data['JK'] === 'L' ? '👨‍🏫' : '👩‍🏫';
-                $mapel = strlen($data['MATA_PELAJARAN']) > 30 ? substr($data['MATA_PELAJARAN'], 0, 30) . '...' : $data['MATA_PELAJARAN'];
-
-                $this->command->info("[{$progress}%] ✓ {$gender} {$data['NAMA']} ({$jenisKelamin}, {$mapel})");
-            } catch (\Exception $e) {
-                $gagal++;
-                $this->command->error("[{$progress}%] ✗ Gagal membuat akun guru: {$data['NAMA']} - {$e->getMessage()}");
-            }
+                Guru::firstOrCreate([
+                    'user_id' => $user->id,
+                ]);
+            });
         }
 
-        // Tampilkan statistik final
-        $this->command->info("\n" . str_repeat("=", 80));
-        $this->command->info("👩‍🏫 RINGKASAN SEEDER GURU");
-        $this->command->info(str_repeat("=", 80));
-
-        $this->command->info("📈 Statistik Proses:");
-        $this->command->info("  ✅ Berhasil dibuat    : {$berhasil} guru");
-        $this->command->info("  ⚠️  Dilewati (sudah ada): {$dilewati} guru");
-        $this->command->info("  ❌ Gagal            : {$gagal} guru");
-        $this->command->info("  📝 Total data       : " . count($guruData) . " guru");
-
-        $this->command->info("\n👥 Statistik Gender:");
-        $this->command->info("  👨‍🏫 Laki-laki       : {$lakiLaki} guru (" . round(($lakiLaki / max($berhasil, 1)) * 100, 1) . "%)");
-        $this->command->info("  👩‍🏫 Perempuan       : {$perempuan} guru (" . round(($perempuan / max($berhasil, 1)) * 100, 1) . "%)");
-
-        $this->command->info("\n📚 Mata Pelajaran:");
-        $mataPelajaran = collect($guruData)->groupBy('MATA_PELAJARAN')->map->count()->sortDesc();
-        foreach ($mataPelajaran->take(5) as $mapel => $count) {
-            $mapelShort = strlen($mapel) > 40 ? substr($mapel, 0, 40) . '...' : $mapel;
-            $this->command->info("  📖 {$mapelShort}: {$count} guru");
-        }
-
-        $this->command->info("\n🔐 Informasi Login:");
-        $this->command->info("  📧 Format Email     : nama.guru@smpqadri.edu");
-        $this->command->info("  🔑 Format Password  : guru123 + nomor urut (2 digit)");
-        $this->command->info("  📝 Contoh Login     :");
-        $this->command->info("     Email    : kamil.guru@smpqadri.edu");
-        $this->command->info("     Password : guru12301");
-
-        $this->command->info("\n🎯 Fitur yang Tersedia:");
-        $this->command->info("  ✅ Akun sudah terverifikasi otomatis");
-        $this->command->info("  ✅ Data jenis kelamin sudah diset");
-        $this->command->info("  ✅ Role guru sudah diset");
-
-        // Informasi khusus guru BK
-        $guruBK = collect($guruData)->where('MATA_PELAJARAN', 'Bimbingan Konseling');
-        if ($guruBK->isNotEmpty()) {
-            $this->command->info("\n🎓 Informasi Guru BK:");
-            foreach ($guruBK as $bk) {
-                $this->command->info("  👨‍🎓 {$bk['NAMA']} - Bimbingan Konseling");
-            }
-        }
-
-        if ($berhasil > 0) {
-            $this->command->info("\n🎉 Seeder berhasil dijalankan!");
-            $this->command->info("🚀 Guru dapat langsung login menggunakan email dan password yang telah dibuat.");
-        } else {
-            $this->command->warn("\n⚠️  Tidak ada guru baru yang dibuat. Semua data sudah ada atau terjadi error.");
-        }
-
-        if ($gagal > 0) {
-            $this->command->error("\n❗ Terdapat {$gagal} guru yang gagal dibuat. Periksa log error di atas.");
-        }
-
-        $this->command->info("\n" . str_repeat("=", 80));
-    }
-
-    /**
-     * Generate email berdasarkan nama guru
-     */
-    private function generateEmail($nama)
-    {
-        // Bersihkan nama dari gelar dan karakter khusus
-        $cleanName = preg_replace('/,\s*S\.\w+/', '', $nama); // Hapus gelar
-        $cleanName = preg_replace('/[^a-zA-Z\s]/', '', $cleanName); // Hapus karakter selain huruf dan spasi
-        $cleanName = trim($cleanName);
-        $cleanName = Str::slug(strtolower($cleanName), '.');
-
-        // Jika nama terlalu panjang, ambil 2 kata pertama
-        $nameParts = explode('.', $cleanName);
-        if (count($nameParts) > 2) {
-            $cleanName = implode('.', array_slice($nameParts, 0, 2));
-        }
-
-        // Generate email dengan format nama.guru@smpqadri.edu
-        $baseEmail = $cleanName . '.guru@smpqadri.edu';
-
-        // Cek apakah email sudah ada
-        $counter = 1;
-        $email = $baseEmail;
-
-        while (User::where('email', $email)->exists()) {
-            $email = $cleanName . '.guru.' . $counter . '@smpqadri.edu';
-            $counter++;
-        }
-
-        return $email;
+        $this->command?->info('GuruSeeder selesai: '.count($dataGuru).' guru diproses.');
     }
 }

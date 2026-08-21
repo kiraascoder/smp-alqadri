@@ -30,6 +30,18 @@
                         href="{{ route('admin.orang') }}">Orang Tua</a></li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('admin.pelanggaran*') ? 'bg-blue-700' : '' }}"
                         href="{{ route('admin.pelanggaran') }}">Jenis Pelanggaran</a></li>
+                <li>
+                    <a href="{{ route('admin.kebajikan') }}"
+                        class="flex items-center gap-3
+               px-4 py-3 rounded-lg
+               hover:bg-blue-800
+               transition-colors group">
+                        <span class="text-sm">
+                            Jenis Kebajikan
+                        </span>
+
+                    </a>
+                </li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('admin.skorsing*') ? 'bg-blue-700' : '' }}"
                         href="{{ route('admin.skorsing') }}">Skorsing</a></li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('admin.rekap-skorsing') ? 'bg-blue-700' : '' }}"
@@ -41,6 +53,18 @@
                         href="{{ route('guru.pelanggaran') }}">Jenis Pelanggaran</a></li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('guru.skorsing*') ? 'bg-blue-700' : '' }}"
                         href="{{ route('guru.skorsing') }}">Skorsing</a></li>
+                <li>
+                    <a href="{{ route('guru.kebajikan') }}"
+                        class="flex items-center gap-3
+               px-4 py-3 rounded-lg
+               hover:bg-blue-800
+               transition-colors group">
+                        <span class="text-sm">
+                            Poin Kebajikan
+                        </span>
+
+                    </a>
+                </li>
                 <li><a class="block px-4 py-3 rounded-lg hover:bg-blue-700 {{ request()->routeIs('guru.profil') ? 'bg-blue-700' : '' }}"
                         href="{{ route('guru.profil') }}">Profil</a></li>
             @elseif ($role === 'orang_tua')

@@ -2,53 +2,178 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrangTua;
 use App\Models\Pelanggaran;
+use App\Models\RiwayatKebajikan;
 use App\Models\RiwayatPelanggaran;
+use App\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
 
 class OrangTuaController extends Controller
 {
-    private function profile()
-    {
-        return Auth::user()->orangTuaProfile()->firstOrFail();
-    }
-
     public function dashboard()
     {
-        $ortu = $this->profile();
-        $anak = $ortu->siswa()->with('kelas')->orderBy('nama')->get();
-        $anakIds = $anak->pluck('id');
-        $totalSkor = $anak->sum('score_bk');
-        $totalSkorsing = RiwayatPelanggaran::whereIn('siswa_id', $anakIds)->count();
-        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
-            ->whereIn('siswa_id', $anakIds)
-            ->latest('tanggal')
-            ->take(8)
+        /*
+    |--------------------------------------------------------------------------
+    | Cari data orang tua berdasarkan user yang login
+    |--------------------------------------------------------------------------
+    */
+
+        $orangTua = OrangTua::where(
+            'user_id',
+            auth()->id()
+        )->firstOrFail();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Ambil anak berdasarkan ID tabel orang_tua
+    |--------------------------------------------------------------------------
+    */
+
+        $anak = Siswa::with('kelas')
+            ->withSum(
+                'riwayatPelanggaran as total_pelanggaran',
+                'skor'
+            )
+            ->withSum(
+                'riwayatKebajikan as total_kebajikan',
+                'skor'
+            )
+            ->where(
+                'orang_tua_id',
+                $orangTua->id
+            )
+            ->orderBy('nama')
             ->get();
 
-        return view('orangtua.dashboard', compact('anak', 'totalSkor', 'totalSkorsing', 'riwayat'));
+
+        $anakIds = $anak->pluck('id');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Total Pelanggaran
+    |--------------------------------------------------------------------------
+    */
+
+        $totalSkorPelanggaran = RiwayatPelanggaran::whereIn(
+            'siswa_id',
+            $anakIds
+        )
+            ->sum('skor');
+
+
+        $totalSkorsing = RiwayatPelanggaran::whereIn(
+            'siswa_id',
+            $anakIds
+        )
+            ->count();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Total Kebajikan
+    |--------------------------------------------------------------------------
+    */
+
+        $totalPoinKebajikan = RiwayatKebajikan::whereIn(
+            'siswa_id',
+            $anakIds
+        )
+            ->sum('skor');
+
+
+        $totalKebajikan = RiwayatKebajikan::whereIn(
+            'siswa_id',
+            $anakIds
+        )
+            ->count();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Riwayat Pelanggaran
+    |--------------------------------------------------------------------------
+    */
+
+        $riwayatSkorsing = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'pelanggaran',
+        ])
+            ->whereIn(
+                'siswa_id',
+                $anakIds
+            )
+            ->latest('tanggal')
+            ->latest('id')
+            ->take(10)
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Riwayat Kebajikan
+    |--------------------------------------------------------------------------
+    */
+
+        $riwayatKebajikan = RiwayatKebajikan::with([
+            'siswa.kelas',
+            'kebajikan',
+        ])
+            ->whereIn(
+                'siswa_id',
+                $anakIds
+            )
+            ->latest('tanggal')
+            ->latest('id')
+            ->take(10)
+            ->get();
+
+
+        return view(
+            'orangtua.dashboard',
+            compact(
+                'anak',
+                'totalSkorPelanggaran',
+                'totalSkorsing',
+                'totalPoinKebajikan',
+                'totalKebajikan',
+                'riwayatSkorsing',
+                'riwayatKebajikan'
+            )
+        );
     }
 
-    public function anak()
-    {
-        $anak = $this->profile()->siswa()->with('kelas')->orderBy('nama')->get();
-        return view('orangtua.anak', compact('anak'));
-    }
 
     public function pelanggaran()
     {
-        $pelanggarans = Pelanggaran::orderBy('kategori')->paginate(15);
-        return view('orangtua.pelanggaran', compact('pelanggarans'));
-    }
+        $user = Auth::user();
 
-    public function skorsing()
-    {
-        $anakIds = $this->profile()->siswa()->pluck('id');
-        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran', 'creator'])
+        $anakIds = Siswa::where(
+            'orang_tua_id',
+            $user->id
+        )
+            ->pluck('id');
+
+        $riwayat = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'pelanggaran',
+        ])
             ->whereIn('siswa_id', $anakIds)
             ->latest('tanggal')
-            ->paginate(15);
+            ->paginate(10);
 
-        return view('orangtua.skorsing', compact('riwayat'));
+        $pelanggarans = Pelanggaran::orderBy('kategori')
+            ->orderBy('skor')
+            ->get();
+
+        return view(
+            'orangtua.pelanggaran',
+            compact(
+                'riwayat',
+                'pelanggarans'
+            )
+        );
     }
 }

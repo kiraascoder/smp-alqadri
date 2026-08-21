@@ -48,4 +48,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(RiwayatPelanggaran::class, 'created_by');
     }
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class, 'user_id');
+    }
+
+    public function anak()
+    {
+        return $this->hasMany(Siswa::class, 'orang_tua_id');
+    }
 }
