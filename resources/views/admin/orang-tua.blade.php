@@ -354,8 +354,8 @@ text-slate-500">
 
 
                 {{-- ANAK --}}
+                {{-- ANAK --}}
                 <div class="md:col-span-2">
-
 
                     <label class="text-sm font-medium text-slate-700">
 
@@ -364,36 +364,105 @@ text-slate-500">
                     </label>
 
 
-                    <select name="anak[]" multiple
-                        class="
-mt-1
-w-full
-border border-slate-300
-rounded-xl
-px-4
-py-3
-min-h-40">
+                    <p class="text-xs text-slate-500 mt-1 mb-3">
 
-
-                        @foreach ($siswaList as $siswa)
-                            <option value="{{ $siswa->id }}">
-
-                                {{ $siswa->nama }}
-                                -
-                                {{ $siswa->kelas?->nama_kelas }}
-
-                            </option>
-                        @endforeach
-
-
-                    </select>
-
-
-                    <p class="text-xs text-slate-500 mt-2">
-
-                        Gunakan Ctrl/Command untuk memilih beberapa anak.
+                        Pilih siswa yang akan diawasi oleh akun orang tua ini.
 
                     </p>
+
+
+
+                    <div class="
+border
+border-slate-300
+rounded-xl
+p-4
+
+max-h-72
+overflow-y-auto
+
+space-y-2">
+
+
+
+                        @forelse($siswaList as $siswa)
+                            <label
+                                class="
+flex
+items-center
+gap-3
+
+p-3
+
+rounded-xl
+
+hover:bg-blue-50
+
+cursor-pointer
+
+transition">
+
+
+                                <input type="checkbox" name="anak[]" value="{{ $siswa->id }}"
+                                    class="
+w-5
+h-5
+
+text-blue-600
+
+rounded
+
+focus:ring-blue-500">
+
+
+
+                                <div>
+
+
+                                    <p class="
+font-medium
+text-slate-800">
+
+
+                                        {{ $siswa->nama }}
+
+
+                                    </p>
+
+
+
+                                    <p class="
+text-xs
+text-slate-500">
+
+
+                                        {{ $siswa->kelas?->nama_kelas ?? 'Belum ada kelas' }}
+
+
+                                    </p>
+
+
+                                </div>
+
+
+
+                            </label>
+
+
+
+                        @empty
+
+
+                            <p class="text-sm text-slate-500 text-center">
+
+                                Belum ada data siswa.
+
+                            </p>
+                        @endforelse
+
+
+
+                    </div>
 
 
                 </div>
