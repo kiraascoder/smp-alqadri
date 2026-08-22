@@ -1,12 +1,15 @@
 <header
-    class="fixed top-0 left-0 right-0 z-50
+    class="
+    fixed top-0 left-0 right-0 z-50
     lg:hidden
     bg-white border-b border-slate-200
-    px-4 py-3 flex items-center justify-between">
+    px-4 py-3
+    flex items-center justify-between">
 
 
     <button id="hamburger-btn"
-        class="p-2 rounded-xl
+        class="
+        p-2 rounded-xl
         text-slate-700
         hover:bg-slate-100
         transition">
@@ -25,18 +28,24 @@
 
     <div class="flex items-center gap-2">
 
+
         <div
-            class="w-8 h-8 rounded-xl
+            class="
+            w-8 h-8
+            rounded-xl
             bg-blue-700
             flex items-center justify-center
-            text-white font-bold">
+            text-white
+            font-bold">
 
             A
 
         </div>
 
 
-        <span class="font-bold text-slate-800">
+        <span class="
+            font-bold
+            text-slate-800">
 
             SMP AL-QADRI
 
@@ -51,18 +60,40 @@
 
 
 
-<div id="sidebar-overlay" class="fixed inset-0 z-40
-bg-black/40 hidden lg:hidden">
+
+{{-- OVERLAY MOBILE --}}
+
+<div id="sidebar-overlay" class="
+fixed inset-0
+z-40
+bg-black/40
+hidden
+lg:hidden">
+
 </div>
 
 
 
 
 
+
+
+
+{{-- SIDEBAR --}}
+
 <aside id="sidebar"
     class="
-fixed top-0 left-0 z-50
-h-full w-72
+fixed
+top-0
+left-0
+
+z-50
+
+h-screen
+w-72
+
+flex
+flex-col
 
 -translate-x-full
 lg:translate-x-0
@@ -73,41 +104,61 @@ text-white
 
 shadow-xl
 
-transition-transform duration-300">
+transition-transform
+duration-300
+
+overflow-hidden">
 
 
-    {{-- HEADER SIDEBAR --}}
+    {{-- HEADER --}}
 
     <div class="
 p-6
-border-b border-slate-700">
+border-b
+border-slate-700
+shrink-0">
 
 
-        <div class="flex items-center gap-3">
+        <div class="
+flex
+items-center
+gap-3">
 
 
             <div class="
-w-12 h-12
+w-12
+h-12
 rounded-2xl
+
 bg-blue-600
-flex items-center justify-center
-text-xl font-bold">
+
+flex
+items-center
+justify-center
+
+text-xl
+font-bold">
 
                 A
 
             </div>
 
 
+
             <div>
 
-                <h1 class="font-bold text-lg">
+                <h1 class="
+font-bold
+text-lg">
 
                     SMP AL-QADRI
 
                 </h1>
 
 
-                <p class="text-xs text-slate-400">
+                <p class="
+text-xs
+text-slate-400">
 
                     Sistem Informasi Sekolah
 
@@ -130,11 +181,14 @@ rounded-xl
 bg-slate-800">
 
 
-            <p class="font-semibold text-sm">
+            <p class="
+font-semibold
+text-sm">
 
                 {{ auth()->user()->name }}
 
             </p>
+
 
 
             <p class="
@@ -158,9 +212,24 @@ mt-1">
 
 
 
+
+
     @php
 
         $role = auth()->user()->role;
+
+        $active = 'flex items-center gap-3
+px-4 py-3
+rounded-xl
+transition
+font-medium';
+
+        $normal = 'text-slate-300
+hover:bg-slate-800
+hover:text-white';
+
+        $selected = 'bg-blue-600
+text-white';
 
     @endphp
 
@@ -168,29 +237,23 @@ mt-1">
 
 
 
+
+
+    {{-- MENU SCROLL --}}
+
     <nav class="
-p-4
+flex-1
 overflow-y-auto
-h-[calc(100%-190px)]">
+
+p-4
+
+scrollbar-thin">
 
 
-        <ul class="space-y-1 text-sm">
+        <ul class="
+space-y-1
+text-sm">
 
-
-
-            {{-- COMPONENT MENU --}}
-            @php
-
-                $active = 'flex items-center gap-3
-px-4 py-3 rounded-xl
-transition
-font-medium';
-
-                $normal = 'text-slate-300 hover:bg-slate-800 hover:text-white';
-
-                $selected = 'bg-blue-600 text-white';
-
-            @endphp
 
 
 
@@ -199,12 +262,13 @@ font-medium';
                 <li>
 
                     <a href="{{ route('admin.dashboard') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.dashboard') ? $selected : $normal }}">
 
-                        <span>📊</span>
 
-                        Dashboard
+                        📊 Dashboard
+
 
                     </a>
 
@@ -212,158 +276,212 @@ font-medium';
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.guru') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.guru*') || request()->routeIs('admin-guru.*') ? $selected : $normal }}">
 
-                        <span>👨‍🏫</span>
-                        Guru
+
+                        👨‍🏫 Guru
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.kelas') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.kelas*') ? $selected : $normal }}">
 
-                        <span>🏫</span>
-                        Kelas
+
+                        🏫 Kelas
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.siswa') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.siswa*') ? $selected : $normal }}">
 
-                        <span>👨‍🎓</span>
-                        Siswa
+
+                        👨‍🎓 Siswa
+
 
                     </a>
+
                 </li>
 
 
 
 
                 <li>
+
                     <a href="{{ route('admin.orang') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.orang*') ? $selected : $normal }}">
 
-                        <span>👪</span>
-                        Orang Tua
+
+                        👪 Orang Tua
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.pelanggaran') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.pelanggaran*') ? $selected : $normal }}">
 
-                        <span>⚠️</span>
-                        Pelanggaran
+
+                        ⚠️ Pelanggaran
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.kebajikan') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.kebajikan*') ? $selected : $normal }}">
 
-                        <span>⭐</span>
-                        Jenis Kebajikan
+
+                        ⭐ Jenis Kebajikan
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.skorsing') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.skorsing*') ? $selected : $normal }}">
 
-                        <span>🚨</span>
-                        Skorsing
+
+                        🚨 Skorsing
+
 
                     </a>
+
                 </li>
 
 
 
+
                 <li>
+
                     <a href="{{ route('admin.rekap-skorsing') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('admin.rekap-skorsing') ? $selected : $normal }}">
 
-                        <span>📋</span>
-                        Rekap Skorsing
+
+                        📋 Rekap Skorsing
+
 
                     </a>
+
                 </li>
             @elseif($role === 'guru')
                 <li>
 
                     <a href="{{ route('guru.dashboard') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('guru.dashboard') ? $selected : $normal }}">
 
+
                         📊 Dashboard
+
 
                     </a>
 
                 </li>
+
 
 
 
                 <li>
 
                     <a href="{{ route('guru.pelanggaran') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('guru.pelanggaran') ? $selected : $normal }}">
 
+
                         ⚠️ Jenis Pelanggaran
+
 
                     </a>
 
                 </li>
+
 
 
 
                 <li>
 
                     <a href="{{ route('guru.skorsing') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('guru.skorsing*') ? $selected : $normal }}">
 
+
                         🚨 Skorsing
+
 
                     </a>
 
                 </li>
+
 
 
 
                 <li>
 
                     <a href="{{ route('guru.kebajikan') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('guru.kebajikan*') ? $selected : $normal }}">
 
+
                         ⭐ Poin Kebajikan
+
 
                     </a>
 
@@ -371,13 +489,17 @@ font-medium';
 
 
 
+
                 <li>
 
                     <a href="{{ route('guru.profil') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('guru.profil') ? $selected : $normal }}">
 
+
                         👤 Profil
+
 
                     </a>
 
@@ -386,10 +508,13 @@ font-medium';
                 <li>
 
                     <a href="{{ route('ortu.dashboard') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('ortu.dashboard') ? $selected : $normal }}">
 
+
                         📊 Dashboard
+
 
                     </a>
 
@@ -397,13 +522,17 @@ font-medium';
 
 
 
+
                 <li>
 
                     <a href="{{ route('ortu.pelanggaran') }}"
-                        class="{{ $active }}
+                        class="
+{{ $active }}
 {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
 
+
                         ⚠️ Jenis Pelanggaran
+
 
                     </a>
 
@@ -422,16 +551,20 @@ font-medium';
 
 
 
+
+
+
     {{-- LOGOUT --}}
 
     <div class="
-absolute bottom-0
-left-0 right-0
 p-4
-border-t border-slate-700">
+border-t
+border-slate-700
+shrink-0">
 
 
         <form method="POST" action="{{ route('logout') }}">
+
 
             @csrf
 
@@ -439,15 +572,20 @@ border-t border-slate-700">
             <button
                 class="
 w-full
-flex items-center
+
+flex
+items-center
 justify-center
+
 gap-2
 
-px-4 py-3
+px-4
+py-3
 
 rounded-xl
 
 bg-red-600
+
 hover:bg-red-700
 
 text-white
@@ -463,10 +601,12 @@ transition">
             </button>
 
 
+
         </form>
 
 
     </div>
+
 
 
 
@@ -476,44 +616,57 @@ transition">
 
 
 
+
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener(
+        'DOMContentLoaded',
+        () => {
 
 
-        const button =
-            document.getElementById('hamburger-btn');
+            const button =
+                document.getElementById('hamburger-btn');
 
 
-        const sidebar =
-            document.getElementById('sidebar');
+            const sidebar =
+                document.getElementById('sidebar');
 
 
-        const overlay =
-            document.getElementById('sidebar-overlay');
-
-
-
-        function toggle() {
-
-            sidebar.classList.toggle('-translate-x-full');
-
-            overlay.classList.toggle('hidden');
-
-        }
+            const overlay =
+                document.getElementById('sidebar-overlay');
 
 
 
-        button?.addEventListener(
-            'click',
-            toggle
-        );
+
+            function toggleSidebar() {
 
 
-        overlay?.addEventListener(
-            'click',
-            toggle
-        );
+                sidebar.classList.toggle('-translate-x-full');
 
 
-    });
+                overlay.classList.toggle('hidden');
+
+
+                document.body.classList.toggle('overflow-hidden');
+
+
+            }
+
+
+
+            button?.addEventListener(
+                'click',
+                toggleSidebar
+            );
+
+
+
+            overlay?.addEventListener(
+                'click',
+                toggleSidebar
+            );
+
+
+
+        });
 </script>
