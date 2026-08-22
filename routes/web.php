@@ -36,8 +36,30 @@ Route::view('/layanan', 'layanan')->name('layanan');
 Route::middleware('authenticated')->group(function () {
 
     // Login
-    Route::get('/login', [SesiController::class, 'LoginView'])
-        ->name('login');
+        Route::get('/login', function () {
+
+        // Jika sudah login
+        if (auth()->check()) {
+
+            return match (auth()->user()->role) {
+
+                'admin' => redirect()->route('admin.dashboard'),
+
+                'guru' => redirect()->route('guru.dashboard'),
+
+                'orang_tua' => redirect()->route('ortu.dashboard'),
+
+                default => redirect('/'),
+
+            };
+
+        }
+
+
+        return view('auth.login');
+
+
+    })->name('login');
 
     Route::post('/login', [SesiController::class, 'login'])
         ->name('login.submit');

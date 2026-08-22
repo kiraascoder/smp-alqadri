@@ -18,22 +18,49 @@ class SesiController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string', 'min:6'],
-        ]);
-
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()
-                ->withErrors(['login' => 'Email atau password tidak sesuai.'])
-                ->onlyInput('email');
-        }
-
-        $request->session()->regenerate();
-
+{
+    // Jika sudah login, langsung arahkan sesuai role
+    if (Auth::check()) {
         return $this->redirectByRole(Auth::user());
     }
+
+
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string', 'min:6'],
+    ]);
+
+
+    if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+
+        return back()
+            ->withErrors([
+                'login' => 'Email atau password tidak sesuai.'
+            ])
+            ->onlyInput('email');
+
+    }
+
+
+    $request->session()->regenerate();
+
+
+    return $this->redirectByRole(Auth::user());
+}
+private function redirectByRole($user)
+{
+    return match ($user->role) {
+
+        'admin' => redirect()->route('admin.dashboard'),
+
+        'guru' => redirect()->route('guru.dashboard'),
+
+        'orang_tua' => redirect()->route('ortu.dashboard'),
+
+        default => redirect()->route('login')
+
+    };
+}
 
     public function logout(Request $request)
     {
@@ -63,4 +90,3 @@ class SesiController extends Controller
         ]);
     }
 }
-
