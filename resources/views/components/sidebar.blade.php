@@ -369,8 +369,9 @@
             @elseif($role === 'orang_tua')
                 <li>
                     <a href="{{ route('ortu.dashboard') }}"
-                        class="{{ $active }}
-                {{ request()->routeIs('ortu.dashboard') ? $selected : $normal }}">
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('ortu.dashboard') ? $selected : $normal }}">
 
                         📊 Dashboard
 
@@ -380,10 +381,23 @@
 
                 <li>
                     <a href="{{ route('ortu.pelanggaran') }}"
-                        class="{{ $active }}
-                {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
 
                         ⚠️ Jenis Pelanggaran
+
+                    </a>
+                </li>
+
+
+                <li>
+                    <a href="{{ route('ortu.kebajikan') }}"
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('ortu.kebajikan*') ? $selected : $normal }}">
+
+                        ⭐ Kebajikan Anak
 
                     </a>
                 </li>

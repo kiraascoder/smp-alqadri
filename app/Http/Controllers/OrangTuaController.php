@@ -176,4 +176,21 @@ class OrangTuaController extends Controller
             )
         );
     }
+    public function kebajikan()
+    {
+        $orangTua = auth()->user()->orangTua;
+
+
+        $siswa = $orangTua
+            ->siswa()
+            ->with([
+                'kelas',
+                'riwayatKebajikan.kebajikan',
+                'riwayatKebajikan.creator'
+            ])
+            ->get();
+
+
+        return view('orangtua.kebajikan', compact('siswa'));
+    }
 }
