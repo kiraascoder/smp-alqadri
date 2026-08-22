@@ -3,7 +3,7 @@
         <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
             <!-- Logo -->
             <a href="/" class="flex items-center">
-                <img src="https://demo.themesberg.com/landwind/images/logo.svg" class="h-8 mr-3" alt="SmartTrans Logo" />
+                <img src="{{ asset('logo.png') }}" alt="Logo SMP Al Qadri" class="h-8 mr-3">
                 <span class="text-xl font-semibold text-white">SMP AL QADRI ISLAMIC SCHOOL</span>
             </a>
 
