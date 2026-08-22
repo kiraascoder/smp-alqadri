@@ -64,18 +64,6 @@ border-blue-600
 shadow">
 
 
-                        <div class="
-absolute
-bottom-2
-right-2
-w-5
-h-5
-rounded-full
-bg-emerald-500
-border-2
-border-white">
-                        </div>
-
 
                     </div>
 
@@ -245,19 +233,6 @@ flex-col
 sm:flex-row
 justify-end
 gap-3">
-
-
-                <button @click="openPassword=true" class="
-px-5 py-3
-rounded-xl
-border
-border-slate-300
-hover:bg-slate-50">
-
-                    Ganti Password
-
-                </button>
-
 
 
                 <button @click="openModal=true"
