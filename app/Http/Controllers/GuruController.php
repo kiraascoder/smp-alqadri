@@ -38,27 +38,46 @@ class GuruController extends Controller
 
     public function edit(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'no_hp' => ['nullable', 'string', 'max:20'],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'no_hp' => 'nullable',
+            'avatar' => 'nullable|image|max:2048',
         ]);
 
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->no_hp = $request->no_hp;
+
+
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
+
+            // hapus avatar lama
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+
+
+            $path = $request->file('avatar')
+                ->store('avatars', 'public');
+
+
+            $user->avatar = $path;
         }
 
-        $user->update($data);
 
-        return back()->with('success', 'Profil berhasil diperbarui.');
+        $user->save();
+
+
+        return back()->with(
+            'success',
+            'Profil berhasil diperbarui'
+        );
     }
-
+    
     public function pelanggaran()
     {
         $pelanggarans = Pelanggaran::orderBy('kategori')->paginate(10);
