@@ -8,23 +8,19 @@ class OrangTua extends Model
 {
     protected $table = 'orang_tua';
 
-    protected $fillable = [
-        'user_id',
-    ];
+    protected $guarded = [];
+
+
 
     public function user()
     {
-        return $this->belongsTo(
-            User::class,
-            'user_id'
-        );
+        return $this->belongsTo(User::class);
     }
 
-    public function anak()
+
+
+    public function siswa()
     {
-        return $this->hasMany(
-            Siswa::class,
-            'orang_tua_id'
-        );
+        return $this->hasMany(Siswa::class, 'orang_tua_id');
     }
 }
