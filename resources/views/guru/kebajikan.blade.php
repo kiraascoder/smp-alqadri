@@ -53,7 +53,7 @@
                     @foreach ($siswas as $siswa)
                         <option value="{{ $siswa->id }}">
 
-                            {{ $siswa->user?->name }}
+                            {{ $siswa->nama }}
 
                             —
 
@@ -152,7 +152,7 @@
                                 <td class="p-4">
 
                                     <div class="font-medium">
-                                        {{ $item->siswa?->user?->name }}
+                                        {{ $item->siswa?->user?->nama }}
                                     </div>
 
                                     <div class="text-xs text-slate-500">
