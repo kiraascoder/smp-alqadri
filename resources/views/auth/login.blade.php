@@ -253,25 +253,6 @@
 
                 text-sm">
 
-
-                <label class="
-                    flex
-
-                    items-center
-
-                    gap-2">
-
-
-                    <input type="checkbox" name="remember">
-
-
-                    Ingat saya
-
-
-                </label>
-
-
-
                 <a href="{{ route('password.request') }}"
                     class="
                     text-blue-700
