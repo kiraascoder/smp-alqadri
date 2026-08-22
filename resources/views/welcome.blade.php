@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bimbingan Konseling - SMP AL QADRI Islamic School</title>
+    <title>Bimbingan Konseling - SMP AL QADRI ISLAMIC SCHOOL Islamic School</title>
 
     <!-- PWA Meta Tags untuk Landing Page BK -->
     <meta name="description"
-        content="Bimbingan dan Konseling SMP AL QADRI Islamic School - Layanan konseling Islami terpadu untuk mendampingi prestasi akademik dan pembentukan akhlaq mulia siswa">
+        content="Bimbingan dan Konseling SMP AL QADRI ISLAMIC SCHOOL Islamic School - Layanan konseling Islami terpadu untuk mendampingi prestasi akademik dan pembentukan akhlaq mulia siswa">
     <meta name="keywords"
-        content="bimbingan konseling islami, SMP AL QADRI, konseling siswa, pendidikan islam, akhlaq mulia">
-    <meta name="author" content="SMP AL QADRI Islamic School">
+        content="bimbingan konseling islami, SMP AL QADRI ISLAMIC SCHOOL, konseling siswa, pendidikan islam, akhlaq mulia">
+    <meta name="author" content="SMP AL QADRI ISLAMIC SCHOOL Islamic School">
     <meta name="theme-color" content="#059669">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,7 +20,7 @@
     <meta name="msapplication-TileColor" content="#059669">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Bimbingan Konseling SMP AL QADRI Islamic School">
+    <meta property="og:title" content="Bimbingan Konseling SMP AL QADRI ISLAMIC SCHOOL Islamic School">
     <meta property="og:description"
         content="Layanan Bimbingan dan Konseling berbasis nilai-nilai Islam untuk mendukung prestasi akademik dan pembentukan akhlaq mulia">
     <meta property="og:image" content="/images/icons/icon-512x512.png">
@@ -29,7 +29,7 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="BK SMP AL QADRI Islamic School">
+    <meta name="twitter:title" content="BK SMP AL QADRI ISLAMIC SCHOOL Islamic School">
     <meta name="twitter:description" content="Bimbingan Konseling Islami terpadu">
     <meta name="twitter:image" content="/images/icons/icon-512x512.png">
 
@@ -319,7 +319,7 @@
                     <div
                         class="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-sm font-medium mb-6 glass-card">
                         <div class="w-2 h-2 bg-emerald-400 rounded-full mr-2 pulse-slow"></div>
-                        SMP AL QADRI Islamic School
+                        SMP AL QADRI ISLAMIC SCHOOL Islamic School
                     </div>
 
                     <h1 class="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -332,7 +332,7 @@
 
                     <p class="text-xl text-emerald-100 mb-8 leading-relaxed max-w-lg">
                         Layanan Bimbingan dan Konseling berbasis nilai-nilai Islam untuk mendukung prestasi akademik,
-                        akhlaq mulia, dan pengembangan karakter siswa SMP AL QADRI Islamic School.
+                        akhlaq mulia, dan pengembangan karakter siswa SMP AL QADRI ISLAMIC SCHOOL Islamic School.
                     </p>
 
                     <!-- PWA Install CTA -->
@@ -395,7 +395,7 @@
                     Program Unggulan BK
                 </div>
                 <h2 class="text-4xl lg:text-5xl font-bold text-gradient mb-4">
-                    Layanan BK SMP AL QADRI Islamic School
+                    Layanan BK SMP AL QADRI ISLAMIC SCHOOL Islamic School
                 </h2>
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">
                     Program bimbingan konseling yang mengintegrasikan nilai-nilai Islam dalam setiap layanan untuk
@@ -553,7 +553,8 @@
                     Bergabunglah dengan Program BK Kami
                 </h2>
                 <p class="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
-                    Tim Guru BK SMP AL QADRI Islamic School siap mendampingi perjalanan akademik dan spiritual
+                    Tim Guru BK SMP AL QADRI ISLAMIC SCHOOL Islamic School siap mendampingi perjalanan akademik dan
+                    spiritual
                     putra-putri Anda dengan penuh amanah dan profesionalisme.
                 </p>
 
@@ -589,12 +590,13 @@
         <div class="container mx-auto px-6 text-center">
             <div class="mb-4">
                 <span class="text-3xl">🕌</span>
-                <h3 class="text-xl font-bold mt-2">SMP AL QADRI Islamic School</h3>
+                <h3 class="text-xl font-bold mt-2">SMP AL QADRI ISLAMIC SCHOOL Islamic School</h3>
                 <p class="text-emerald-200">Bimbingan & Konseling Islami</p>
             </div>
 
             <div class="border-t border-emerald-800 pt-6">
-                <p class="text-emerald-300">&copy; 2025 SMP AL QADRI Islamic School - Bimbingan & Konseling.
+                <p class="text-emerald-300">&copy; 2025 SMP AL QADRI ISLAMIC SCHOOL Islamic School - Bimbingan &
+                    Konseling.
                     Barakallahu fiikum.</p>
                 <div class="flex justify-center gap-4 mt-4 text-sm">
                     <a href="#" class="hover:text-emerald-200 transition-colors">Kebijakan Privasi</a>

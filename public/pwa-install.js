@@ -1,4 +1,4 @@
-// Enhanced PWA Installation Handler untuk BK SMP AL QADRI
+// Enhanced PWA Installation Handler untuk BK SMP AL QADRI ISLAMIC SCHOOL
 let deferredPrompt = null;
 let installButton = null;
 let pwaSupported = false;
@@ -35,7 +35,7 @@ function getDeviceInfo() {
     return {
         isMobile:
             /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                userAgent
+                userAgent,
             ),
         isIOS: /iPad|iPhone|iPod/.test(userAgent),
         isAndroid: /Android/.test(userAgent),
@@ -141,40 +141,40 @@ function showInstallNotification() {
             border-left: 4px solid #007bff;
             animation: slideInRight 0.3s ease-out;
         }
-        
+
         .pwa-notification-content {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        
+
         .pwa-notification-icon {
             color: #007bff;
             font-size: 24px;
         }
-        
+
         .pwa-notification-text {
             flex: 1;
         }
-        
+
         .pwa-notification-text strong {
             display: block;
             margin-bottom: 4px;
             color: #333;
         }
-        
+
         .pwa-notification-text p {
             margin: 0;
             font-size: 14px;
             color: #666;
         }
-        
+
         .pwa-notification-actions {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-        
+
         .pwa-notification-actions .btn {
             font-size: 12px;
             padding: 4px 8px;
@@ -182,22 +182,22 @@ function showInstallNotification() {
             border-radius: 4px;
             cursor: pointer;
         }
-        
+
         .pwa-notification-actions .btn-primary {
             background: #007bff;
             color: white;
         }
-        
+
         .pwa-notification-actions .btn-secondary {
             background: #6c757d;
             color: white;
         }
-        
+
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
+
         @media (max-width: 480px) {
             .pwa-install-notification {
                 top: 10px;
@@ -311,7 +311,7 @@ function showIOSInstallInstructions() {
                 Aplikasi akan muncul di home screen seperti app native
             </div>
         </div>
-    `
+    `,
     );
 
     document.body.appendChild(modal);
@@ -336,7 +336,7 @@ function showAndroidInstallInstructions() {
                 App akan ter-install seperti aplikasi Android biasa
             </div>
         </div>
-    `
+    `,
     );
 
     document.body.appendChild(modal);
@@ -390,7 +390,7 @@ function showGenericInstallInstructions() {
                 </button>
             </div>
         </div>
-    `
+    `,
     );
 
     document.body.appendChild(modal);
@@ -439,11 +439,11 @@ function createInstructionModal(title, content) {
                 opacity: 0;
                 transition: opacity 0.3s ease;
             }
-            
+
             .pwa-instruction-modal.show {
                 opacity: 1;
             }
-            
+
             .pwa-modal-overlay {
                 position: absolute;
                 top: 0;
@@ -452,7 +452,7 @@ function createInstructionModal(title, content) {
                 height: 100%;
                 background: rgba(0,0,0,0.5);
             }
-            
+
             .pwa-modal-content {
                 background: white;
                 border-radius: 8px;
@@ -463,7 +463,7 @@ function createInstructionModal(title, content) {
                 position: relative;
                 box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             }
-            
+
             .pwa-modal-header {
                 padding: 16px 20px;
                 border-bottom: 1px solid #eee;
@@ -471,12 +471,12 @@ function createInstructionModal(title, content) {
                 justify-content: space-between;
                 align-items: center;
             }
-            
+
             .pwa-modal-header h4 {
                 margin: 0;
                 color: #333;
             }
-            
+
             .pwa-modal-close {
                 background: none;
                 border: none;
@@ -485,55 +485,55 @@ function createInstructionModal(title, content) {
                 cursor: pointer;
                 padding: 4px;
             }
-            
+
             .pwa-modal-body {
                 padding: 20px;
             }
-            
+
             .pwa-modal-body ol {
                 padding-left: 20px;
             }
-            
+
             .pwa-modal-body li {
                 margin-bottom: 8px;
                 line-height: 1.4;
             }
-            
+
             .pwa-modal-footer {
                 padding: 16px 20px;
                 border-top: 1px solid #eee;
                 text-align: right;
             }
-            
+
             .alternative-options {
                 margin-top: 16px;
                 padding-top: 16px;
                 border-top: 1px solid #eee;
             }
-            
+
             .alternative-options .btn {
                 margin-right: 8px;
                 margin-bottom: 8px;
             }
-            
+
             .alert {
                 padding: 12px;
                 border-radius: 4px;
                 margin: 12px 0;
             }
-            
+
             .alert-info {
                 background: #d1ecf1;
                 border: 1px solid #bee5eb;
                 color: #0c5460;
             }
-            
+
             .alert-success {
                 background: #d4edda;
                 border: 1px solid #c3e6cb;
                 color: #155724;
             }
-            
+
             .alert-warning {
                 background: #fff3cd;
                 border: 1px solid #ffeaa7;
@@ -573,7 +573,7 @@ function enableNotifications() {
     if ("Notification" in window) {
         Notification.requestPermission().then((permission) => {
             if (permission === "granted") {
-                new Notification("BK SMP AL QADRI", {
+                new Notification("BK SMP AL QADRI ISLAMIC SCHOOL", {
                     body: "Notifikasi berhasil diaktifkan!",
                     icon: "/images/icons/icon-192x192.png",
                 });
@@ -611,18 +611,18 @@ function showInstallSuccess() {
             z-index: 10002;
             border: 3px solid #28a745;
         }
-        
+
         .success-content i {
             font-size: 48px;
             color: #28a745;
             margin-bottom: 16px;
         }
-        
+
         .success-content h5 {
             color: #28a745;
             margin-bottom: 8px;
         }
-        
+
         .success-content p {
             color: #666;
             margin: 0;

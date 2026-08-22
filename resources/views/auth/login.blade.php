@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SMP Al Qadri</title>
+    <title>Login - SMP AL QADRI ISLAMIC SCHOOL</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -13,7 +13,7 @@
     <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
         <div class="text-center mb-8">
             <div class="text-5xl mb-3">🎓</div>
-            <h1 class="text-2xl font-bold text-gray-900">SMP Al Qadri</h1>
+            <h1 class="text-2xl font-bold text-gray-900">SMP AL QADRI ISLAMIC SCHOOL</h1>
             <p class="text-gray-500 mt-1">Masuk sebagai Admin, Guru, atau Orang Tua</p>
         </div>
 

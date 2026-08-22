@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Akun - SMP Al Qadri</title>
+    <title>Daftar Akun - SMP AL QADRI ISLAMIC SCHOOL</title>
     @vite('resources/css/app.css')
 </head>
 

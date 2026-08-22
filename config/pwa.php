@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'name' => 'BK SMP AL QADRI Islamic School',
+    'name' => 'BK SMP AL QADRI ISLAMIC SCHOOL Islamic School',
     'manifest' => [
-        'name' => 'Bimbingan Konseling SMP AL QADRI Islamic School',
+        'name' => 'Bimbingan Konseling SMP AL QADRI ISLAMIC SCHOOL Islamic School',
         'short_name' => 'BK AL QADRI',
-        'description' => 'Aplikasi Bimbingan dan Konseling SMP AL QADRI Islamic School - Mendampingi prestasi akademik dan pembentukan akhlak mulia siswa',
+        'description' => 'Aplikasi Bimbingan dan Konseling SMP AL QADRI ISLAMIC SCHOOL Islamic School - Mendampingi prestasi akademik dan pembentukan akhlak mulia siswa',
         'start_url' => '/',
         'background_color' => '#065f46', // Emerald green sesuai tema Islamic
         'theme_color' => '#059669', // Emerald theme
