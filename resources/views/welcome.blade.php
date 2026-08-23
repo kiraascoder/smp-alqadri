@@ -34,7 +34,7 @@
 
     <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
 
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('logo-baru.png') }}">
 
 
     {{-- FONT --}}
@@ -148,7 +148,7 @@
             {{-- LOGO --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
 
-                <img src="{{ asset('logo.png') }}" alt="Logo SMP Al-Qadri" class="w-12 h-12 object-contain">
+                <img src="{{ asset('logo-baru.png') }}" alt="Logo SMP Al-Qadri" class="w-12 h-12 object-contain">
 
                 <div>
 
@@ -665,7 +665,7 @@
                                     mb-6
                                 ">
 
-                                <img src="{{ asset('logo.png') }}" alt="Logo SMP Al-Qadri"
+                                <img src="{{ asset('logo-baru.png') }}" alt="Logo SMP Al-Qadri"
                                     class="
                                         w-28
                                         h-28
@@ -2052,7 +2052,7 @@
                             gap-3
                         ">
 
-                        <img src="{{ asset('logo.png') }}" alt="Logo"
+                        <img src="{{ asset('logo-baru.png') }}" alt="Logo"
                             class="
                                 w-12 h-12
                                 object-contain
@@ -2215,10 +2215,10 @@
 
     <script>
         /*
-            |--------------------------------------------------------------------------
-            | MOBILE MENU
-            |--------------------------------------------------------------------------
-            */
+                |--------------------------------------------------------------------------
+                | MOBILE MENU
+                |--------------------------------------------------------------------------
+                */
 
         const mobileButton =
             document.getElementById('mobile-menu-button');

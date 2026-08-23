@@ -10,7 +10,7 @@
     <meta name="description"
         content="Tentang SMP Al-Qadri Islamic School, sekolah Islam yang berkomitmen membentuk generasi berilmu, berkarakter, disiplin, dan berakhlak mulia.">
 
-    <link rel="icon" href="{{ asset('logo.png') }}">
+    <link rel="icon" href="{{ asset('logo-baru.png') }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -62,7 +62,7 @@
 
             <a href="{{ route('home') }}" class="flex items-center gap-3">
 
-                <img src="{{ asset('logo.png') }}" class="w-12 h-12 object-contain" alt="Logo SMP Al-Qadri">
+                <img src="{{ asset('logo-baru.png') }}" class="w-12 h-12 object-contain" alt="Logo SMP Al-Qadri">
 
                 <div>
                     <h1 class="font-bold text-slate-900">
@@ -205,7 +205,7 @@
                     flex items-center justify-center
                 ">
 
-                <img src="{{ asset('logo.png') }}" alt="SMP Al-Qadri" class="w-64 h-64 object-contain">
+                <img src="{{ asset('logo-baru.png') }}" alt="SMP Al-Qadri" class="w-64 h-64 object-contain">
 
             </div>
 
@@ -415,7 +415,7 @@
 
             <div class="flex items-center gap-3">
 
-                <img src="{{ asset('logo.png') }}" class="w-10 h-10 object-contain" alt="Logo">
+                <img src="{{ asset('logo-baru.png') }}" class="w-10 h-10 object-contain" alt="Logo">
 
                 <div>
                     <p class="font-bold">

@@ -10,7 +10,7 @@
 
     <meta name="description" content="Portal Sistem Informasi SMP Al-Qadri Islamic School">
 
-    <link rel="icon" href="{{ asset('logo.png') }}">
+    <link rel="icon" href="{{ asset('logo-baru.png') }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
 

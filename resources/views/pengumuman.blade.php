@@ -10,7 +10,7 @@
 
     <meta name="description" content="Pengumuman resmi SMP Al-Qadri Islamic School.">
 
-    <link rel="icon" href="{{ asset('logo.png') }}">
+    <link rel="icon" href="{{ asset('logo-baru.png') }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -57,7 +57,7 @@
 
             <a href="{{ route('home') }}" class="flex items-center gap-3">
 
-                <img src="{{ asset('logo.png') }}" class="w-12 h-12 object-contain" alt="Logo">
+                <img src="{{ asset('logo-baru.png') }}" class="w-12 h-12 object-contain" alt="Logo">
 
                 <div>
 

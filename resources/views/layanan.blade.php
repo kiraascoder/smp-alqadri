@@ -4,23 +4,17 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Layanan - SMP Al-Qadri Islamic School</title>
 
-    <meta
-        name="description"
-        content="Layanan dan sistem informasi SMP Al-Qadri Islamic School.">
+    <meta name="description" content="Layanan dan sistem informasi SMP Al-Qadri Islamic School.">
 
-    <link rel="icon" href="{{ asset('logo.png') }}">
+    <link rel="icon" href="{{ asset('logo-baru.png') }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -28,12 +22,10 @@
         }
 
         .hero-gradient {
-            background: linear-gradient(
-                135deg,
-                #064e3b,
-                #047857,
-                #059669
-            );
+            background: linear-gradient(135deg,
+                    #064e3b,
+                    #047857,
+                    #059669);
         }
 
         .service-card {
@@ -73,14 +65,9 @@
                 justify-between
             ">
 
-            <a
-                href="{{ route('home') }}"
-                class="flex items-center gap-3">
+            <a href="{{ route('home') }}" class="flex items-center gap-3">
 
-                <img
-                    src="{{ asset('logo.png') }}"
-                    class="w-12 h-12 object-contain"
-                    alt="Logo">
+                <img src="{{ asset('logo-baru.png') }}" class="w-12 h-12 object-contain" alt="Logo">
 
                 <div>
                     <h1 class="font-bold">
@@ -97,35 +84,26 @@
 
             <nav class="hidden lg:flex gap-7 text-sm font-medium">
 
-                <a
-                    href="{{ route('home') }}"
-                    class="text-slate-600 hover:text-emerald-600">
+                <a href="{{ route('home') }}" class="text-slate-600 hover:text-emerald-600">
                     Beranda
                 </a>
 
-                <a
-                    href="{{ route('tentang') }}"
-                    class="text-slate-600 hover:text-emerald-600">
+                <a href="{{ route('tentang') }}" class="text-slate-600 hover:text-emerald-600">
                     Tentang
                 </a>
 
-                <a
-                    href="{{ route('layanan') }}"
-                    class="text-emerald-600 font-semibold">
+                <a href="{{ route('layanan') }}" class="text-emerald-600 font-semibold">
                     Layanan
                 </a>
 
-                <a
-                    href="{{ route('pengumuman') }}"
-                    class="text-slate-600 hover:text-emerald-600">
+                <a href="{{ route('pengumuman') }}" class="text-slate-600 hover:text-emerald-600">
                     Pengumuman
                 </a>
 
             </nav>
 
 
-            <a
-                href="{{ route('login') }}"
+            <a href="{{ route('login') }}"
                 class="
                     bg-emerald-600
                     hover:bg-emerald-700
@@ -361,7 +339,7 @@
             @auth
 
                 @php
-                    $dashboardRoute = match(auth()->user()->role) {
+                    $dashboardRoute = match (auth()->user()->role) {
                         'admin' => route('admin.dashboard'),
                         'guru' => route('guru.dashboard'),
                         'orang_tua' => route('ortu.dashboard'),
@@ -369,8 +347,7 @@
                     };
                 @endphp
 
-                <a
-                    href="{{ $dashboardRoute }}"
+                <a href="{{ $dashboardRoute }}"
                     class="
                         inline-flex
                         mt-7
@@ -382,11 +359,8 @@
                     ">
                     Buka Dashboard
                 </a>
-
             @else
-
-                <a
-                    href="{{ route('login') }}"
+                <a href="{{ route('login') }}"
                     class="
                         inline-flex
                         mt-7

@@ -175,7 +175,7 @@ class ServiceWorkerTester {
                         "BK Test Notification",
                         {
                             body: "Service Worker test successful",
-                            icon: "/logo.png",
+                            icon: "/logo-baru.png",
                             tag: "sw-test",
                         },
                     );
@@ -446,7 +446,7 @@ const quickTests = {
             if (permission === "granted") {
                 new Notification("BK Test", {
                     body: "Service Worker notification test",
-                    icon: "/logo.png",
+                    icon: "/logo-baru.png",
                 });
             }
         }
