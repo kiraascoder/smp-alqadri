@@ -337,25 +337,78 @@
 
                     <!-- PWA Install CTA -->
                     <div class="flex flex-col sm:flex-row gap-4">
-                        @if (auth()->check())
-                            <a href="{{ route('portal.bk') }}"
-                                class="inline-flex items-center px-8 py-4 bg-white text-emerald-600 rounded-2xl font-semibold hover:bg-emerald-50 transition-all duration-300 hover:scale-105 shadow-lg">
+
+                        @auth
+
+                            @php
+                                $dashboardRoute = match (auth()->user()->role) {
+                                    'admin' => route('admin.dashboard'),
+                                    'guru' => route('guru.dashboard'),
+                                    'orang_tua' => route('ortu.dashboard'),
+                                    default => route('login'),
+                                };
+                            @endphp
+
+
+                            <a href="{{ $dashboardRoute }}"
+                                class="
+            inline-flex items-center
+            px-8 py-4
+            bg-white
+            text-emerald-600
+            rounded-2xl
+            font-semibold
+            hover:bg-emerald-50
+            transition-all
+            duration-300
+            hover:scale-105
+            shadow-lg">
 
                                 🚀 Dashboard
 
                             </a>
                         @else
                             <a href="{{ route('login') }}"
-                                class="inline-flex items-center px-8 py-4 bg-white text-emerald-600 rounded-2xl font-semibold hover:bg-emerald-50 transition-all duration-300 hover:scale-105 shadow-lg">
+                                class="
+            inline-flex items-center
+            px-8 py-4
+            bg-white
+            text-emerald-600
+            rounded-2xl
+            font-semibold
+            hover:bg-emerald-50
+            transition-all
+            duration-300
+            hover:scale-105
+            shadow-lg">
 
                                 🚀 Login
 
                             </a>
-                        @endif
+
+
+                        @endauth
+
+
+
                         <button onclick="installBKApp()"
-                            class="inline-flex items-center px-8 py-4 bg-emerald-800/50 text-white rounded-2xl font-semibold hover:bg-emerald-800/70 transition-all duration-300 glass-card">
+                            class="
+        inline-flex items-center
+        px-8 py-4
+        bg-emerald-800/50
+        text-white
+        rounded-2xl
+        font-semibold
+        hover:bg-emerald-800/70
+        transition-all
+        duration-300
+        glass-card">
+
                             📱 Install Aplikasi
+
                         </button>
+
+
                     </div>
 
                     <!-- Islamic Quote -->

@@ -2,13 +2,15 @@
     class="
     fixed top-0 left-0 right-0 z-50
     lg:hidden
-    bg-white border-b border-slate-200
+    bg-white
+    border-b border-slate-200
     px-4 py-3
     flex items-center justify-between">
 
     <button id="hamburger-btn"
         class="
-        p-2 rounded-xl
+        p-2
+        rounded-xl
         text-slate-700
         hover:bg-slate-100
         transition">
@@ -37,8 +39,13 @@
 
         </div>
 
-        <span class="font-bold text-slate-800">
+
+        <span class="
+            font-bold
+            text-slate-800">
+
             SMP AL-QADRI
+
         </span>
 
     </div>
@@ -49,12 +56,14 @@
 
 {{-- OVERLAY MOBILE --}}
 <div id="sidebar-overlay" class="
-    fixed inset-0
+    fixed
+    inset-0
     z-40
     bg-black/40
     hidden
     lg:hidden">
 </div>
+
 
 
 
@@ -66,7 +75,7 @@
     left-0
     z-50
 
-    h-screen
+    h-dvh
     w-72
 
     flex
@@ -93,9 +102,9 @@
 
 
         <div class="
-        flex
-        items-center
-        gap-3">
+            flex
+            items-center
+            gap-3">
 
 
             <div
@@ -119,8 +128,8 @@
             <div>
 
                 <h1 class="
-                font-bold
-                text-lg">
+                    font-bold
+                    text-lg">
 
                     SMP AL-QADRI
 
@@ -128,8 +137,8 @@
 
 
                 <p class="
-                text-xs
-                text-slate-400">
+                    text-xs
+                    text-slate-400">
 
                     Sistem Informasi Sekolah
 
@@ -142,6 +151,7 @@
 
 
 
+
         <div class="
             mt-6
             p-4
@@ -150,12 +160,13 @@
 
 
             <p class="
-            font-semibold
-            text-sm">
+                font-semibold
+                text-sm">
 
                 {{ auth()->user()->name }}
 
             </p>
+
 
 
             <p
@@ -177,48 +188,54 @@
 
 
 
+
     @php
 
         $role = auth()->user()->role;
 
-        $active = "
-        flex items-center gap-3
-        px-4 py-3
-        rounded-xl
-        transition
-        font-medium";
+        $active = '
+            flex items-center gap-3
+            px-4 py-3
+            rounded-xl
+            transition
+            font-medium
+        ';
 
-        $normal = "
-        text-slate-300
-        hover:bg-slate-800
-        hover:text-white";
+        $normal = '
+            text-slate-300
+            hover:bg-slate-800
+            hover:text-white
+        ';
 
-        $selected = "
-        bg-blue-600
-        text-white";
+        $selected = '
+            bg-blue-600
+            text-white
+        ';
 
     @endphp
 
 
 
 
-    {{-- AREA SCROLL --}}
+
+    {{-- MENU AREA --}}
     <nav class="
         flex-1
         overflow-y-auto
-        p-4">
+        p-4
+        scrollbar-thin">
 
 
         <ul class="
-        space-y-1
-        text-sm">
+            space-y-1
+            text-sm">
 
 
             @if ($role === 'admin')
                 <li>
                     <a href="{{ route('admin.dashboard') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.dashboard') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.dashboard') ? $selected : $normal }}">
 
                         📊 Dashboard
 
@@ -229,7 +246,7 @@
                 <li>
                     <a href="{{ route('admin.guru') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.guru*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.guru*') ? $selected : $normal }}">
 
                         👨‍🏫 Guru
 
@@ -240,7 +257,7 @@
                 <li>
                     <a href="{{ route('admin.kelas') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.kelas*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.kelas*') ? $selected : $normal }}">
 
                         🏫 Kelas
 
@@ -251,7 +268,7 @@
                 <li>
                     <a href="{{ route('admin.siswa') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.siswa*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.siswa*') ? $selected : $normal }}">
 
                         👨‍🎓 Siswa
 
@@ -262,7 +279,7 @@
                 <li>
                     <a href="{{ route('admin.orang') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.orang*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.orang*') ? $selected : $normal }}">
 
                         👪 Orang Tua
 
@@ -273,7 +290,7 @@
                 <li>
                     <a href="{{ route('admin.pelanggaran') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.pelanggaran*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.pelanggaran*') ? $selected : $normal }}">
 
                         ⚠️ Pelanggaran
 
@@ -284,7 +301,7 @@
                 <li>
                     <a href="{{ route('admin.kebajikan') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.kebajikan*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.kebajikan*') ? $selected : $normal }}">
 
                         ⭐ Jenis Kebajikan
 
@@ -295,7 +312,7 @@
                 <li>
                     <a href="{{ route('admin.skorsing') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.skorsing*') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.skorsing*') ? $selected : $normal }}">
 
                         🚨 Skorsing
 
@@ -306,7 +323,7 @@
                 <li>
                     <a href="{{ route('admin.rekap-skorsing') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('admin.rekap-skorsing') ? $selected : $normal }}">
+                    {{ request()->routeIs('admin.rekap-skorsing') ? $selected : $normal }}">
 
                         📋 Rekap Skorsing
 
@@ -316,7 +333,7 @@
                 <li>
                     <a href="{{ route('guru.dashboard') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('guru.dashboard') ? $selected : $normal }}">
+                    {{ request()->routeIs('guru.dashboard') ? $selected : $normal }}">
 
                         📊 Dashboard
 
@@ -327,7 +344,7 @@
                 <li>
                     <a href="{{ route('guru.pelanggaran') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('guru.pelanggaran') ? $selected : $normal }}">
+                    {{ request()->routeIs('guru.pelanggaran') ? $selected : $normal }}">
 
                         ⚠️ Jenis Pelanggaran
 
@@ -338,7 +355,7 @@
                 <li>
                     <a href="{{ route('guru.skorsing') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('guru.skorsing*') ? $selected : $normal }}">
+                    {{ request()->routeIs('guru.skorsing*') ? $selected : $normal }}">
 
                         🚨 Skorsing
 
@@ -349,7 +366,7 @@
                 <li>
                     <a href="{{ route('guru.kebajikan') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('guru.kebajikan*') ? $selected : $normal }}">
+                    {{ request()->routeIs('guru.kebajikan*') ? $selected : $normal }}">
 
                         ⭐ Poin Kebajikan
 
@@ -360,7 +377,7 @@
                 <li>
                     <a href="{{ route('guru.profil') }}"
                         class="{{ $active }}
-                {{ request()->routeIs('guru.profil') ? $selected : $normal }}">
+                    {{ request()->routeIs('guru.profil') ? $selected : $normal }}">
 
                         👤 Profil
 
@@ -369,9 +386,8 @@
             @elseif($role === 'orang_tua')
                 <li>
                     <a href="{{ route('ortu.dashboard') }}"
-                        class="
-            {{ $active }}
-            {{ request()->routeIs('ortu.dashboard') ? $selected : $normal }}">
+                        class="{{ $active }}
+                    {{ request()->routeIs('ortu.dashboard') ? $selected : $normal }}">
 
                         📊 Dashboard
 
@@ -381,9 +397,8 @@
 
                 <li>
                     <a href="{{ route('ortu.pelanggaran') }}"
-                        class="
-            {{ $active }}
-            {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
+                        class="{{ $active }}
+                    {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
 
                         ⚠️ Jenis Pelanggaran
 
@@ -393,9 +408,8 @@
 
                 <li>
                     <a href="{{ route('ortu.kebajikan') }}"
-                        class="
-            {{ $active }}
-            {{ request()->routeIs('ortu.kebajikan*') ? $selected : $normal }}">
+                        class="{{ $active }}
+                    {{ request()->routeIs('ortu.kebajikan*') ? $selected : $normal }}">
 
                         ⭐ Kebajikan Anak
 
@@ -407,22 +421,27 @@
         </ul>
 
 
-
-        {{-- LOGOUT DI DALAM SCROLL --}}
-        <div class="
-            mt-6
-            pt-4
-            border-t
-            border-slate-700">
+    </nav>
 
 
-            <form method="POST" action="{{ route('logout') }}">
-
-                @csrf
 
 
-                <button
-                    class="
+
+    {{-- LOGOUT FIXED --}}
+    <div class="
+        p-4
+        border-t
+        border-slate-700
+        shrink-0">
+
+
+        <form method="POST" action="{{ route('logout') }}">
+
+            @csrf
+
+
+            <button
+                class="
                 w-full
                 flex
                 items-center
@@ -438,28 +457,38 @@
                 hover:bg-red-700
 
                 text-white
+
                 font-semibold
 
                 transition">
 
+                🚪 Keluar
 
-                    🚪 Keluar
-
-
-                </button>
+            </button>
 
 
-            </form>
+        </form>
 
 
-        </div>
-
-
-    </nav>
+    </div>
 
 
 </aside>
 
+
+
+
+
+<style>
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+    }
+</style>
 
 
 

@@ -184,6 +184,7 @@ Route::prefix('admin')
 
         Route::get('/kebajikan', [OrangTuaController::class, 'kebajikan'])
             ->name('ortu.kebajikan');
+
         Route::get('/orang-tua', [AdminController::class, 'orangTua'])
             ->name('admin.orang');
 

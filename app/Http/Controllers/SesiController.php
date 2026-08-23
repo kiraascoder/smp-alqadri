@@ -47,20 +47,7 @@ class SesiController extends Controller
 
     return $this->redirectByRole(Auth::user());
 }
-private function redirectByRole($user)
-{
-    return match ($user->role) {
 
-        'admin' => redirect()->route('admin.dashboard'),
-
-        'guru' => redirect()->route('guru.dashboard'),
-
-        'orang_tua' => redirect()->route('ortu.dashboard'),
-
-        default => redirect()->route('login')
-
-    };
-}
 
     public function logout(Request $request)
     {
