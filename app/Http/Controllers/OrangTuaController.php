@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kebajikan;
 use App\Models\OrangTua;
 use App\Models\Pelanggaran;
 use App\Models\RiwayatKebajikan;
@@ -216,25 +217,12 @@ class OrangTuaController extends Controller
      */
     public function kebajikan()
     {
-        $orangTua = $this->getOrangTua();
-
-
-        $siswa = Siswa::where(
-            'orang_tua_id',
-            $orangTua->id
-        )
-            ->with([
-                'kelas',
-                'riwayatKebajikan.kebajikan',
-                'riwayatKebajikan.creator',
-            ])
-            ->orderBy('nama')
-            ->get();
-
+        $kebajikans = Kebajikan::orderBy('deskripsi')
+            ->paginate(10);
 
         return view(
             'orangtua.kebajikan',
-            compact('siswa')
+            compact('kebajikans')
         );
     }
 }

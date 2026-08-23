@@ -424,7 +424,7 @@
                         class="{{ $active }}
                     {{ request()->routeIs('ortu.kebajikan*') ? $selected : $normal }}">
 
-                        ⭐ Kebajikan Anak
+                        ⭐ Jenis Kebajikan
 
                     </a>
                 </li>
