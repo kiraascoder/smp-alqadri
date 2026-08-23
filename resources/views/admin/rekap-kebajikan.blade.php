@@ -1,6 +1,6 @@
 @extends('components.admin')
 
-@section('title', 'Rekap Skorsing')
+@section('title', 'Rekap Kebajikan')
 
 @section('content')
 
@@ -10,31 +10,32 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <div>
+
                 <h1 class="text-3xl font-bold text-slate-900">
-                    Rekap Skorsing
+                    Rekap Kebajikan
                 </h1>
 
                 <p class="text-slate-500 mt-1">
-                    Seluruh riwayat skorsing yang diberikan oleh Admin dan Guru.
+                    Seluruh riwayat poin kebajikan siswa yang diberikan oleh Admin dan Guru.
                 </p>
+
             </div>
 
 
-            <a href="{{ route('admin.rekap-skorsing.pdf', request()->query()) }}"
+            <a href="{{ route('admin.rekap-kebajikan.pdf', request()->query()) }}"
                 class="
                 inline-flex
                 items-center
                 justify-center
                 gap-2
-                px-5
-                py-3
-                bg-red-600
-                hover:bg-red-700
+                px-5 py-3
+                bg-emerald-600
+                hover:bg-emerald-700
                 text-white
                 font-semibold
                 rounded-xl
-                transition
                 shadow-sm
+                transition
             ">
 
                 📄 Download PDF
@@ -49,57 +50,48 @@
         <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
 
             <div class="mb-5">
+
                 <h2 class="font-semibold text-lg text-slate-800">
                     Filter Data
                 </h2>
 
                 <p class="text-sm text-slate-500 mt-1">
-                    Pilih filter untuk menampilkan data tertentu.
+                    Filter berdasarkan tanggal, pembuat, kelas, siswa, atau jenis kebajikan.
                 </p>
+
             </div>
 
 
-            <form method="GET" action="{{ route('admin.rekap-skorsing') }}"
+            <form method="GET" action="{{ route('admin.rekap-kebajikan') }}"
                 class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
 
-                {{-- TANGGAL MULAI --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Tanggal Mulai
                     </label>
 
                     <input type="date" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}"
-                        class="
-                        w-full
-                        border border-slate-300
-                        rounded-xl
-                        px-3 py-2.5
-                        focus:ring-2
-                        focus:ring-blue-500
-                        focus:border-blue-500
-                    ">
+                        class="w-full border border-slate-300 rounded-xl px-3 py-2.5">
+
                 </div>
 
 
-                {{-- TANGGAL SELESAI --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Tanggal Selesai
                     </label>
 
                     <input type="date" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}"
-                        class="
-                        w-full
-                        border border-slate-300
-                        rounded-xl
-                        px-3 py-2.5
-                    ">
+                        class="w-full border border-slate-300 rounded-xl px-3 py-2.5">
+
                 </div>
 
 
-                {{-- PEMBUAT --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Dibuat Oleh
                     </label>
@@ -119,11 +111,12 @@
                         @endforeach
 
                     </select>
+
                 </div>
 
 
-                {{-- KELAS --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Kelas
                     </label>
@@ -143,11 +136,12 @@
                         @endforeach
 
                     </select>
+
                 </div>
 
 
-                {{-- SISWA --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
                         Siswa
                     </label>
@@ -167,30 +161,32 @@
                         @endforeach
 
                     </select>
+
                 </div>
 
 
-                {{-- PELANGGARAN --}}
                 <div>
+
                     <label class="block text-sm font-medium text-slate-700 mb-2">
-                        Pelanggaran
+                        Jenis Kebajikan
                     </label>
 
-                    <select name="pelanggaran_id" class="w-full border border-slate-300 rounded-xl px-3 py-2.5">
+                    <select name="kebajikan_id" class="w-full border border-slate-300 rounded-xl px-3 py-2.5">
 
                         <option value="">
-                            Semua pelanggaran
+                            Semua kebajikan
                         </option>
 
-                        @foreach ($pelanggaranList as $p)
-                            <option value="{{ $p->id }}" @selected(request('pelanggaran_id') == $p->id)>
+                        @foreach ($kebajikanList as $kebajikan)
+                            <option value="{{ $kebajikan->id }}" @selected(request('kebajikan_id') == $kebajikan->id)>
 
-                                {{ $p->deskripsi }}
+                                {{ $kebajikan->deskripsi }}
 
                             </option>
                         @endforeach
 
                     </select>
+
                 </div>
 
 
@@ -202,9 +198,9 @@
                         bg-blue-700
                         hover:bg-blue-800
                         text-white
-                        font-semibold
                         rounded-xl
                         px-5 py-3
+                        font-semibold
                         transition
                     ">
 
@@ -213,16 +209,15 @@
                     </button>
 
 
-                    <a href="{{ route('admin.rekap-skorsing') }}"
+                    <a href="{{ route('admin.rekap-kebajikan') }}"
                         class="
                         px-6 py-3
                         border border-slate-300
+                        rounded-xl
+                        text-center
+                        font-semibold
                         text-slate-700
                         hover:bg-slate-50
-                        rounded-xl
-                        font-semibold
-                        text-center
-                        transition
                     ">
 
                         Reset
@@ -243,7 +238,7 @@
             <div class="p-5 border-b border-slate-100">
 
                 <h2 class="font-semibold text-lg text-slate-800">
-                    Data Rekap Skorsing
+                    Data Rekap Kebajikan
                 </h2>
 
             </div>
@@ -257,7 +252,7 @@
 
                         <tr>
 
-                            <th class="p-4 text-left whitespace-nowrap">
+                            <th class="p-4 text-left">
                                 Tanggal
                             </th>
 
@@ -270,11 +265,11 @@
                             </th>
 
                             <th class="p-4 text-left">
-                                Pelanggaran
+                                Kebajikan
                             </th>
 
                             <th class="p-4 text-left">
-                                Skor
+                                Poin
                             </th>
 
                             <th class="p-4 text-left">
@@ -300,7 +295,7 @@
                                 </td>
 
 
-                                <td class="p-4 font-medium text-slate-800">
+                                <td class="p-4 font-medium">
                                     {{ $item->siswa?->nama ?? '-' }}
                                 </td>
 
@@ -311,7 +306,7 @@
 
 
                                 <td class="p-4 min-w-[250px]">
-                                    {{ $item->pelanggaran?->deskripsi ?? '-' }}
+                                    {{ $item->kebajikan?->deskripsi ?? '-' }}
                                 </td>
 
 
@@ -321,13 +316,13 @@
                                         class="
                                         inline-flex
                                         px-3 py-1
-                                        bg-red-50
-                                        text-red-700
+                                        bg-emerald-50
+                                        text-emerald-700
                                         rounded-full
                                         font-bold
                                     ">
 
-                                        {{ $item->skor }}
+                                        +{{ $item->skor }}
 
                                     </span>
 
@@ -351,7 +346,7 @@
 
                                 <td colspan="7" class="p-10 text-center text-slate-500">
 
-                                    Tidak ada data skorsing.
+                                    Belum ada data kebajikan.
 
                                 </td>
 

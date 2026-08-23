@@ -329,6 +329,19 @@
 
                     </a>
                 </li>
+                <li>
+
+                    <a href="{{ route('admin.rekap-kebajikan') }}"
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('admin.rekap-kebajikan*') ? $selected : $normal }}
+        ">
+
+                        📗 Rekap Kebajikan
+
+                    </a>
+
+                </li>
             @elseif($role === 'guru')
                 <li>
                     <a href="{{ route('guru.dashboard') }}"
@@ -400,7 +413,7 @@
                         class="{{ $active }}
                     {{ request()->routeIs('ortu.pelanggaran') ? $selected : $normal }}">
 
-                        ⚠️ Jenis Pelanggaran
+                        ⚠️ Jenis pelanggaran
 
                     </a>
                 </li>

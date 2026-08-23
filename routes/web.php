@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC ROUTES
+| PUBLIC
 |--------------------------------------------------------------------------
 */
 
@@ -27,65 +27,53 @@ Route::view('/layanan', 'layanan')->name('layanan');
 |--------------------------------------------------------------------------
 | AUTHENTICATION
 |--------------------------------------------------------------------------
-|
-| Pertahankan middleware "authenticated" jika memang middleware custom
-| Anda digunakan untuk mencegah user yang sudah login membuka login.
-|
 */
 
-Route::middleware('authenticated')->group(function () {
+Route::get('/login', function () {
 
-    // Login
-        Route::get('/login', function () {
+    if (auth()->check()) {
+        return match (auth()->user()->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'guru' => redirect()->route('guru.dashboard'),
+            'orang_tua' => redirect()->route('ortu.dashboard'),
+            default => redirect()->route('home'),
+        };
+    }
 
-        // Jika sudah login
-        if (auth()->check()) {
+    return view('auth.login');
 
-            return match (auth()->user()->role) {
-
-                'admin' => redirect()->route('admin.dashboard'),
-
-                'guru' => redirect()->route('guru.dashboard'),
-
-                'orang_tua' => redirect()->route('ortu.dashboard'),
-
-                default => redirect('/'),
-
-            };
-
-        }
+})->name('login');
 
 
-        return view('auth.login');
+Route::post('/login', [SesiController::class, 'login'])
+    ->name('login.submit');
 
 
-    })->name('login');
+/*
+|--------------------------------------------------------------------------
+| FORGOT PASSWORD
+|--------------------------------------------------------------------------
+*/
 
-    Route::post('/login', [SesiController::class, 'login'])
-        ->name('login.submit');
+Route::get(
+    '/lupa-password',
+    [ForgotPasswordController::class, 'requestForm']
+)->name('password.request');
 
+Route::post(
+    '/lupa-password',
+    [ForgotPasswordController::class, 'sendResetLink']
+)->name('password.email');
 
-    // Lupa Password
-    Route::get(
-        '/lupa-password',
-        [ForgotPasswordController::class, 'requestForm']
-    )->name('password.request');
+Route::get(
+    '/reset-password/{token}',
+    [ForgotPasswordController::class, 'resetForm']
+)->name('password.reset');
 
-    Route::post(
-        '/lupa-password',
-        [ForgotPasswordController::class, 'sendResetLink']
-    )->name('password.email');
-
-    Route::get(
-        '/reset-password/{token}',
-        [ForgotPasswordController::class, 'resetForm']
-    )->name('password.reset');
-
-    Route::post(
-        '/reset-password',
-        [ForgotPasswordController::class, 'reset']
-    )->name('password.update');
-});
+Route::post(
+    '/reset-password',
+    [ForgotPasswordController::class, 'reset']
+)->name('password.update');
 
 
 /*
@@ -101,7 +89,7 @@ Route::post('/logout', [SesiController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES
+| ADMIN
 |--------------------------------------------------------------------------
 */
 
@@ -182,9 +170,6 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/kebajikan', [OrangTuaController::class, 'kebajikan'])
-            ->name('ortu.kebajikan');
-
         Route::get('/orang-tua', [AdminController::class, 'orangTua'])
             ->name('admin.orang');
 
@@ -243,7 +228,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | Skorsing / Riwayat Pelanggaran
+        | Skorsing
         |--------------------------------------------------------------------------
         */
 
@@ -266,26 +251,44 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/rekap-skorsing', [AdminController::class, 'rekapSkorsing'])
-            ->name('admin.rekap-skorsing');
+        Route::get(
+            '/rekap-skorsing',
+            [AdminController::class, 'rekapSkorsing']
+        )->name('admin.rekap-skorsing');
+
+        Route::get(
+            '/rekap-skorsing/pdf',
+            [AdminController::class, 'rekapSkorsingPdf']
+        )->name('admin.rekap-skorsing.pdf');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Rekap Kebajikan
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/rekap-kebajikan',
+            [AdminController::class, 'rekapKebajikan']
+        )->name('admin.rekap-kebajikan');
+
+        Route::get(
+            '/rekap-kebajikan/pdf',
+            [AdminController::class, 'rekapKebajikanPdf']
+        )->name('admin.rekap-kebajikan.pdf');
     });
 
 
 /*
 |--------------------------------------------------------------------------
-| GURU ROUTES
+| GURU
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('guru')
     ->middleware(['auth', 'role:guru'])
     ->group(function () {
-
-        /*
-        |--------------------------------------------------------------------------
-        | Dashboard
-        |--------------------------------------------------------------------------
-        */
 
         Route::get('/dashboard', [GuruController::class, 'index'])
             ->name('guru.dashboard');
@@ -303,20 +306,13 @@ Route::prefix('guru')
         Route::put('/profil', [GuruController::class, 'edit'])
             ->name('guru.edit');
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Ganti Password
-        |--------------------------------------------------------------------------
-        */
-
         Route::put('/profil/password', [GuruController::class, 'updatePassword'])
             ->name('guru.password.update');
 
 
         /*
         |--------------------------------------------------------------------------
-        | Jenis Pelanggaran
+        | Pelanggaran
         |--------------------------------------------------------------------------
         */
 
@@ -326,7 +322,7 @@ Route::prefix('guru')
 
         /*
         |--------------------------------------------------------------------------
-        | Skorsing / Pemberian Pelanggaran
+        | Skorsing
         |--------------------------------------------------------------------------
         */
 
@@ -345,7 +341,7 @@ Route::prefix('guru')
 
         /*
         |--------------------------------------------------------------------------
-        | Poin Kebajikan
+        | Kebajikan
         |--------------------------------------------------------------------------
         */
 
@@ -364,7 +360,7 @@ Route::prefix('guru')
 
 /*
 |--------------------------------------------------------------------------
-| ORANG TUA ROUTES
+| ORANG TUA
 |--------------------------------------------------------------------------
 */
 
@@ -372,23 +368,28 @@ Route::prefix('orang-tua')
     ->middleware(['auth', 'role:orang_tua'])
     ->group(function () {
 
-        Route::get('/dashboard', [OrangTuaController::class, 'dashboard'])
-            ->name('ortu.dashboard');
+        Route::get(
+            '/dashboard',
+            [OrangTuaController::class, 'dashboard']
+        )->name('ortu.dashboard');
 
-        Route::get('/anak', [OrangTuaController::class, 'anak'])
-            ->name('ortu.anak');
 
-        Route::get('/jenis-pelanggaran', [OrangTuaController::class, 'pelanggaran'])
-            ->name('ortu.pelanggaran');
+        Route::get(
+            '/jenis-pelanggaran',
+            [OrangTuaController::class, 'pelanggaran']
+        )->name('ortu.pelanggaran');
 
-        Route::get('/skorsing', [OrangTuaController::class, 'skorsing'])
-            ->name('ortu.skorsing');
+
+        Route::get(
+            '/kebajikan',
+            [OrangTuaController::class, 'kebajikan']
+        )->name('ortu.kebajikan');
     });
 
 
 /*
 |--------------------------------------------------------------------------
-| PWA ROUTES
+| PWA
 |--------------------------------------------------------------------------
 */
 
@@ -398,15 +399,20 @@ Route::get('/manifest.json', [PWAController::class, 'manifest'])
 
 Route::get('/serviceworker.js', function () {
 
+    $path = public_path('serviceworker.js');
+
+    abort_unless(file_exists($path), 404);
+
     return response(
-        file_get_contents(public_path('serviceworker.js')),
+        file_get_contents($path),
         200,
         [
             'Content-Type' => 'application/javascript',
-            'Cache-Control' => 'public, max-age=86400, must-revalidate',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
             'Service-Worker-Allowed' => '/',
         ]
     );
+
 })->name('pwa.serviceworker');
 
 

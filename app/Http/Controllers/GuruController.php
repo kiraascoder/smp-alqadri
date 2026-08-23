@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\Pelanggaran;
+use App\Models\RiwayatKebajikan;
 use App\Models\RiwayatPelanggaran;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
@@ -16,18 +17,90 @@ class GuruController extends Controller
 {
     public function index()
     {
-        $skorsingCount = RiwayatPelanggaran::where('created_by', Auth::id())->count();
-        $skorsingBulanIni = RiwayatPelanggaran::where('created_by', Auth::id())
+        $guruId = Auth::id();
+
+        /*
+    |--------------------------------------------------------------------------
+    | SKORSING / PELANGGARAN
+    |--------------------------------------------------------------------------
+    */
+
+        $skorsingCount = RiwayatPelanggaran::where(
+            'created_by',
+            $guruId
+        )->count();
+
+
+        $skorsingBulanIni = RiwayatPelanggaran::where(
+            'created_by',
+            $guruId
+        )
             ->whereMonth('tanggal', now()->month)
             ->whereYear('tanggal', now()->year)
             ->count();
-        $riwayat = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran'])
-            ->where('created_by', Auth::id())
+
+
+        $riwayat = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'pelanggaran'
+        ])
+            ->where('created_by', $guruId)
             ->latest('tanggal')
+            ->latest('id')
             ->take(8)
             ->get();
 
-        return view('guru.dashboard', compact('skorsingCount', 'skorsingBulanIni', 'riwayat'));
+
+        /*
+    |--------------------------------------------------------------------------
+    | KEBAJIKAN
+    |--------------------------------------------------------------------------
+    */
+
+        $kebajikanCount = RiwayatKebajikan::where(
+            'created_by',
+            $guruId
+        )->count();
+
+
+        $kebajikanBulanIni = RiwayatKebajikan::where(
+            'created_by',
+            $guruId
+        )
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->count();
+
+
+        $totalPoinKebajikan = RiwayatKebajikan::where(
+            'created_by',
+            $guruId
+        )->sum('skor');
+
+
+        $riwayatKebajikan = RiwayatKebajikan::with([
+            'siswa.kelas',
+            'kebajikan'
+        ])
+            ->where('created_by', $guruId)
+            ->latest('tanggal')
+            ->latest('id')
+            ->take(8)
+            ->get();
+
+
+        return view(
+            'guru.dashboard',
+            compact(
+                'skorsingCount',
+                'skorsingBulanIni',
+                'riwayat',
+                'kebajikanCount',
+                'kebajikanBulanIni',
+                'totalPoinKebajikan',
+                'riwayatKebajikan'
+            )
+        );
     }
 
     public function profil()
@@ -77,7 +150,7 @@ class GuruController extends Controller
             'Profil berhasil diperbarui'
         );
     }
-    
+
     public function pelanggaran()
     {
         $pelanggarans = Pelanggaran::orderBy('kategori')->paginate(10);

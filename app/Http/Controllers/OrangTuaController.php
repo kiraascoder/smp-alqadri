@@ -7,29 +7,25 @@ use App\Models\Pelanggaran;
 use App\Models\RiwayatKebajikan;
 use App\Models\RiwayatPelanggaran;
 use App\Models\Siswa;
-use Illuminate\Support\Facades\Auth;
 
 class OrangTuaController extends Controller
 {
+    /**
+     * Mengambil profil orang tua berdasarkan user yang sedang login.
+     */
+    private function getOrangTua()
+    {
+        return OrangTua::where('user_id', auth()->id())
+            ->firstOrFail();
+    }
+
+
+    /**
+     * Dashboard Orang Tua
+     */
     public function dashboard()
     {
-        /*
-    |--------------------------------------------------------------------------
-    | Cari data orang tua berdasarkan user yang login
-    |--------------------------------------------------------------------------
-    */
-
-        $orangTua = OrangTua::where(
-            'user_id',
-            auth()->id()
-        )->firstOrFail();
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | Ambil anak berdasarkan ID tabel orang_tua
-    |--------------------------------------------------------------------------
-    */
+        $orangTua = $this->getOrangTua();
 
         $anak = Siswa::with('kelas')
             ->withSum(
@@ -40,10 +36,7 @@ class OrangTuaController extends Controller
                 'riwayatKebajikan as total_kebajikan',
                 'skor'
             )
-            ->where(
-                'orang_tua_id',
-                $orangTua->id
-            )
+            ->where('orang_tua_id', $orangTua->id)
             ->orderBy('nama')
             ->get();
 
@@ -52,82 +45,72 @@ class OrangTuaController extends Controller
 
 
         /*
-    |--------------------------------------------------------------------------
-    | Total Pelanggaran
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Total Pelanggaran
+        |--------------------------------------------------------------------------
+        */
 
         $totalSkorPelanggaran = RiwayatPelanggaran::whereIn(
             'siswa_id',
             $anakIds
-        )
-            ->sum('skor');
+        )->sum('skor');
 
 
         $totalSkorsing = RiwayatPelanggaran::whereIn(
             'siswa_id',
             $anakIds
-        )
-            ->count();
+        )->count();
 
 
         /*
-    |--------------------------------------------------------------------------
-    | Total Kebajikan
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Total Kebajikan
+        |--------------------------------------------------------------------------
+        */
 
         $totalPoinKebajikan = RiwayatKebajikan::whereIn(
             'siswa_id',
             $anakIds
-        )
-            ->sum('skor');
+        )->sum('skor');
 
 
         $totalKebajikan = RiwayatKebajikan::whereIn(
             'siswa_id',
             $anakIds
-        )
-            ->count();
+        )->count();
 
 
         /*
-    |--------------------------------------------------------------------------
-    | Riwayat Pelanggaran
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Riwayat Pelanggaran Terbaru
+        |--------------------------------------------------------------------------
+        */
 
         $riwayatSkorsing = RiwayatPelanggaran::with([
             'siswa.kelas',
             'pelanggaran',
         ])
-            ->whereIn(
-                'siswa_id',
-                $anakIds
-            )
+            ->whereIn('siswa_id', $anakIds)
             ->latest('tanggal')
             ->latest('id')
-            ->take(10)
+            ->limit(10)
             ->get();
 
 
         /*
-    |--------------------------------------------------------------------------
-    | Riwayat Kebajikan
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Riwayat Kebajikan Terbaru
+        |--------------------------------------------------------------------------
+        */
 
         $riwayatKebajikan = RiwayatKebajikan::with([
             'siswa.kelas',
             'kebajikan',
         ])
-            ->whereIn(
-                'siswa_id',
-                $anakIds
-            )
+            ->whereIn('siswa_id', $anakIds)
             ->latest('tanggal')
             ->latest('id')
-            ->take(10)
+            ->limit(10)
             ->get();
 
 
@@ -146,15 +129,43 @@ class OrangTuaController extends Controller
     }
 
 
+    /**
+     * Daftar Jenis Pelanggaran + Riwayat Anak
+     */
     public function pelanggaran()
     {
-        $user = Auth::user();
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil profil orang tua
+        |--------------------------------------------------------------------------
+        */
+
+        $orangTua = $this->getOrangTua();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil ID anak milik orang tua
+        |--------------------------------------------------------------------------
+        |
+        | PENTING:
+        | orang_tua_id di tabel siswa menunjuk ke orang_tua.id,
+        | BUKAN users.id.
+        |
+        */
 
         $anakIds = Siswa::where(
             'orang_tua_id',
-            $user->id
+            $orangTua->id
         )
             ->pluck('id');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Riwayat Pelanggaran Anak
+        |--------------------------------------------------------------------------
+        */
 
         $riwayat = RiwayatPelanggaran::with([
             'siswa.kelas',
@@ -162,11 +173,33 @@ class OrangTuaController extends Controller
         ])
             ->whereIn('siswa_id', $anakIds)
             ->latest('tanggal')
-            ->paginate(10);
+            ->latest('id')
+            ->paginate(10, ['*'], 'riwayat_page');
 
-        $pelanggarans = Pelanggaran::orderBy('kategori')
+
+        /*
+        |--------------------------------------------------------------------------
+        | Daftar Jenis Pelanggaran
+        |--------------------------------------------------------------------------
+        |
+        | HARUS paginate(), bukan get(),
+        | karena Blade menggunakan:
+        |
+        | {{ $pelanggarans->links() }}
+        |
+        */
+
+        $pelanggarans = Pelanggaran::orderByRaw("
+                CASE
+                    WHEN kategori = 'Ringan' THEN 1
+                    WHEN kategori = 'Sedang' THEN 2
+                    WHEN kategori = 'Sangat Berat' THEN 3
+                    ELSE 4
+                END
+            ")
             ->orderBy('skor')
-            ->get();
+            ->paginate(10, ['*'], 'pelanggaran_page');
+
 
         return view(
             'orangtua.pelanggaran',
@@ -176,21 +209,32 @@ class OrangTuaController extends Controller
             )
         );
     }
+
+
+    /**
+     * Riwayat Kebajikan Anak
+     */
     public function kebajikan()
     {
-        $orangTua = auth()->user()->orangTua;
+        $orangTua = $this->getOrangTua();
 
 
-        $siswa = $orangTua
-            ->siswa()
+        $siswa = Siswa::where(
+            'orang_tua_id',
+            $orangTua->id
+        )
             ->with([
                 'kelas',
                 'riwayatKebajikan.kebajikan',
-                'riwayatKebajikan.creator'
+                'riwayatKebajikan.creator',
             ])
+            ->orderBy('nama')
             ->get();
 
 
-        return view('orangtua.kebajikan', compact('siswa'));
+        return view(
+            'orangtua.kebajikan',
+            compact('siswa')
+        );
     }
 }
