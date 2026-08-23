@@ -297,6 +297,16 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('admin.skorsing') }}"
+                        class="{{ $active }}
+                    {{ request()->routeIs('admin.skorsing*') ? $selected : $normal }}">
+
+                        🚨 Skorsing
+
+                    </a>
+                </li>
+
 
                 <li>
                     <a href="{{ route('admin.kebajikan') }}"
@@ -321,15 +331,6 @@
 
                 </li>
 
-                <li>
-                    <a href="{{ route('admin.skorsing') }}"
-                        class="{{ $active }}
-                    {{ request()->routeIs('admin.skorsing*') ? $selected : $normal }}">
-
-                        🚨 Skorsing
-
-                    </a>
-                </li>
 
 
                 <li>
