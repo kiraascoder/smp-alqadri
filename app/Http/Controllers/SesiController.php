@@ -8,61 +8,68 @@ use Illuminate\Support\Facades\Auth;
 
 class SesiController extends Controller
 {
-  public function LoginView()
-{
-    if (Auth::check()) {
+    public function LoginView()
+    {
+        if (Auth::check()) {
+            return $this->redirectByRole(Auth::user());
+        }
+
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        if (Auth::check()) {
+            return $this->redirectByRole(Auth::user());
+        }
+
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+
+        if (! Auth::attempt(
+            $credentials,
+            $request->boolean('remember')
+        )) {
+            return back()
+                ->withErrors([
+                    'login' => 'Email atau password tidak sesuai.'
+                ])
+                ->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+
         return $this->redirectByRole(Auth::user());
     }
-
-    return view('auth.login');
-}
-
-public function login(Request $request)
-{
-    if (Auth::check()) {
-        return $this->redirectByRole(Auth::user());
-    }
-
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required', 'string', 'min:6'],
-    ]);
-
-    if (! Auth::attempt(
-        $credentials,
-        $request->boolean('remember')
-    )) {
-        return back()
-            ->withErrors([
-                'login' => 'Email atau password tidak sesuai.'
-            ])
-            ->onlyInput('email');
-    }
-
-    $request->session()->regenerate();
-
-    return $this->redirectByRole(Auth::user());
-}
 
 
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()
+            ->route('login')
+            ->with(
+                'success',
+                'Anda berhasil keluar dari sistem.'
+            );
     }
 
     private function redirectByRole(User $user)
-{
-    return match ($user->role) {
-        User::ROLE_ADMIN => redirect()->route('admin.dashboard'),
-        User::ROLE_GURU => redirect()->route('guru.dashboard'),
-        User::ROLE_ORANG_TUA => redirect()->route('ortu.dashboard'),
-        default => redirect()->route('home'),
-    };
-}
+    {
+        return match ($user->role) {
+            User::ROLE_ADMIN => redirect()->route('admin.dashboard'),
+            User::ROLE_GURU => redirect()->route('guru.dashboard'),
+            User::ROLE_ORANG_TUA => redirect()->route('ortu.dashboard'),
+            default => redirect()->route('home'),
+        };
+    }
 
     private function invalidRole()
     {

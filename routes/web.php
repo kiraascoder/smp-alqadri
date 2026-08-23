@@ -31,21 +31,41 @@ Route::view('/layanan', 'layanan')->name('layanan');
 
 Route::get('/login', function () {
 
+    /*
+     * Jika user sudah login,
+     * jangan tampilkan halaman login lagi.
+     */
     if (auth()->check()) {
+
         return match (auth()->user()->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'guru' => redirect()->route('guru.dashboard'),
-            'orang_tua' => redirect()->route('ortu.dashboard'),
-            default => redirect()->route('home'),
+
+            'admin' =>
+            redirect()->route('admin.dashboard'),
+
+            'guru' =>
+            redirect()->route('guru.dashboard'),
+
+            'orang_tua' =>
+            redirect()->route('ortu.dashboard'),
+
+            default =>
+            redirect()->route('home'),
         };
     }
 
+
+    /*
+     * Jika belum login,
+     * tampilkan halaman login.
+     */
     return view('auth.login');
 })->name('login');
 
 
-Route::post('/login', [SesiController::class, 'login'])
-    ->name('login.submit');
+Route::post(
+    '/login',
+    [SesiController::class, 'login']
+)->name('login.submit');
 
 
 /*
@@ -59,15 +79,18 @@ Route::get(
     [ForgotPasswordController::class, 'requestForm']
 )->name('password.request');
 
+
 Route::post(
     '/lupa-password',
     [ForgotPasswordController::class, 'sendResetLink']
 )->name('password.email');
 
+
 Route::get(
     '/reset-password/{token}',
     [ForgotPasswordController::class, 'resetForm']
 )->name('password.reset');
+
 
 Route::post(
     '/reset-password',
@@ -79,13 +102,53 @@ Route::post(
 |--------------------------------------------------------------------------
 | LOGOUT
 |--------------------------------------------------------------------------
+|
+| GET /logout:
+| Tidak melakukan logout.
+| Jika diketik manual di browser, user dikembalikan ke dashboard.
+|
 */
 
-Route::post('/logout', [SesiController::class, 'logout'])
+Route::get('/logout', function () {
+
+    if (! auth()->check()) {
+
+        return redirect()->route('login');
+    }
+
+
+    return match (auth()->user()->role) {
+
+        'admin' =>
+        redirect()->route('admin.dashboard'),
+
+        'guru' =>
+        redirect()->route('guru.dashboard'),
+
+        'orang_tua' =>
+        redirect()->route('ortu.dashboard'),
+
+        default =>
+        redirect()->route('home'),
+    };
+})->name('logout.redirect');
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGOUT SEBENARNYA
+|--------------------------------------------------------------------------
+|
+| Logout hanya dilakukan menggunakan request POST.
+|
+*/
+
+Route::post(
+    '/logout',
+    [SesiController::class, 'logout']
+)
     ->middleware('auth')
     ->name('logout');
-
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN
