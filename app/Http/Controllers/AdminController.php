@@ -1376,4 +1376,154 @@ class AdminController extends Controller
                 '.pdf'
         );
     }
+    /*
+|--------------------------------------------------------------------------
+| POIN KEBAJIKAN
+|--------------------------------------------------------------------------
+*/
+
+    public function poinKebajikan()
+    {
+        /*
+     * Daftar siswa untuk pilihan penerima kebajikan.
+     */
+        $siswas = Siswa::with('kelas')
+            ->orderBy('nama')
+            ->get();
+
+
+        /*
+     * Master jenis kebajikan.
+     */
+        $kebajikans = Kebajikan::orderBy('deskripsi')
+            ->get();
+
+
+        /*
+     * Semua riwayat kebajikan.
+     * Admin boleh melihat pemberian dari admin maupun guru.
+     */
+        $riwayat = RiwayatKebajikan::with([
+            'siswa.kelas',
+            'kebajikan',
+            'creator',
+        ])
+            ->latest('tanggal')
+            ->latest('id')
+            ->paginate(15);
+
+
+        return view(
+            'admin.poin-kebajikan',
+            compact(
+                'siswas',
+                'kebajikans',
+                'riwayat'
+            )
+        );
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| BERI KEBAJIKAN
+|--------------------------------------------------------------------------
+*/
+
+    public function beriKebajikan(Request $request)
+    {
+        $data = $request->validate([
+            'siswa_id' => [
+                'required',
+                'exists:siswa,id',
+            ],
+
+            'kebajikan_id' => [
+                'required',
+                'exists:kebajikans,id',
+            ],
+
+            'tanggal' => [
+                'required',
+                'date',
+            ],
+
+            'keterangan' => [
+                'nullable',
+                'string',
+                'max:2000',
+            ],
+        ]);
+
+
+        DB::transaction(function () use ($data) {
+
+            /*
+         * Pastikan siswa benar-benar ada.
+         */
+            Siswa::findOrFail(
+                $data['siswa_id']
+            );
+
+
+            /*
+         * Ambil master kebajikan.
+         */
+            $kebajikan = Kebajikan::findOrFail(
+                $data['kebajikan_id']
+            );
+
+
+            /*
+         * Simpan snapshot skor.
+         *
+         * Jadi apabila skor master kebajikan berubah
+         * di kemudian hari, riwayat lama tidak ikut berubah.
+         */
+            RiwayatKebajikan::create([
+                'siswa_id' =>
+                $data['siswa_id'],
+
+                'kebajikan_id' =>
+                $data['kebajikan_id'],
+
+                'skor' =>
+                $kebajikan->skor,
+
+                'tanggal' =>
+                $data['tanggal'],
+
+                'keterangan' =>
+                $data['keterangan'] ?? null,
+
+                'created_by' =>
+                auth()->id(),
+            ]);
+        });
+
+
+        return back()->with(
+            'success',
+            'Poin kebajikan berhasil diberikan kepada siswa.'
+        );
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| HAPUS RIWAYAT KEBAJIKAN
+|--------------------------------------------------------------------------
+*/
+
+    public function hapusKebajikan(
+        RiwayatKebajikan $riwayat
+    ) {
+        $riwayat->delete();
+
+
+        return back()->with(
+            'success',
+            'Riwayat kebajikan berhasil dihapus.'
+        );
+    }
 }

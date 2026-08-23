@@ -8,6 +8,7 @@ class RiwayatKebajikan extends Model
 {
     protected $table = 'riwayat_kebajikan';
 
+
     protected $fillable = [
         'siswa_id',
         'kebajikan_id',
@@ -17,10 +18,12 @@ class RiwayatKebajikan extends Model
         'created_by',
     ];
 
+
     protected $casts = [
         'tanggal' => 'date',
         'skor' => 'integer',
     ];
+
 
     public function siswa()
     {
@@ -30,6 +33,7 @@ class RiwayatKebajikan extends Model
         );
     }
 
+
     public function kebajikan()
     {
         return $this->belongsTo(
@@ -37,6 +41,7 @@ class RiwayatKebajikan extends Model
             'kebajikan_id'
         );
     }
+
 
     public function creator()
     {

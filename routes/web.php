@@ -41,7 +41,6 @@ Route::get('/login', function () {
     }
 
     return view('auth.login');
-
 })->name('login');
 
 
@@ -225,7 +224,26 @@ Route::prefix('admin')
             [KebajikanController::class, 'destroy']
         )->name('admin.kebajikan.delete');
 
+        /*
+    |--------------------------------------------------------------------------
+    | Pemberian Kebajikan
+    |--------------------------------------------------------------------------
+    */
 
+        Route::get(
+            '/poin-kebajikan',
+            [AdminController::class, 'poinKebajikan']
+        )->name('admin.poin-kebajikan');
+
+        Route::post(
+            '/poin-kebajikan',
+            [AdminController::class, 'beriKebajikan']
+        )->name('admin.poin-kebajikan.store');
+
+        Route::delete(
+            '/poin-kebajikan/{riwayat}',
+            [AdminController::class, 'hapusKebajikan']
+        )->name('admin.poin-kebajikan.delete');
         /*
         |--------------------------------------------------------------------------
         | Skorsing
@@ -412,7 +430,6 @@ Route::get('/serviceworker.js', function () {
             'Service-Worker-Allowed' => '/',
         ]
     );
-
 })->name('pwa.serviceworker');
 
 
