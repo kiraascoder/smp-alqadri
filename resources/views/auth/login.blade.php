@@ -51,7 +51,7 @@
                 justify-center
                 mb-5">
 
-                <img src="{{ asset('logo.png') }}" alt="Logo SMP Al Qadri"
+                <img src="{{ asset('logo-baru.png') }}" alt="Logo SMP Al Qadri"
                     class="
                     w-32
                     h-32
