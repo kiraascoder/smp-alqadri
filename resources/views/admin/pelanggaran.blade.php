@@ -70,15 +70,15 @@
                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Pilih Kategori</option>
 
-                        <option value="Ringan" @selected(old('kategori') === 'Ringan')>
+                        <option value="ringan" @selected(old('kategori') === 'Ringan')>
                             Ringan
                         </option>
 
-                        <option value="Sedang" @selected(old('kategori') === 'Sedang')>
+                        <option value="sedang" @selected(old('kategori') === 'Sedang')>
                             Sedang
                         </option>
 
-                        <option value="Sangat Berat" @selected(old('kategori') === 'Sangat Berat')>
+                        <option value="sangat berat" @selected(old('kategori') === 'Sangat Berat')>
                             Sangat Berat
                         </option>
                     </select>
@@ -160,19 +160,19 @@
                                 {{-- Kategori --}}
                                 <td class="p-4">
 
-                                    @if ($item->kategori === 'Ringan')
+                                    @if ($item->kategori === 'ringan')
                                         <span
                                             class="inline-flex px-3 py-1 rounded-full text-xs font-medium
                                                  bg-emerald-100 text-emerald-700">
                                             Ringan
                                         </span>
-                                    @elseif ($item->kategori === 'Sedang')
+                                    @elseif ($item->kategori === 'sedang')
                                         <span
                                             class="inline-flex px-3 py-1 rounded-full text-xs font-medium
                                                  bg-amber-100 text-amber-700">
                                             Sedang
                                         </span>
-                                    @elseif ($item->kategori === 'Sangat Berat')
+                                    @elseif ($item->kategori === 'sangat berat')
                                         <span
                                             class="inline-flex px-3 py-1 rounded-full text-xs font-medium
                                                  bg-red-100 text-red-700">
@@ -276,15 +276,15 @@
                                                                 class="w-full border border-slate-300 rounded-xl px-4 py-3
                                                                    focus:ring-2 focus:ring-blue-500">
 
-                                                                <option value="Ringan" @selected($item->kategori === 'Ringan')>
+                                                                <option value="ringan" @selected($item->kategori === 'ringan')>
                                                                     Ringan
                                                                 </option>
 
-                                                                <option value="Sedang" @selected($item->kategori === 'Sedang')>
+                                                                <option value="sedang" @selected($item->kategori === 'sedang')>
                                                                     Sedang
                                                                 </option>
 
-                                                                <option value="Sangat Berat" @selected($item->kategori === 'Sangat Berat')>
+                                                                <option value="sangat berat" @selected($item->kategori === 'sangat berat')>
                                                                     Sangat Berat
                                                                 </option>
 

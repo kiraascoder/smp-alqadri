@@ -11,7 +11,7 @@ class PelanggaranController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'kategori' => ['required', Rule::in(['ringan', 'sedang', 'berat'])],
+            'kategori' => ['required', Rule::in(['ringan', 'sedang', 'sangat berat'])],
             'deskripsi' => ['required', 'string', 'max:2000'],
             'skor' => ['required', 'integer', 'min:1'],
         ]);
