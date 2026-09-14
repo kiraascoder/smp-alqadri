@@ -4,6 +4,65 @@
 
 @section('content')
 
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+
+    <style>
+        /*
+        |--------------------------------------------------------------------------
+        | TOM SELECT - SEARCH SISWA
+        |--------------------------------------------------------------------------
+        */
+
+        .ts-wrapper {
+            margin-top: 0;
+        }
+
+        .ts-control {
+            min-height: 50px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            background: #ffffff !important;
+            box-shadow: none !important;
+            font-size: 0.875rem;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15) !important;
+        }
+
+        .ts-control input {
+            font-size: 0.875rem !important;
+        }
+
+        .ts-dropdown {
+            margin-top: 5px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10) !important;
+        }
+
+        .ts-dropdown .option {
+            padding: 11px 14px !important;
+            font-size: 0.875rem;
+        }
+
+        .ts-dropdown .option.active {
+            background: #ecfdf5 !important;
+            color: #047857 !important;
+        }
+
+        .ts-dropdown .no-results {
+            padding: 14px !important;
+            color: #64748b;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+    </style>
+
+
     <div class="py-8 space-y-6">
 
         {{-- HEADER --}}
@@ -107,7 +166,7 @@
                     {{-- SISWA --}}
                     <div>
 
-                        <label
+                        <label for="siswa_id"
                             class="
                             block
                             text-sm
@@ -121,17 +180,7 @@
                         </label>
 
 
-                        <select name="siswa_id" required
-                            class="
-                            w-full
-                            border border-slate-300
-                            rounded-xl
-                            px-4 py-3
-                            bg-white
-                            focus:ring-2
-                            focus:ring-emerald-500
-                            focus:border-emerald-500
-                        ">
+                        <select id="siswa_id" name="siswa_id" required placeholder="Ketik nama siswa atau kelas...">
 
                             <option value="">
                                 Pilih siswa
@@ -142,7 +191,7 @@
                                 <option value="{{ $siswa->id }}" @selected(old('siswa_id') == $siswa->id)>
 
                                     {{ $siswa->nama }}
-                                    —
+                                    -
                                     {{ $siswa->kelas?->nama_kelas ?? 'Belum ada kelas' }}
 
                                 </option>
@@ -227,6 +276,7 @@
                             px-4 py-3
                             focus:ring-2
                             focus:ring-emerald-500
+                            focus:border-emerald-500
                         ">
 
                     </div>
@@ -263,6 +313,7 @@
                             resize-none
                             focus:ring-2
                             focus:ring-emerald-500
+                            focus:border-emerald-500
                         ">{{ old('keterangan') }}</textarea>
 
                     </div>
@@ -383,6 +434,7 @@
                                 hover:bg-slate-50
                             ">
 
+
                                 <td class="p-4 whitespace-nowrap">
 
                                     {{ $item->tanggal?->format('d/m/Y') ?? '-' }}
@@ -446,13 +498,8 @@
 
                                 <td class="p-4 text-center">
 
-                                    <form method="POST"
-                                        action="{{ route('admin.poin-kebajikan.delete', $item->id) }}"
-                                        onsubmit="
-                                        return confirm(
-                                            'Hapus riwayat kebajikan ini?'
-                                        )
-                                    ">
+                                    <form method="POST" action="{{ route('admin.poin-kebajikan.delete', $item->id) }}"
+                                        onsubmit="return confirm('Hapus riwayat kebajikan ini?')">
 
                                         @csrf
                                         @method('DELETE')
@@ -479,6 +526,7 @@
                                 </td>
 
                             </tr>
+
 
                         @empty
 
@@ -519,5 +567,61 @@
         </section>
 
     </div>
+
+
+    {{-- TOM SELECT --}}
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const siswaSelect =
+                document.getElementById('siswa_id');
+
+
+            if (siswaSelect) {
+
+                new TomSelect(
+                    siswaSelect, {
+                        create: false,
+
+                        allowEmptyOption: true,
+
+                        placeholder: 'Ketik nama siswa atau kelas...',
+
+                        searchField: [
+                            'text'
+                        ],
+
+                        sortField: {
+                            field: 'text',
+                            direction: 'asc'
+                        },
+
+                        maxOptions: 100,
+
+                        closeAfterSelect: true,
+
+                        render: {
+
+                            no_results: function() {
+
+                                return `
+                            <div class="no-results">
+                                Siswa tidak ditemukan.
+                            </div>
+                        `;
+
+                            }
+
+                        }
+                    }
+                );
+
+            }
+
+        });
+    </script>
 
 @endsection
