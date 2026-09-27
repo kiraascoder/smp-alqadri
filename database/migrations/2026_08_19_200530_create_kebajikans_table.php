@@ -8,12 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('kebajikans', function (Blueprint $table) {
-            $table->id();
-            $table->text('deskripsi');
-            $table->unsignedInteger('skor');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('kebajikans')) {
+            Schema::create('kebajikans', function (Blueprint $table) {
+                $table->id();
+                $table->text('deskripsi');
+                $table->unsignedInteger('skor');
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void

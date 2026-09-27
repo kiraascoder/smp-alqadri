@@ -8,53 +8,56 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('riwayat_kebajikan', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('riwayat_kebajikan')) {
+            Schema::create('riwayat_kebajikan', function (Blueprint $table) {
+                $table->id();
 
-            $table->foreignId('siswa_id')
-                ->constrained('siswa')
-                ->cascadeOnDelete();
+                $table->foreignId('siswa_id')
+                    ->constrained('siswa')
+                    ->cascadeOnDelete();
 
-            $table->foreignId('kebajikan_id')
-                ->constrained('kebajikans')
-                ->restrictOnDelete();
+                $table->foreignId('kebajikan_id')
+                    ->constrained('kebajikans')
+                    ->restrictOnDelete();
 
-            /*
-            |--------------------------------------------------------------------------
-            | Snapshot skor
-            |--------------------------------------------------------------------------
-            | Skor disimpan di sini supaya jika master kebajikan berubah
-            | dari 5 menjadi 10, riwayat lama tetap 5.
-            */
-            $table->unsignedInteger('skor');
+                /*
+                |--------------------------------------------------------------------------
+                | Snapshot skor
+                |--------------------------------------------------------------------------
+                | Skor disimpan di sini supaya jika master kebajikan berubah
+                | dari 5 menjadi 10, riwayat lama tetap 5.
+                |--------------------------------------------------------------------------
+                */
+                $table->unsignedInteger('skor');
 
-            $table->date('tanggal');
+                $table->date('tanggal');
 
-            $table->text('keterangan')
-                ->nullable();
+                $table->text('keterangan')
+                    ->nullable();
 
-            /*
-            |--------------------------------------------------------------------------
-            | Guru yang memberikan poin
-            |--------------------------------------------------------------------------
-            */
-            $table->foreignId('created_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
+                /*
+                |--------------------------------------------------------------------------
+                | User yang memberikan poin
+                |--------------------------------------------------------------------------
+                */
+                $table->foreignId('created_by')
+                    ->nullable()
+                    ->constrained('users')
+                    ->nullOnDelete();
 
-            $table->timestamps();
+                $table->timestamps();
 
-            $table->index([
-                'siswa_id',
-                'tanggal',
-            ]);
+                $table->index([
+                    'siswa_id',
+                    'tanggal',
+                ]);
 
-            $table->index([
-                'created_by',
-                'tanggal',
-            ]);
-        });
+                $table->index([
+                    'created_by',
+                    'tanggal',
+                ]);
+            });
+        }
     }
 
     public function down(): void
