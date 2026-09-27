@@ -172,64 +172,233 @@ class GuruController extends Controller
     public function tambahSkorsing(Request $request)
     {
         $data = $request->validate([
-            'siswa_id' => ['required', 'exists:siswa,id'],
-            'pelanggaran_id' => ['required', 'exists:pelanggarans,id'],
-            'tanggal' => ['required', 'date'],
-            'keterangan' => ['nullable', 'string', 'max:2000'],
+            'jenis_pencatatan' => [
+                'required',
+                Rule::in([
+                    'master',
+                    'manual',
+                ]),
+            ],
+
+            'siswa_id' => [
+                'required',
+                'exists:siswa,id',
+            ],
+
+            'pelanggaran_id' => [
+                'nullable',
+                'required_if:jenis_pencatatan,master',
+                'exists:pelanggarans,id',
+            ],
+
+            'tanggal' => [
+                'required',
+                'date',
+            ],
+
+            'keterangan' => [
+                'nullable',
+                'required_if:jenis_pencatatan,manual',
+                'string',
+                'max:2000',
+            ],
         ]);
 
-        $siswa = DB::transaction(function () use ($data) {
-            $siswa = Siswa::lockForUpdate()->findOrFail($data['siswa_id']);
-            $pelanggaran = Pelanggaran::findOrFail($data['pelanggaran_id']);
 
-            RiwayatPelanggaran::create($data + [
-                'created_by' => Auth::id(),
+        $hasil = DB::transaction(function () use ($data) {
+
+            $siswa = Siswa::lockForUpdate()
+                ->findOrFail($data['siswa_id']);
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | CATATAN MANUAL
+        |--------------------------------------------------------------------------
+        |
+        | Guru hanya mencatat kejadian.
+        | Belum ada poin.
+        | Admin menentukan poin kemudian.
+        |
+        */
+
+            if ($data['jenis_pencatatan'] === 'manual') {
+
+                RiwayatPelanggaran::create([
+                    'siswa_id' => $siswa->id,
+                    'pelanggaran_id' => null,
+                    'skor' => null,
+                    'tanggal' => $data['tanggal'],
+                    'keterangan' => $data['keterangan'],
+                    'created_by' => Auth::id(),
+                    'dinilai_oleh' => null,
+                    'dinilai_pada' => null,
+                ]);
+
+
+                return [
+                    'siswa' => $siswa->fresh(),
+                    'manual' => true,
+                ];
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | PELANGGARAN MASTER
+        |--------------------------------------------------------------------------
+        */
+
+            $pelanggaran = Pelanggaran::findOrFail(
+                $data['pelanggaran_id']
+            );
+
+
+            RiwayatPelanggaran::create([
+                'siswa_id' => $siswa->id,
+                'pelanggaran_id' => $pelanggaran->id,
                 'skor' => $pelanggaran->skor,
+                'tanggal' => $data['tanggal'],
+                'keterangan' => $data['keterangan'] ?? null,
+                'created_by' => Auth::id(),
             ]);
-            $siswa->increment('score_bk', $pelanggaran->skor);
 
-            return $siswa->fresh();
+
+            $siswa->increment(
+                'score_bk',
+                $pelanggaran->skor
+            );
+
+
+            return [
+                'siswa' => $siswa->fresh(),
+                'manual' => false,
+            ];
         });
 
-        return back()->with('success', "Skorsing {$siswa->nama} berhasil ditambahkan.");
+
+        if ($hasil['manual']) {
+
+            return back()->with(
+                'success',
+                "Catatan pelanggaran {$hasil['siswa']->nama} berhasil disimpan dan menunggu penentuan poin."
+            );
+        }
+
+
+        return back()->with(
+            'success',
+            "Skorsing {$hasil['siswa']->nama} berhasil ditambahkan."
+        );
     }
 
     public function detailSkorsing(int $id)
     {
-        $skorsing = RiwayatPelanggaran::with(['siswa.kelas', 'pelanggaran'])
-            ->where('created_by', Auth::id())
+        $skorsing = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'pelanggaran',
+            'penilai',
+        ])
+            ->where(
+                'created_by',
+                Auth::id()
+            )
             ->findOrFail($id);
+
 
         return response()->json([
             'id' => $skorsing->id,
+
             'siswa' => [
-                'nama' => $skorsing->siswa?->nama,
-                'kelas' => $skorsing->siswa?->kelas?->nama_kelas,
-                'score_bk' => $skorsing->siswa?->score_bk,
+                'nama' =>
+                $skorsing->siswa?->nama,
+
+                'kelas' =>
+                $skorsing->siswa?->kelas?->nama_kelas,
+
+                'score_bk' =>
+                $skorsing->siswa?->score_bk,
             ],
+
             'pelanggaran' => [
-                'deskripsi' => $skorsing->pelanggaran?->deskripsi,
-                'skor' => $skorsing->skor,
+                'jenis' =>
+                $skorsing->pelanggaran_id
+                    ? 'master'
+                    : 'manual',
+
+                'deskripsi' =>
+                $skorsing->pelanggaran?->deskripsi
+                    ?? $skorsing->keterangan,
+
+                'skor' =>
+                $skorsing->skor,
+
+                'status_poin' =>
+                is_null($skorsing->skor)
+                    ? 'belum_ditentukan'
+                    : 'sudah_ditentukan',
             ],
-            'tanggal' => optional($skorsing->tanggal)->format('Y-m-d'),
-            'keterangan' => $skorsing->keterangan,
+
+            'tanggal' =>
+            optional($skorsing->tanggal)
+                ->format('Y-m-d'),
+
+            'keterangan' =>
+            $skorsing->keterangan,
+
+            'dinilai_oleh' =>
+            $skorsing->penilai?->name,
+
+            'dinilai_pada' =>
+            optional($skorsing->dinilai_pada)
+                ->format('d/m/Y H:i'),
         ]);
     }
 
     public function destroySkorsing(int $id)
     {
         DB::transaction(function () use ($id) {
-            $riwayat = RiwayatPelanggaran::with('pelanggaran')
-                ->where('created_by', Auth::id())
+
+            $riwayat = RiwayatPelanggaran::where(
+                'created_by',
+                Auth::id()
+            )
                 ->lockForUpdate()
                 ->findOrFail($id);
 
-            $siswa = Siswa::lockForUpdate()->findOrFail($riwayat->siswa_id);
-            $siswa->score_bk = max(0, $siswa->score_bk - $riwayat->skor);
-            $siswa->save();
+
+            /*
+        |--------------------------------------------------------------------------
+        | KURANGI SCORE_BK HANYA JIKA SUDAH MEMILIKI POIN
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->skor)) {
+
+                $siswa = Siswa::lockForUpdate()
+                    ->findOrFail(
+                        $riwayat->siswa_id
+                    );
+
+
+                $siswa->score_bk = max(
+                    0,
+                    $siswa->score_bk -
+                        $riwayat->skor
+                );
+
+
+                $siswa->save();
+            }
+
+
             $riwayat->delete();
         });
 
-        return back()->with('success', 'Skorsing berhasil dihapus.');
+
+        return back()->with(
+            'success',
+            'Skorsing berhasil dihapus.'
+        );
     }
 }

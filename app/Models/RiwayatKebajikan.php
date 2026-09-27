@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RiwayatKebajikan extends Model
 {
-    protected $table = 'riwayat_kebajikan';
+    use HasFactory;
 
+    protected $table = 'riwayat_kebajikan';
 
     protected $fillable = [
         'siswa_id',
@@ -16,12 +18,14 @@ class RiwayatKebajikan extends Model
         'tanggal',
         'keterangan',
         'created_by',
+        'dinilai_oleh',
+        'dinilai_pada',
     ];
-
 
     protected $casts = [
         'tanggal' => 'date',
         'skor' => 'integer',
+        'dinilai_pada' => 'datetime',
     ];
 
 
@@ -48,6 +52,15 @@ class RiwayatKebajikan extends Model
         return $this->belongsTo(
             User::class,
             'created_by'
+        );
+    }
+
+
+    public function penilai()
+    {
+        return $this->belongsTo(
+            User::class,
+            'dinilai_oleh'
         );
     }
 }

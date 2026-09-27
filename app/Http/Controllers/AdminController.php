@@ -726,13 +726,22 @@ class AdminController extends Controller
     public function tambahSkorsing(Request $request)
     {
         $data = $request->validate([
+            'jenis_pencatatan' => [
+                'required',
+                Rule::in([
+                    'master',
+                    'manual',
+                ]),
+            ],
+
             'siswa_id' => [
                 'required',
                 'exists:siswa,id',
             ],
 
             'pelanggaran_id' => [
-                'required',
+                'nullable',
+                'required_if:jenis_pencatatan,master',
                 'exists:pelanggarans,id',
             ],
 
@@ -743,6 +752,7 @@ class AdminController extends Controller
 
             'keterangan' => [
                 'nullable',
+                'required_if:jenis_pencatatan,manual',
                 'string',
                 'max:2000',
             ],
@@ -751,44 +761,68 @@ class AdminController extends Controller
 
         DB::transaction(function () use ($data) {
 
-            /*
-             * Lock data siswa agar perubahan score_bk
-             * aman dari request bersamaan.
-             */
             $siswa = Siswa::lockForUpdate()
-                ->findOrFail(
-                    $data['siswa_id']
-                );
-
-
-            $pelanggaran =
-                Pelanggaran::findOrFail(
-                    $data['pelanggaran_id']
-                );
+                ->findOrFail($data['siswa_id']);
 
 
             /*
-             * Simpan snapshot skor.
-             */
-            RiwayatPelanggaran::create(
-                $data + [
-                    'created_by' =>
-                    auth()->id(),
+        |--------------------------------------------------------------------------
+        | CATATAN MANUAL
+        |--------------------------------------------------------------------------
+        */
 
-                    'skor' =>
-                    $pelanggaran->skor,
-                ]
+            if ($data['jenis_pencatatan'] === 'manual') {
+
+                RiwayatPelanggaran::create([
+                    'siswa_id' => $siswa->id,
+                    'pelanggaran_id' => null,
+                    'skor' => null,
+                    'tanggal' => $data['tanggal'],
+                    'keterangan' => $data['keterangan'],
+                    'created_by' => auth()->id(),
+                    'dinilai_oleh' => null,
+                    'dinilai_pada' => null,
+                ]);
+
+                return;
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | PELANGGARAN MASTER
+        |--------------------------------------------------------------------------
+        */
+
+            $pelanggaran = Pelanggaran::findOrFail(
+                $data['pelanggaran_id']
             );
 
 
-            /*
-             * Tambahkan score BK siswa.
-             */
+            RiwayatPelanggaran::create([
+                'siswa_id' => $siswa->id,
+                'pelanggaran_id' => $pelanggaran->id,
+                'skor' => $pelanggaran->skor,
+                'tanggal' => $data['tanggal'],
+                'keterangan' => $data['keterangan'] ?? null,
+                'created_by' => auth()->id(),
+            ]);
+
+
             $siswa->increment(
                 'score_bk',
                 $pelanggaran->skor
             );
         });
+
+
+        if ($data['jenis_pencatatan'] === 'manual') {
+
+            return back()->with(
+                'success',
+                'Catatan pelanggaran berhasil disimpan dan menunggu penentuan poin.'
+            );
+        }
 
 
         return back()->with(
@@ -802,30 +836,32 @@ class AdminController extends Controller
     {
         DB::transaction(function () use ($id) {
 
-            $riwayat =
-                RiwayatPelanggaran::lockForUpdate()
+            $riwayat = RiwayatPelanggaran::lockForUpdate()
                 ->findOrFail($id);
 
 
-            $siswa =
-                Siswa::lockForUpdate()
-                ->findOrFail(
-                    $riwayat->siswa_id
+            /*
+        |--------------------------------------------------------------------------
+        | HANYA KURANGI SCORE_BK JIKA SUDAH ADA POIN
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->skor)) {
+
+                $siswa = Siswa::lockForUpdate()
+                    ->findOrFail(
+                        $riwayat->siswa_id
+                    );
+
+
+                $siswa->score_bk = max(
+                    0,
+                    $siswa->score_bk - $riwayat->skor
                 );
 
 
-            /*
-             * Kurangi score_bk berdasarkan snapshot skor
-             * yang tersimpan di riwayat.
-             */
-            $siswa->score_bk = max(
-                0,
-                $siswa->score_bk -
-                    $riwayat->skor
-            );
-
-
-            $siswa->save();
+                $siswa->save();
+            }
 
 
             $riwayat->delete();
@@ -841,48 +877,49 @@ class AdminController extends Controller
 
     public function detailSkorsing(int $id)
     {
-        $skorsing =
-            RiwayatPelanggaran::with([
-                'siswa.kelas',
-                'pelanggaran',
-                'creator',
-            ])
+        $skorsing = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'pelanggaran',
+            'creator',
+            'penilai',
+        ])
             ->findOrFail($id);
 
 
         return response()->json([
-            'id' =>
-            $skorsing->id,
+            'id' => $skorsing->id,
 
             'siswa' => [
                 'nama' =>
                 $skorsing->siswa?->nama,
 
                 'kelas' =>
-                $skorsing
-                    ->siswa
-                    ?->kelas
-                    ?->nama_kelas,
+                $skorsing->siswa?->kelas?->nama_kelas,
 
                 'score_bk' =>
-                $skorsing
-                    ->siswa
-                    ?->score_bk,
+                $skorsing->siswa?->score_bk,
             ],
 
             'pelanggaran' => [
+                'jenis' =>
+                is_null($skorsing->pelanggaran_id)
+                    ? 'manual'
+                    : 'master',
+
                 'kategori' =>
-                $skorsing
-                    ->pelanggaran
-                    ?->kategori,
+                $skorsing->pelanggaran?->kategori,
 
                 'deskripsi' =>
-                $skorsing
-                    ->pelanggaran
-                    ?->deskripsi,
+                $skorsing->pelanggaran?->deskripsi
+                    ?? $skorsing->keterangan,
 
                 'skor' =>
                 $skorsing->skor,
+
+                'status_poin' =>
+                is_null($skorsing->skor)
+                    ? 'belum_ditentukan'
+                    : 'sudah_ditentukan',
             ],
 
             'tanggal' =>
@@ -894,10 +931,16 @@ class AdminController extends Controller
             $skorsing->keterangan,
 
             'dibuat_oleh' =>
-            $skorsing
-                ->creator
-                ?->name
+            $skorsing->creator?->name
                 ?? 'User dihapus',
+
+            'dinilai_oleh' =>
+            $skorsing->penilai?->name,
+
+            'dinilai_pada' =>
+            optional(
+                $skorsing->dinilai_pada
+            )->format('d/m/Y H:i'),
         ]);
     }
 
@@ -1433,13 +1476,22 @@ class AdminController extends Controller
     public function beriKebajikan(Request $request)
     {
         $data = $request->validate([
+            'jenis_pencatatan' => [
+                'required',
+                Rule::in([
+                    'master',
+                    'manual',
+                ]),
+            ],
+
             'siswa_id' => [
                 'required',
                 'exists:siswa,id',
             ],
 
             'kebajikan_id' => [
-                'required',
+                'nullable',
+                'required_if:jenis_pencatatan,master',
                 'exists:kebajikans,id',
             ],
 
@@ -1450,6 +1502,7 @@ class AdminController extends Controller
 
             'keterangan' => [
                 'nullable',
+                'required_if:jenis_pencatatan,manual',
                 'string',
                 'max:2000',
             ],
@@ -1458,34 +1511,51 @@ class AdminController extends Controller
 
         DB::transaction(function () use ($data) {
 
-            /*
-         * Pastikan siswa benar-benar ada.
-         */
             Siswa::findOrFail(
                 $data['siswa_id']
             );
 
 
             /*
-         * Ambil master kebajikan.
-         */
+        |--------------------------------------------------------------------------
+        | CATATAN KEBAJIKAN MANUAL
+        |--------------------------------------------------------------------------
+        */
+
+            if ($data['jenis_pencatatan'] === 'manual') {
+
+                RiwayatKebajikan::create([
+                    'siswa_id' => $data['siswa_id'],
+                    'kebajikan_id' => null,
+                    'skor' => null,
+                    'tanggal' => $data['tanggal'],
+                    'keterangan' => $data['keterangan'],
+                    'created_by' => auth()->id(),
+                    'dinilai_oleh' => null,
+                    'dinilai_pada' => null,
+                ]);
+
+                return;
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | KEBAJIKAN MASTER
+        |--------------------------------------------------------------------------
+        */
+
             $kebajikan = Kebajikan::findOrFail(
                 $data['kebajikan_id']
             );
 
 
-            /*
-         * Simpan snapshot skor.
-         *
-         * Jadi apabila skor master kebajikan berubah
-         * di kemudian hari, riwayat lama tidak ikut berubah.
-         */
             RiwayatKebajikan::create([
                 'siswa_id' =>
                 $data['siswa_id'],
 
                 'kebajikan_id' =>
-                $data['kebajikan_id'],
+                $kebajikan->id,
 
                 'skor' =>
                 $kebajikan->skor,
@@ -1500,6 +1570,15 @@ class AdminController extends Controller
                 auth()->id(),
             ]);
         });
+
+
+        if ($data['jenis_pencatatan'] === 'manual') {
+
+            return back()->with(
+                'success',
+                'Catatan kebajikan berhasil disimpan dan menunggu penentuan poin.'
+            );
+        }
 
 
         return back()->with(
@@ -1524,6 +1603,221 @@ class AdminController extends Controller
         return back()->with(
             'success',
             'Riwayat kebajikan berhasil dihapus.'
+        );
+    }
+    public function penilaianPelanggaran()
+    {
+        $riwayat = RiwayatPelanggaran::with([
+            'siswa.kelas',
+            'creator',
+        ])
+            ->whereNull('pelanggaran_id')
+            ->whereNull('skor')
+            ->latest('tanggal')
+            ->latest('id')
+            ->paginate(15);
+
+
+        return view(
+            'admin.penilaian-pelanggaran',
+            compact('riwayat')
+        );
+    }
+    public function beriPoinPelanggaran(
+        Request $request,
+        RiwayatPelanggaran $riwayat
+    ) {
+        $data = $request->validate([
+            'skor' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+        ]);
+
+
+        DB::transaction(function () use (
+            $riwayat,
+            $data
+        ) {
+
+            /*
+        |--------------------------------------------------------------------------
+        | LOCK RIWAYAT
+        |--------------------------------------------------------------------------
+        */
+
+            $riwayat = RiwayatPelanggaran::whereKey(
+                $riwayat->id
+            )
+                ->lockForUpdate()
+                ->firstOrFail();
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | CEGAH PEMBERIAN POIN DUA KALI
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->skor)) {
+
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'skor' =>
+                    'Poin pelanggaran ini sudah ditentukan.',
+                ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | HANYA CATATAN MANUAL YANG BOLEH DINILAI
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->pelanggaran_id)) {
+
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'skor' =>
+                    'Pelanggaran ini menggunakan poin dari master.',
+                ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | LOCK SISWA
+        |--------------------------------------------------------------------------
+        */
+
+            $siswa = Siswa::whereKey(
+                $riwayat->siswa_id
+            )
+                ->lockForUpdate()
+                ->firstOrFail();
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | TETAPKAN POIN
+        |--------------------------------------------------------------------------
+        */
+
+            $riwayat->update([
+                'skor' => $data['skor'],
+                'dinilai_oleh' => auth()->id(),
+                'dinilai_pada' => now(),
+            ]);
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | PELANGGARAN MASUK SCORE_BK
+        |--------------------------------------------------------------------------
+        */
+
+            $siswa->increment(
+                'score_bk',
+                $data['skor']
+            );
+        });
+
+
+        return back()->with(
+            'success',
+            'Poin pelanggaran berhasil ditentukan.'
+        );
+    }
+    public function beriPoinKebajikan(
+        Request $request,
+        RiwayatKebajikan $riwayat
+    ) {
+        $data = $request->validate([
+            'skor' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+        ]);
+
+
+        DB::transaction(function () use (
+            $riwayat,
+            $data
+        ) {
+
+            $riwayat = RiwayatKebajikan::whereKey(
+                $riwayat->id
+            )
+                ->lockForUpdate()
+                ->firstOrFail();
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | CEGAH PEMBERIAN POIN DUA KALI
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->skor)) {
+
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'skor' =>
+                    'Poin kebajikan ini sudah ditentukan.',
+                ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | HANYA KEBAJIKAN MANUAL
+        |--------------------------------------------------------------------------
+        */
+
+            if (! is_null($riwayat->kebajikan_id)) {
+
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'skor' =>
+                    'Kebajikan ini menggunakan poin dari master.',
+                ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | TETAPKAN POIN
+        |--------------------------------------------------------------------------
+        */
+
+            $riwayat->update([
+                'skor' => $data['skor'],
+                'dinilai_oleh' => auth()->id(),
+                'dinilai_pada' => now(),
+            ]);
+        });
+
+
+        return back()->with(
+            'success',
+            'Poin kebajikan berhasil ditentukan.'
+        );
+    }
+    public function penilaianKebajikan()
+    {
+        $riwayat = RiwayatKebajikan::with([
+            'siswa.kelas',
+            'creator',
+        ])
+            ->whereNull('kebajikan_id')
+            ->whereNull('skor')
+            ->latest('tanggal')
+            ->latest('id')
+            ->paginate(15);
+
+
+        return view(
+            'admin.penilaian-kebajikan',
+            compact('riwayat')
         );
     }
 }

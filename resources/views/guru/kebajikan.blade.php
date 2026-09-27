@@ -8,7 +8,7 @@
 
     <style>
         .ts-wrapper {
-            margin-top: 0;
+            margin-top: 0.25rem;
         }
 
         .ts-control {
@@ -59,18 +59,26 @@
 
     <div class="py-8 space-y-6">
 
+        {{-- ========================================================= --}}
+        {{-- HEADER --}}
+        {{-- ========================================================= --}}
+
         <div>
 
             <h1 class="text-3xl font-bold text-slate-900">
                 Poin Kebajikan
             </h1>
 
-            <p class="text-slate-500">
-                Berikan poin kebajikan kepada peserta didik.
+            <p class="text-slate-500 mt-1">
+                Berikan kebajikan kepada peserta didik atau buat catatan untuk dinilai kemudian.
             </p>
 
         </div>
 
+
+        {{-- ========================================================= --}}
+        {{-- ALERT SUCCESS --}}
+        {{-- ========================================================= --}}
 
         @if (session('success'))
             <div
@@ -89,6 +97,10 @@
         @endif
 
 
+        {{-- ========================================================= --}}
+        {{-- ALERT ERROR --}}
+        {{-- ========================================================= --}}
+
         @if ($errors->any())
             <div
                 class="
@@ -106,7 +118,11 @@
         @endif
 
 
+
+        {{-- ========================================================= --}}
         {{-- FORM --}}
+        {{-- ========================================================= --}}
+
         <section
             class="
             bg-white
@@ -116,6 +132,19 @@
             shadow-sm
             p-6
         ">
+
+            <div class="mb-5">
+
+                <h2 class="text-lg font-semibold text-slate-900">
+                    Berikan Kebajikan
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Pilih kebajikan dari daftar atau buat catatan manual untuk ditentukan poinnya kemudian.
+                </p>
+
+            </div>
+
 
             <form method="POST" action="{{ route('guru.kebajikan.store') }}"
                 class="
@@ -128,7 +157,10 @@
                 @csrf
 
 
+                {{-- ================================================= --}}
                 {{-- SISWA --}}
+                {{-- ================================================= --}}
+
                 <div>
 
                     <label for="siswa_id"
@@ -167,10 +199,147 @@
                 </div>
 
 
-                {{-- KEBAJIKAN --}}
+
+                {{-- ================================================= --}}
+                {{-- JENIS PENCATATAN --}}
+                {{-- ================================================= --}}
+
                 <div>
 
                     <label
+                        class="
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                        mb-2
+                    ">
+
+                        Jenis Pencatatan
+
+                    </label>
+
+
+                    <div
+                        class="
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2
+                        gap-3
+                    ">
+
+
+                        {{-- DARI DAFTAR --}}
+                        <label id="label-master"
+                            class="
+                            cursor-pointer
+                            border
+                            border-emerald-200
+                            bg-emerald-50
+                            rounded-xl
+                            p-3
+                            transition
+                        ">
+
+                            <div class="flex items-start gap-3">
+
+                                <input type="radio" name="jenis_pencatatan" value="master" class="mt-1"
+                                    @checked(old('jenis_pencatatan', 'master') === 'master')>
+
+
+                                <div>
+
+                                    <div
+                                        class="
+                                        text-sm
+                                        font-semibold
+                                        text-slate-800
+                                    ">
+
+                                        Dari Daftar
+
+                                    </div>
+
+                                    <div
+                                        class="
+                                        text-xs
+                                        text-slate-500
+                                        mt-1
+                                    ">
+
+                                        Poin langsung mengikuti jenis kebajikan.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </label>
+
+
+
+                        {{-- MANUAL --}}
+                        <label id="label-manual"
+                            class="
+                            cursor-pointer
+                            border
+                            border-slate-200
+                            bg-white
+                            rounded-xl
+                            p-3
+                            transition
+                        ">
+
+                            <div class="flex items-start gap-3">
+
+                                <input type="radio" name="jenis_pencatatan" value="manual" class="mt-1"
+                                    @checked(old('jenis_pencatatan') === 'manual')>
+
+
+                                <div>
+
+                                    <div
+                                        class="
+                                        text-sm
+                                        font-semibold
+                                        text-slate-800
+                                    ">
+
+                                        Catatan Manual
+
+                                    </div>
+
+                                    <div
+                                        class="
+                                        text-xs
+                                        text-slate-500
+                                        mt-1
+                                    ">
+
+                                        Poin ditentukan Admin kemudian.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                {{-- ================================================= --}}
+                {{-- KEBAJIKAN MASTER --}}
+                {{-- ================================================= --}}
+
+                <div id="kebajikan-master-wrapper">
+
+                    <label for="kebajikan_id"
                         class="
                         block
                         text-sm
@@ -184,7 +353,7 @@
                     </label>
 
 
-                    <select name="kebajikan_id" required
+                    <select id="kebajikan_id" name="kebajikan_id"
                         class="
                         w-full
                         border
@@ -213,13 +382,89 @@
 
                     </select>
 
+
+                    <p class="text-xs text-slate-400 mt-1">
+
+                        Poin akan langsung mengikuti jenis kebajikan yang dipilih.
+
+                    </p>
+
                 </div>
 
 
+
+                {{-- ================================================= --}}
+                {{-- INFO MANUAL --}}
+                {{-- ================================================= --}}
+
+                <div id="manual-info"
+                    class="
+                    hidden
+                    rounded-xl
+                    border
+                    border-amber-200
+                    bg-amber-50
+                    p-4
+                ">
+
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            shrink-0
+                            w-8
+                            h-8
+                            rounded-lg
+                            bg-amber-100
+                            text-amber-700
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                        ">
+
+                            !
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="text-sm font-semibold text-amber-800">
+
+                                Poin Belum Ditentukan
+
+                            </div>
+
+
+                            <p
+                                class="
+                                text-xs
+                                text-amber-700
+                                mt-1
+                                leading-relaxed
+                            ">
+
+                                Tuliskan kebajikan yang dilakukan siswa pada kolom keterangan.
+                                Poin akan ditentukan oleh Admin setelah catatan diperiksa.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                {{-- ================================================= --}}
                 {{-- TANGGAL --}}
+                {{-- ================================================= --}}
+
                 <div>
 
-                    <label
+                    <label for="tanggal"
                         class="
                         block
                         text-sm
@@ -233,7 +478,8 @@
                     </label>
 
 
-                    <input type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required
+                    <input id="tanggal" type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}"
+                        required
                         class="
                         w-full
                         border
@@ -249,10 +495,14 @@
                 </div>
 
 
+
+                {{-- ================================================= --}}
                 {{-- KETERANGAN --}}
+                {{-- ================================================= --}}
+
                 <div>
 
-                    <label
+                    <label for="keterangan"
                         class="
                         block
                         text-sm
@@ -263,11 +513,20 @@
 
                         Keterangan
 
+                        <span id="keterangan-opsional"
+                            class="
+                            text-slate-400
+                            font-normal
+                        ">
+
+                            (Opsional)
+
+                        </span>
+
                     </label>
 
 
-                    <input type="text" name="keterangan" value="{{ old('keterangan') }}"
-                        placeholder="Keterangan (opsional)"
+                    <textarea id="keterangan" name="keterangan" rows="3" placeholder="Tambahkan keterangan"
                         class="
                         w-full
                         border
@@ -275,16 +534,34 @@
                         rounded-xl
                         px-4
                         py-3
+                        resize-none
                         focus:ring-2
                         focus:ring-emerald-500
                         focus:border-emerald-500
+                    ">{{ old('keterangan') }}</textarea>
+
+
+                    <p id="manual-help"
+                        class="
+                        hidden
+                        text-xs
+                        text-slate-500
+                        mt-1
                     ">
+
+                        Jelaskan kebajikan yang dilakukan siswa secara jelas.
+
+                    </p>
 
                 </div>
 
 
+
+                {{-- ================================================= --}}
                 {{-- SUBMIT --}}
-                <button type="submit"
+                {{-- ================================================= --}}
+
+                <button type="submit" id="submit-button"
                     class="
                     md:col-span-2
                     bg-emerald-600
@@ -305,7 +582,11 @@
         </section>
 
 
+
+        {{-- ========================================================= --}}
         {{-- RIWAYAT --}}
+        {{-- ========================================================= --}}
+
         <section
             class="
             bg-white
@@ -315,6 +596,23 @@
             shadow-sm
             overflow-hidden
         ">
+
+            <div class="
+                p-6
+                border-b
+                border-slate-200
+            ">
+
+                <h2 class="font-semibold text-lg text-slate-900">
+                    Riwayat Kebajikan
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Data kebajikan yang pernah Anda tambahkan.
+                </p>
+
+            </div>
+
 
             <div class="overflow-x-auto">
 
@@ -352,22 +650,33 @@
                     <tbody>
 
                         @forelse ($riwayat as $item)
-                            <tr class="border-t hover:bg-slate-50">
 
-                                <td class="p-4">
+                            <tr
+                                class="
+                                border-t
+                                border-slate-100
+                                hover:bg-slate-50
+                            ">
 
-                                    {{ $item->tanggal?->format('d/m/Y') }}
+
+                                {{-- TANGGAL --}}
+                                <td class="p-4 whitespace-nowrap">
+
+                                    {{ $item->tanggal?->format('d/m/Y') ?? '-' }}
 
                                 </td>
 
 
+
+                                {{-- SISWA --}}
                                 <td class="p-4">
 
-                                    <div class="font-medium">
+                                    <div class="font-medium text-slate-800">
 
                                         {{ $item->siswa?->nama ?? 'Siswa dihapus' }}
 
                                     </div>
+
 
                                     <div class="text-xs text-slate-500">
 
@@ -378,36 +687,109 @@
                                 </td>
 
 
-                                <td class="p-4">
 
-                                    {{ $item->kebajikan?->deskripsi ?? 'Kebajikan dihapus' }}
+                                {{-- KEBAJIKAN --}}
+                                <td class="p-4 min-w-[280px]">
+
+                                    @if ($item->kebajikan)
+                                        <div class="text-slate-800">
+
+                                            {{ $item->kebajikan->deskripsi }}
+
+                                        </div>
+
+
+                                        @if ($item->keterangan)
+                                            <div
+                                                class="
+                                                text-xs
+                                                text-slate-500
+                                                mt-1
+                                            ">
+
+                                                {{ $item->keterangan }}
+
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="mb-1">
+
+                                            <span
+                                                class="
+                                                inline-flex
+                                                px-2
+                                                py-1
+                                                rounded-full
+                                                bg-amber-50
+                                                text-amber-700
+                                                text-xs
+                                                font-semibold
+                                            ">
+
+                                                Catatan Manual
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="text-slate-700">
+
+                                            {{ $item->keterangan ?? '-' }}
+
+                                        </div>
+                                    @endif
 
                                 </td>
 
 
+
+                                {{-- POIN --}}
                                 <td class="p-4 text-center">
 
-                                    <span
-                                        class="
-                                        rounded-full
-                                        bg-emerald-100
-                                        px-3
-                                        py-1
-                                        font-bold
-                                        text-emerald-700
-                                    ">
+                                    @if (is_null($item->skor))
+                                        <span
+                                            class="
+                                            inline-flex
+                                            items-center
+                                            px-3
+                                            py-1
+                                            rounded-full
+                                            bg-amber-50
+                                            text-amber-700
+                                            font-semibold
+                                            whitespace-nowrap
+                                        ">
 
-                                        +{{ $item->skor }}
+                                            Belum Ditentukan
 
-                                    </span>
+                                        </span>
+                                    @else
+                                        <span
+                                            class="
+                                            inline-flex
+                                            px-3
+                                            py-1
+                                            rounded-full
+                                            bg-emerald-100
+                                            text-emerald-700
+                                            font-bold
+                                        ">
+
+                                            +{{ $item->skor }}
+
+                                        </span>
+                                    @endif
 
                                 </td>
 
 
+
+                                {{-- AKSI --}}
                                 <td class="p-4 text-center">
 
                                     <form method="POST" action="{{ route('guru.kebajikan.delete', $item) }}"
-                                        onsubmit="return confirm('Hapus poin kebajikan ini?')">
+                                        onsubmit="return confirm('Hapus riwayat kebajikan ini?')">
 
                                         @csrf
                                         @method('DELETE')
@@ -442,11 +824,12 @@
                                     text-slate-500
                                 ">
 
-                                    Belum ada poin kebajikan.
+                                    Belum ada riwayat kebajikan.
 
                                 </td>
 
                             </tr>
+
                         @endforelse
 
                     </tbody>
@@ -457,7 +840,12 @@
 
 
             @if ($riwayat->hasPages())
-                <div class="p-4 border-t">
+                <div
+                    class="
+                    p-4
+                    border-t
+                    border-slate-100
+                ">
 
                     {{ $riwayat->links() }}
 
@@ -469,12 +857,22 @@
     </div>
 
 
+
+    {{-- ============================================================= --}}
     {{-- TOM SELECT --}}
+    {{-- ============================================================= --}}
+
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            /*
+            |--------------------------------------------------------------------------
+            | SEARCH SISWA
+            |--------------------------------------------------------------------------
+            */
 
             const siswaSelect =
                 document.getElementById('siswa_id');
@@ -520,6 +918,297 @@
                 );
 
             }
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | JENIS PENCATATAN
+            |--------------------------------------------------------------------------
+            */
+
+            const jenisInputs =
+                document.querySelectorAll(
+                    'input[name="jenis_pencatatan"]'
+                );
+
+
+            const kebajikanWrapper =
+                document.getElementById(
+                    'kebajikan-master-wrapper'
+                );
+
+
+            const kebajikanSelect =
+                document.getElementById(
+                    'kebajikan_id'
+                );
+
+
+            const manualInfo =
+                document.getElementById(
+                    'manual-info'
+                );
+
+
+            const keterangan =
+                document.getElementById(
+                    'keterangan'
+                );
+
+
+            const keteranganOpsional =
+                document.getElementById(
+                    'keterangan-opsional'
+                );
+
+
+            const manualHelp =
+                document.getElementById(
+                    'manual-help'
+                );
+
+
+            const submitButton =
+                document.getElementById(
+                    'submit-button'
+                );
+
+
+            const labelMaster =
+                document.getElementById(
+                    'label-master'
+                );
+
+
+            const labelManual =
+                document.getElementById(
+                    'label-manual'
+                );
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE MODE
+            |--------------------------------------------------------------------------
+            */
+
+            function updateJenisPencatatan() {
+                const selected =
+                    document.querySelector(
+                        'input[name="jenis_pencatatan"]:checked'
+                    );
+
+
+                if (!selected) {
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODE MANUAL
+                |--------------------------------------------------------------------------
+                */
+
+                if (selected.value === 'manual') {
+
+                    /*
+                     * Sembunyikan pilihan master.
+                     */
+                    kebajikanWrapper.classList.add(
+                        'hidden'
+                    );
+
+
+                    manualInfo.classList.remove(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Jangan kirim kebajikan_id.
+                     */
+                    kebajikanSelect.required = false;
+
+                    kebajikanSelect.disabled = true;
+
+
+                    /*
+                     * Keterangan wajib.
+                     */
+                    keterangan.required = true;
+
+                    keterangan.placeholder =
+                        'Tuliskan kebajikan yang dilakukan siswa...';
+
+
+                    keteranganOpsional.classList.add(
+                        'hidden'
+                    );
+
+
+                    manualHelp.classList.remove(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Ubah teks tombol.
+                     */
+                    submitButton.textContent =
+                        'Simpan Catatan Kebajikan';
+
+
+                    /*
+                     * Style pilihan manual.
+                     */
+                    labelManual.classList.remove(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+
+                    labelManual.classList.add(
+                        'border-amber-300',
+                        'bg-amber-50'
+                    );
+
+
+                    /*
+                     * Hilangkan style aktif master.
+                     */
+                    labelMaster.classList.remove(
+                        'border-emerald-200',
+                        'bg-emerald-50'
+                    );
+
+
+                    labelMaster.classList.add(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODE MASTER
+                |--------------------------------------------------------------------------
+                */
+                else {
+
+                    /*
+                     * Tampilkan master.
+                     */
+                    kebajikanWrapper.classList.remove(
+                        'hidden'
+                    );
+
+
+                    manualInfo.classList.add(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Kebajikan wajib.
+                     */
+                    kebajikanSelect.disabled = false;
+
+                    kebajikanSelect.required = true;
+
+
+                    /*
+                     * Keterangan opsional.
+                     */
+                    keterangan.required = false;
+
+                    keterangan.placeholder =
+                        'Keterangan (opsional)';
+
+
+                    keteranganOpsional.classList.remove(
+                        'hidden'
+                    );
+
+
+                    manualHelp.classList.add(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Tombol.
+                     */
+                    submitButton.textContent =
+                        'Berikan Poin Kebajikan';
+
+
+                    /*
+                     * Style master aktif.
+                     */
+                    labelMaster.classList.remove(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+
+                    labelMaster.classList.add(
+                        'border-emerald-200',
+                        'bg-emerald-50'
+                    );
+
+
+                    /*
+                     * Style manual tidak aktif.
+                     */
+                    labelManual.classList.remove(
+                        'border-amber-300',
+                        'bg-amber-50'
+                    );
+
+
+                    labelManual.classList.add(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+                }
+            }
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RADIO EVENT
+            |--------------------------------------------------------------------------
+            */
+
+            jenisInputs.forEach(function(input) {
+
+                input.addEventListener(
+                    'change',
+                    updateJenisPencatatan
+                );
+
+            });
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIAL STATE
+            |--------------------------------------------------------------------------
+            |
+            | Jika validation gagal, old('jenis_pencatatan')
+            | tetap membuka mode sebelumnya.
+            |
+            */
+
+            updateJenisPencatatan();
 
         });
     </script>

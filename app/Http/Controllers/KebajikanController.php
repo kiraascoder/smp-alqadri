@@ -28,14 +28,26 @@ class KebajikanController extends Controller
         );
     }
 
+
     public function store(Request $request)
     {
         $data = $request->validate([
-            'deskripsi' => 'required|string|max:1000',
-            'skor' => 'required|integer|min:1',
+            'deskripsi' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
+
+            'skor' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
         ]);
 
+
         Kebajikan::create($data);
+
 
         return back()->with(
             'success',
@@ -43,16 +55,28 @@ class KebajikanController extends Controller
         );
     }
 
+
     public function update(
         Request $request,
         Kebajikan $kebajikan
     ) {
         $data = $request->validate([
-            'deskripsi' => 'required|string|max:1000',
-            'skor' => 'required|integer|min:1',
+            'deskripsi' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
+
+            'skor' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
         ]);
 
+
         $kebajikan->update($data);
+
 
         return back()->with(
             'success',
@@ -60,16 +84,20 @@ class KebajikanController extends Controller
         );
     }
 
+
     public function destroy(Kebajikan $kebajikan)
     {
         if ($kebajikan->riwayat()->exists()) {
+
             return back()->with(
                 'error',
                 'Jenis kebajikan tidak dapat dihapus karena sudah digunakan.'
             );
         }
 
+
         $kebajikan->delete();
+
 
         return back()->with(
             'success',
@@ -86,39 +114,24 @@ class KebajikanController extends Controller
 
     public function guruIndex()
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Siswa sekarang TIDAK memakai relasi user
-        |--------------------------------------------------------------------------
-        */
-
         $siswas = Siswa::with('kelas')
             ->orderBy('nama')
             ->get();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Master kebajikan
-        |--------------------------------------------------------------------------
-        */
 
         $kebajikans = Kebajikan::orderBy('skor')
             ->orderBy('deskripsi')
             ->get();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Riwayat kebajikan guru yang login
-        |--------------------------------------------------------------------------
-        */
-
         $riwayat = RiwayatKebajikan::with([
             'siswa.kelas',
             'kebajikan',
         ])
-            ->where('created_by', auth()->id())
+            ->where(
+                'created_by',
+                auth()->id()
+            )
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->paginate(10);
@@ -135,16 +148,41 @@ class KebajikanController extends Controller
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN KEBAJIKAN
+    |--------------------------------------------------------------------------
+    |
+    | jenis_pencatatan:
+    |
+    | master
+    | - memilih jenis kebajikan
+    | - skor langsung dari master
+    |
+    | manual
+    | - guru hanya menulis keterangan
+    | - kebajikan_id = NULL
+    | - skor = NULL
+    | - poin ditentukan Admin kemudian
+    |
+    */
+
     public function beriPoin(Request $request)
     {
         $data = $request->validate([
+            'jenis_pencatatan' => [
+                'required',
+                'in:master,manual',
+            ],
+
             'siswa_id' => [
                 'required',
                 'exists:siswa,id',
             ],
 
             'kebajikan_id' => [
-                'required',
+                'nullable',
+                'required_if:jenis_pencatatan,master',
                 'exists:kebajikans,id',
             ],
 
@@ -161,6 +199,77 @@ class KebajikanController extends Controller
         ]);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | CATATAN MANUAL WAJIB MEMILIKI KETERANGAN
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $data['jenis_pencatatan'] === 'manual' &&
+            empty(trim($data['keterangan'] ?? ''))
+        ) {
+
+            return back()
+                ->withErrors([
+                    'keterangan' =>
+                    'Keterangan kebajikan wajib diisi untuk pencatatan manual.',
+                ])
+                ->withInput();
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE MANUAL
+        |--------------------------------------------------------------------------
+        */
+
+        if ($data['jenis_pencatatan'] === 'manual') {
+
+            DB::transaction(function () use ($data) {
+
+                RiwayatKebajikan::create([
+                    'siswa_id' =>
+                    $data['siswa_id'],
+
+                    'kebajikan_id' =>
+                    null,
+
+                    'skor' =>
+                    null,
+
+                    'tanggal' =>
+                    $data['tanggal'],
+
+                    'keterangan' =>
+                    $data['keterangan'],
+
+                    'created_by' =>
+                    auth()->id(),
+
+                    'dinilai_oleh' =>
+                    null,
+
+                    'dinilai_pada' =>
+                    null,
+                ]);
+            });
+
+
+            return back()->with(
+                'success',
+                'Catatan kebajikan berhasil disimpan dan menunggu penentuan poin.'
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE MASTER
+        |--------------------------------------------------------------------------
+        */
+
         $kebajikan = Kebajikan::findOrFail(
             $data['kebajikan_id']
         );
@@ -172,18 +281,23 @@ class KebajikanController extends Controller
         ) {
 
             RiwayatKebajikan::create([
-                'siswa_id' => $data['siswa_id'],
+                'siswa_id' =>
+                $data['siswa_id'],
 
-                'kebajikan_id' => $kebajikan->id,
+                'kebajikan_id' =>
+                $kebajikan->id,
 
-                'skor' => $kebajikan->skor,
+                'skor' =>
+                $kebajikan->skor,
 
-                'tanggal' => $data['tanggal'],
+                'tanggal' =>
+                $data['tanggal'],
 
                 'keterangan' =>
                 $data['keterangan'] ?? null,
 
-                'created_by' => auth()->id(),
+                'created_by' =>
+                auth()->id(),
             ]);
         });
 
@@ -196,6 +310,12 @@ class KebajikanController extends Controller
         );
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS RIWAYAT GURU
+    |--------------------------------------------------------------------------
+    */
 
     public function hapusRiwayat(
         RiwayatKebajikan $riwayat
@@ -212,7 +332,7 @@ class KebajikanController extends Controller
 
         return back()->with(
             'success',
-            'Riwayat poin kebajikan berhasil dihapus.'
+            'Riwayat kebajikan berhasil dihapus.'
         );
     }
 }

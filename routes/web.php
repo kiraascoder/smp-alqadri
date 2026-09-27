@@ -168,6 +168,29 @@ Route::prefix('admin')
         Route::get('/dashboard', [AdminController::class, 'index'])
             ->name('admin.dashboard');
 
+        Route::get(
+            '/penilaian-pelanggaran',
+            [AdminController::class, 'penilaianPelanggaran']
+        )->name('admin.penilaian-pelanggaran');
+
+
+        Route::patch(
+            '/penilaian-pelanggaran/{riwayat}',
+            [AdminController::class, 'beriPoinPelanggaran']
+        )->name('admin.penilaian-pelanggaran.update');
+
+
+        Route::get(
+            '/penilaian-kebajikan',
+            [AdminController::class, 'penilaianKebajikan']
+        )->name('admin.penilaian-kebajikan');
+
+
+        Route::patch(
+            '/penilaian-kebajikan/{riwayat}',
+            [AdminController::class, 'beriPoinKebajikan']
+        )->name('admin.penilaian-kebajikan.update');
+
 
         /*
         |--------------------------------------------------------------------------

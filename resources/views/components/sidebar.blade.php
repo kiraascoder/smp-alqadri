@@ -307,6 +307,20 @@
                     </a>
                 </li>
 
+                <li>
+
+                    <a href="{{ route('admin.penilaian-pelanggaran') }}"
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('admin.penilaian-pelanggaran*') ? $selected : $normal }}
+        ">
+
+                        📝 Nilai Pelanggaran
+
+                    </a>
+
+                </li>
+
 
                 <li>
                     <a href="{{ route('admin.kebajikan') }}"
@@ -326,6 +340,19 @@
         ">
 
                         🏅 Beri Kebajikan
+
+                    </a>
+
+                </li>
+                <li>
+
+                    <a href="{{ route('admin.penilaian-kebajikan') }}"
+                        class="
+            {{ $active }}
+            {{ request()->routeIs('admin.penilaian-kebajikan*') ? $selected : $normal }}
+        ">
+
+                        📝 Nilai Kebajikan
 
                     </a>
 

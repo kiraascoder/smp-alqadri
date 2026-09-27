@@ -26,6 +26,10 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
         }
 
+        .ts-control input {
+            font-size: 0.875rem !important;
+        }
+
         .ts-dropdown {
             border: 1px solid #e2e8f0 !important;
             border-radius: 0.75rem !important;
@@ -50,16 +54,15 @@
             font-size: 0.875rem;
             text-align: center;
         }
-
-        .ts-control input {
-            font-size: 0.875rem !important;
-        }
     </style>
 
 
     <div class="py-8 space-y-6">
 
-        {{-- Header --}}
+        {{-- ========================================================= --}}
+        {{-- HEADER --}}
+        {{-- ========================================================= --}}
+
         <div>
 
             <h1 class="text-3xl font-bold text-slate-900">
@@ -67,13 +70,17 @@
             </h1>
 
             <p class="text-slate-500 mt-1">
-                Admin dapat menambahkan dan melihat seluruh riwayat skorsing siswa.
+                Admin dapat menambahkan dan melihat seluruh riwayat pelanggaran siswa.
             </p>
 
         </div>
 
 
-        {{-- Alert --}}
+
+        {{-- ========================================================= --}}
+        {{-- ALERT SUCCESS --}}
+        {{-- ========================================================= --}}
+
         @if (session('success'))
             <div
                 class="
@@ -90,6 +97,11 @@
             </div>
         @endif
 
+
+
+        {{-- ========================================================= --}}
+        {{-- ALERT ERROR --}}
+        {{-- ========================================================= --}}
 
         @if ($errors->any())
             <div
@@ -109,7 +121,10 @@
 
 
 
-        {{-- Form Tambah --}}
+        {{-- ========================================================= --}}
+        {{-- FORM TAMBAH --}}
+        {{-- ========================================================= --}}
+
         <section
             class="
             bg-white
@@ -126,8 +141,8 @@
                     Tambah Skorsing
                 </h2>
 
-                <p class="text-sm text-slate-500">
-                    Tambahkan catatan pelanggaran siswa.
+                <p class="text-sm text-slate-500 mt-1">
+                    Pilih pelanggaran dari daftar atau buat catatan manual untuk ditentukan poinnya kemudian.
                 </p>
 
             </div>
@@ -144,7 +159,11 @@
                 @csrf
 
 
-                {{-- Siswa --}}
+
+                {{-- ================================================= --}}
+                {{-- SISWA --}}
+                {{-- ================================================= --}}
+
                 <div>
 
                     <label for="siswa_id" class="text-sm font-medium text-slate-700">
@@ -177,17 +196,117 @@
 
 
 
-                {{-- Pelanggaran --}}
+                {{-- ================================================= --}}
+                {{-- JENIS PENCATATAN --}}
+                {{-- ================================================= --}}
+
                 <div>
 
                     <label class="text-sm font-medium text-slate-700">
+                        Jenis Pencatatan
+                    </label>
+
+
+                    <div
+                        class="
+                        mt-1
+                        grid
+                        grid-cols-1
+                        sm:grid-cols-2
+                        gap-3
+                    ">
+
+
+                        {{-- MASTER --}}
+                        <label id="label-master"
+                            class="
+                            cursor-pointer
+                            border
+                            border-blue-200
+                            bg-blue-50
+                            rounded-xl
+                            p-3
+                            transition
+                        ">
+
+                            <div class="flex items-start gap-3">
+
+                                <input type="radio" name="jenis_pencatatan" value="master" class="mt-1"
+                                    @checked(old('jenis_pencatatan', 'master') === 'master')>
+
+
+                                <div>
+
+                                    <div class="font-semibold text-sm text-slate-800">
+                                        Dari Daftar
+                                    </div>
+
+                                    <div class="text-xs text-slate-500 mt-1">
+                                        Poin langsung mengikuti jenis pelanggaran.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </label>
+
+
+
+                        {{-- MANUAL --}}
+                        <label id="label-manual"
+                            class="
+                            cursor-pointer
+                            border
+                            border-slate-200
+                            bg-white
+                            rounded-xl
+                            p-3
+                            transition
+                        ">
+
+                            <div class="flex items-start gap-3">
+
+                                <input type="radio" name="jenis_pencatatan" value="manual" class="mt-1"
+                                    @checked(old('jenis_pencatatan') === 'manual')>
+
+
+                                <div>
+
+                                    <div class="font-semibold text-sm text-slate-800">
+                                        Catatan Manual
+                                    </div>
+
+                                    <div class="text-xs text-slate-500 mt-1">
+                                        Poin dapat ditentukan kemudian.
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                {{-- ================================================= --}}
+                {{-- PELANGGARAN MASTER --}}
+                {{-- ================================================= --}}
+
+                <div id="pelanggaran-master-wrapper">
+
+                    <label for="pelanggaran_id" class="text-sm font-medium text-slate-700">
 
                         Jenis Pelanggaran
 
                     </label>
 
 
-                    <select name="pelanggaran_id" required
+                    <select id="pelanggaran_id" name="pelanggaran_id"
                         class="
                         mt-1
                         w-full
@@ -196,8 +315,10 @@
                         rounded-xl
                         px-4
                         py-3
+                        bg-white
                         focus:ring-2
                         focus:ring-blue-500
+                        focus:border-blue-500
                     ">
 
                         <option value="">
@@ -216,21 +337,95 @@
 
                     </select>
 
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        Poin langsung mengikuti jenis pelanggaran yang dipilih.
+                    </p>
+
                 </div>
 
 
 
-                {{-- Tanggal --}}
+                {{-- ================================================= --}}
+                {{-- INFO MANUAL --}}
+                {{-- ================================================= --}}
+
+                <div id="manual-info"
+                    class="
+                    hidden
+                    rounded-xl
+                    border
+                    border-amber-200
+                    bg-amber-50
+                    p-4
+                ">
+
+                    <div class="flex gap-3">
+
+                        <div
+                            class="
+                            shrink-0
+                            w-8
+                            h-8
+                            rounded-lg
+                            bg-amber-100
+                            text-amber-700
+                            font-bold
+                            flex
+                            items-center
+                            justify-center
+                        ">
+
+                            !
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="text-sm font-semibold text-amber-800">
+
+                                Poin Belum Ditentukan
+
+                            </div>
+
+
+                            <p
+                                class="
+                                text-xs
+                                text-amber-700
+                                mt-1
+                                leading-relaxed
+                            ">
+
+                                Tuliskan kejadian pelanggaran pada kolom keterangan.
+                                Poin dapat ditentukan kemudian melalui proses penilaian.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                {{-- ================================================= --}}
+                {{-- TANGGAL --}}
+                {{-- ================================================= --}}
+
                 <div>
 
-                    <label class="text-sm font-medium text-slate-700">
+                    <label for="tanggal" class="text-sm font-medium text-slate-700">
 
                         Tanggal
 
                     </label>
 
 
-                    <input type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required
+                    <input id="tanggal" type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}"
+                        required
                         class="
                         mt-1
                         w-full
@@ -241,23 +436,37 @@
                         py-3
                         focus:ring-2
                         focus:ring-blue-500
+                        focus:border-blue-500
                     ">
 
                 </div>
 
 
 
-                {{-- Keterangan --}}
+                {{-- ================================================= --}}
+                {{-- KETERANGAN --}}
+                {{-- ================================================= --}}
+
                 <div>
 
-                    <label class="text-sm font-medium text-slate-700">
+                    <label for="keterangan" class="text-sm font-medium text-slate-700">
 
                         Keterangan
+
+                        <span id="keterangan-opsional"
+                            class="
+                            text-slate-400
+                            font-normal
+                        ">
+
+                            (Opsional)
+
+                        </span>
 
                     </label>
 
 
-                    <input name="keterangan" value="{{ old('keterangan') }}" placeholder="Keterangan (opsional)"
+                    <textarea id="keterangan" name="keterangan" rows="3" placeholder="Tambahkan keterangan"
                         class="
                         mt-1
                         w-full
@@ -266,16 +475,34 @@
                         rounded-xl
                         px-4
                         py-3
+                        resize-none
                         focus:ring-2
                         focus:ring-blue-500
+                        focus:border-blue-500
+                    ">{{ old('keterangan') }}</textarea>
+
+
+                    <p id="manual-help"
+                        class="
+                        hidden
+                        text-xs
+                        text-slate-500
+                        mt-1
                     ">
+
+                        Jelaskan pelanggaran yang dilakukan siswa secara jelas.
+
+                    </p>
 
                 </div>
 
 
 
-                {{-- Submit --}}
-                <button type="submit"
+                {{-- ================================================= --}}
+                {{-- SUBMIT --}}
+                {{-- ================================================= --}}
+
+                <button type="submit" id="submit-button"
                     class="
                     md:col-span-2
                     bg-red-600
@@ -297,7 +524,10 @@
 
 
 
-        {{-- Riwayat --}}
+        {{-- ========================================================= --}}
+        {{-- RIWAYAT --}}
+        {{-- ========================================================= --}}
+
         <section
             class="
             bg-white
@@ -319,7 +549,7 @@
                 </h2>
 
                 <p class="text-sm text-slate-500 mt-1">
-                    Seluruh data skorsing yang tercatat dalam sistem.
+                    Seluruh data pelanggaran yang tercatat dalam sistem.
                 </p>
 
             </div>
@@ -364,32 +594,38 @@
 
                     <tbody>
 
-                        @forelse($riwayat as $item)
-                            <tr class="border-t hover:bg-slate-50">
+                        @forelse ($riwayat as $item)
+
+                            <tr
+                                class="
+                                border-t
+                                border-slate-100
+                                hover:bg-slate-50
+                            ">
 
 
-                                {{-- tanggal --}}
+                                {{-- TANGGAL --}}
                                 <td class="p-4 whitespace-nowrap">
 
-                                    {{ $item->tanggal?->format('d/m/Y') }}
+                                    {{ $item->tanggal?->format('d/m/Y') ?? '-' }}
 
                                 </td>
 
 
 
-                                {{-- siswa --}}
+                                {{-- SISWA --}}
                                 <td class="p-4">
 
                                     <div class="font-semibold text-slate-900">
 
-                                        {{ $item->siswa?->nama }}
+                                        {{ $item->siswa?->nama ?? 'Siswa dihapus' }}
 
                                     </div>
 
 
                                     <div class="text-xs text-slate-500">
 
-                                        {{ $item->siswa?->kelas?->nama_kelas }}
+                                        {{ $item->siswa?->kelas?->nama_kelas ?? 'Belum ada kelas' }}
 
                                     </div>
 
@@ -397,51 +633,147 @@
 
 
 
-                                {{-- pelanggaran --}}
+                                {{-- PELANGGARAN --}}
                                 <td class="p-4 min-w-[280px]">
 
-                                    {{ $item->pelanggaran?->deskripsi }}
+                                    @if ($item->pelanggaran)
+                                        <div class="text-slate-800">
+
+                                            {{ $item->pelanggaran->deskripsi }}
+
+                                        </div>
+
+
+                                        @if ($item->keterangan)
+                                            <div
+                                                class="
+                                                text-xs
+                                                text-slate-500
+                                                mt-1
+                                            ">
+
+                                                {{ $item->keterangan }}
+
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="mb-1">
+
+                                            <span
+                                                class="
+                                                inline-flex
+                                                px-2
+                                                py-1
+                                                rounded-full
+                                                bg-amber-50
+                                                text-amber-700
+                                                text-xs
+                                                font-semibold
+                                            ">
+
+                                                Catatan Manual
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="text-slate-700">
+
+                                            {{ $item->keterangan ?? '-' }}
+
+                                        </div>
+                                    @endif
 
                                 </td>
 
 
 
-                                {{-- skor --}}
+                                {{-- SKOR --}}
                                 <td class="p-4">
 
-                                    <span
-                                        class="
-                                        inline-flex
-                                        px-3
-                                        py-1
-                                        rounded-full
-                                        bg-red-50
-                                        text-red-700
-                                        font-semibold
-                                    ">
+                                    @if (is_null($item->skor))
+                                        <span
+                                            class="
+                                            inline-flex
+                                            items-center
+                                            px-3
+                                            py-1
+                                            rounded-full
+                                            bg-amber-50
+                                            text-amber-700
+                                            font-semibold
+                                            whitespace-nowrap
+                                        ">
 
-                                        +{{ $item->skor }}
+                                            Belum Ditentukan
 
-                                    </span>
+                                        </span>
+                                    @else
+                                        <span
+                                            class="
+                                            inline-flex
+                                            px-3
+                                            py-1
+                                            rounded-full
+                                            bg-red-50
+                                            text-red-700
+                                            font-semibold
+                                            whitespace-nowrap
+                                        ">
+
+                                            +{{ $item->skor }}
+
+                                        </span>
+                                    @endif
 
                                 </td>
 
 
 
-                                {{-- creator --}}
+                                {{-- CREATOR --}}
                                 <td class="p-4">
 
-                                    {{ $item->creator?->name ?? 'User dihapus' }}
+                                    <div class="font-medium text-slate-700">
+
+                                        {{ $item->creator?->name ?? 'User dihapus' }}
+
+                                    </div>
+
+
+                                    @if (is_null($item->pelanggaran_id) && is_null($item->skor))
+                                        <div
+                                            class="
+                                            text-xs
+                                            text-amber-600
+                                            mt-1
+                                        ">
+
+                                            Menunggu penilaian
+
+                                        </div>
+                                    @elseif (is_null($item->pelanggaran_id) && !is_null($item->skor))
+                                        <div
+                                            class="
+                                            text-xs
+                                            text-emerald-600
+                                            mt-1
+                                        ">
+
+                                            Sudah dinilai
+
+                                        </div>
+                                    @endif
 
                                 </td>
 
 
 
-                                {{-- aksi --}}
+                                {{-- AKSI --}}
                                 <td class="p-4 text-center">
 
                                     <form method="POST" action="{{ route('admin.skorsing.delete', $item->id) }}"
-                                        onsubmit="return confirm('Hapus skorsing ini? Skor siswa akan disesuaikan.')">
+                                        onsubmit="return confirm('Hapus skorsing ini? Skor siswa akan disesuaikan jika poin sudah diberikan.')">
 
                                         @csrf
                                         @method('DELETE')
@@ -481,6 +813,7 @@
                                 </td>
 
                             </tr>
+
                         @endforelse
 
                     </tbody>
@@ -491,7 +824,7 @@
 
 
             @if ($riwayat->hasPages())
-                <div class="p-4">
+                <div class="p-4 border-t border-slate-100">
 
                     {{ $riwayat->links() }}
 
@@ -503,12 +836,22 @@
     </div>
 
 
+
+    {{-- ============================================================= --}}
     {{-- TOM SELECT --}}
+    {{-- ============================================================= --}}
+
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            /*
+            |--------------------------------------------------------------------------
+            | SEARCH SISWA
+            |--------------------------------------------------------------------------
+            */
 
             const siswaSelect =
                 document.getElementById('siswa_id');
@@ -554,6 +897,291 @@
                 );
 
             }
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | JENIS PENCATATAN
+            |--------------------------------------------------------------------------
+            */
+
+            const jenisInputs =
+                document.querySelectorAll(
+                    'input[name="jenis_pencatatan"]'
+                );
+
+
+            const pelanggaranWrapper =
+                document.getElementById(
+                    'pelanggaran-master-wrapper'
+                );
+
+
+            const pelanggaranSelect =
+                document.getElementById(
+                    'pelanggaran_id'
+                );
+
+
+            const manualInfo =
+                document.getElementById(
+                    'manual-info'
+                );
+
+
+            const keterangan =
+                document.getElementById(
+                    'keterangan'
+                );
+
+
+            const keteranganOpsional =
+                document.getElementById(
+                    'keterangan-opsional'
+                );
+
+
+            const manualHelp =
+                document.getElementById(
+                    'manual-help'
+                );
+
+
+            const submitButton =
+                document.getElementById(
+                    'submit-button'
+                );
+
+
+            const labelMaster =
+                document.getElementById(
+                    'label-master'
+                );
+
+
+            const labelManual =
+                document.getElementById(
+                    'label-manual'
+                );
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE MODE
+            |--------------------------------------------------------------------------
+            */
+
+            function updateJenisPencatatan() {
+                const selected =
+                    document.querySelector(
+                        'input[name="jenis_pencatatan"]:checked'
+                    );
+
+
+                if (!selected) {
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODE MANUAL
+                |--------------------------------------------------------------------------
+                */
+
+                if (selected.value === 'manual') {
+
+                    pelanggaranWrapper.classList.add(
+                        'hidden'
+                    );
+
+
+                    manualInfo.classList.remove(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Jangan kirim pelanggaran_id.
+                     */
+                    pelanggaranSelect.required = false;
+
+                    pelanggaranSelect.disabled = true;
+
+
+                    /*
+                     * Keterangan wajib.
+                     */
+                    keterangan.required = true;
+
+                    keterangan.placeholder =
+                        'Tuliskan pelanggaran yang dilakukan siswa...';
+
+
+                    keteranganOpsional.classList.add(
+                        'hidden'
+                    );
+
+
+                    manualHelp.classList.remove(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Tombol.
+                     */
+                    submitButton.textContent =
+                        'Simpan Catatan Pelanggaran';
+
+
+                    /*
+                     * Style manual aktif.
+                     */
+                    labelManual.classList.remove(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+
+                    labelManual.classList.add(
+                        'border-amber-300',
+                        'bg-amber-50'
+                    );
+
+
+                    /*
+                     * Style master nonaktif.
+                     */
+                    labelMaster.classList.remove(
+                        'border-blue-200',
+                        'bg-blue-50'
+                    );
+
+
+                    labelMaster.classList.add(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODE MASTER
+                |--------------------------------------------------------------------------
+                */
+                else {
+
+                    pelanggaranWrapper.classList.remove(
+                        'hidden'
+                    );
+
+
+                    manualInfo.classList.add(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Master wajib dipilih.
+                     */
+                    pelanggaranSelect.disabled = false;
+
+                    pelanggaranSelect.required = true;
+
+
+                    /*
+                     * Keterangan opsional.
+                     */
+                    keterangan.required = false;
+
+                    keterangan.placeholder =
+                        'Keterangan (opsional)';
+
+
+                    keteranganOpsional.classList.remove(
+                        'hidden'
+                    );
+
+
+                    manualHelp.classList.add(
+                        'hidden'
+                    );
+
+
+                    /*
+                     * Tombol.
+                     */
+                    submitButton.textContent =
+                        'Simpan Skorsing';
+
+
+                    /*
+                     * Style master aktif.
+                     */
+                    labelMaster.classList.remove(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+
+                    labelMaster.classList.add(
+                        'border-blue-200',
+                        'bg-blue-50'
+                    );
+
+
+                    /*
+                     * Style manual nonaktif.
+                     */
+                    labelManual.classList.remove(
+                        'border-amber-300',
+                        'bg-amber-50'
+                    );
+
+
+                    labelManual.classList.add(
+                        'border-slate-200',
+                        'bg-white'
+                    );
+
+                }
+            }
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RADIO EVENT
+            |--------------------------------------------------------------------------
+            */
+
+            jenisInputs.forEach(function(input) {
+
+                input.addEventListener(
+                    'change',
+                    updateJenisPencatatan
+                );
+
+            });
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIAL STATE
+            |--------------------------------------------------------------------------
+            |
+            | Jika validasi gagal, old('jenis_pencatatan')
+            | tetap membuka mode yang sebelumnya dipilih.
+            |
+            */
+
+            updateJenisPencatatan();
 
         });
     </script>
