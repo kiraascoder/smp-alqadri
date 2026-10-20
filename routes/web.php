@@ -10,7 +10,6 @@ use App\Http\Controllers\PWAController;
 use App\Http\Controllers\SesiController;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | PUBLIC
@@ -18,8 +17,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::view('/', 'welcome')->name('home');
+
 Route::view('/pengumuman', 'pengumuman')->name('pengumuman');
+
 Route::view('/tentang', 'tentang')->name('tentang');
+
 Route::view('/layanan', 'layanan')->name('layanan');
 
 
@@ -29,43 +31,27 @@ Route::view('/layanan', 'layanan')->name('layanan');
 |--------------------------------------------------------------------------
 */
 
-Route::get('/login', function () {
-
-    /*
-     * Jika user sudah login,
-     * jangan tampilkan halaman login lagi.
-     */
-    if (auth()->check()) {
-
-        return match (auth()->user()->role) {
-
-            'admin' =>
-            redirect()->route('admin.dashboard'),
-
-            'guru' =>
-            redirect()->route('guru.dashboard'),
-
-            'orang_tua' =>
-            redirect()->route('ortu.dashboard'),
-
-            default =>
-            redirect()->route('home'),
-        };
-    }
-
-
-    /*
-     * Jika belum login,
-     * tampilkan halaman login.
-     */
-    return view('auth.login');
-})->name('login');
-
+Route::get(
+    '/login',
+    [SesiController::class, 'LoginView']
+)->name('login');
 
 Route::post(
     '/login',
     [SesiController::class, 'login']
 )->name('login.submit');
+
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN ORANG TUA - OTP WHATSAPP
+|--------------------------------------------------------------------------
+|
+| Sementara dinonaktifkan.
+| Login orang tua menggunakan email + password melalui /login.
+|
+|--------------------------------------------------------------------------
+*/
 
 
 /*
@@ -79,18 +65,15 @@ Route::get(
     [ForgotPasswordController::class, 'requestForm']
 )->name('password.request');
 
-
 Route::post(
     '/lupa-password',
     [ForgotPasswordController::class, 'sendResetLink']
 )->name('password.email');
 
-
 Route::get(
     '/reset-password/{token}',
     [ForgotPasswordController::class, 'resetForm']
 )->name('password.reset');
-
 
 Route::post(
     '/reset-password',
@@ -100,27 +83,27 @@ Route::post(
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT
+| LOGOUT REDIRECT
 |--------------------------------------------------------------------------
 |
 | GET /logout:
 | Tidak melakukan logout.
 | Jika diketik manual di browser, user dikembalikan ke dashboard.
 |
+|--------------------------------------------------------------------------
 */
 
 Route::get('/logout', function () {
-
     if (! auth()->check()) {
-
         return redirect()->route('login');
     }
 
-
     return match (auth()->user()->role) {
-
         'admin' =>
         redirect()->route('admin.dashboard'),
+
+
+
 
         'guru' =>
         redirect()->route('guru.dashboard'),
@@ -141,6 +124,7 @@ Route::get('/logout', function () {
 |
 | Logout hanya dilakukan menggunakan request POST.
 |
+|--------------------------------------------------------------------------
 */
 
 Route::post(
@@ -149,6 +133,8 @@ Route::post(
 )
     ->middleware('auth')
     ->name('logout');
+
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN
@@ -165,26 +151,25 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/dashboard', [AdminController::class, 'index'])
-            ->name('admin.dashboard');
+        Route::get(
+            '/dashboard',
+            [AdminController::class, 'index']
+        )->name('admin.dashboard');
 
         Route::get(
             '/penilaian-pelanggaran',
             [AdminController::class, 'penilaianPelanggaran']
         )->name('admin.penilaian-pelanggaran');
 
-
         Route::patch(
             '/penilaian-pelanggaran/{riwayat}',
             [AdminController::class, 'beriPoinPelanggaran']
         )->name('admin.penilaian-pelanggaran.update');
 
-
         Route::get(
             '/penilaian-kebajikan',
             [AdminController::class, 'penilaianKebajikan']
         )->name('admin.penilaian-kebajikan');
-
 
         Route::patch(
             '/penilaian-kebajikan/{riwayat}',
@@ -198,17 +183,25 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/guru', [AdminController::class, 'guru'])
-            ->name('admin.guru');
+        Route::get(
+            '/guru',
+            [AdminController::class, 'guru']
+        )->name('admin.guru');
 
-        Route::post('/guru', [AdminController::class, 'storeGuru'])
-            ->name('admin-guru.tambah');
+        Route::post(
+            '/guru',
+            [AdminController::class, 'storeGuru']
+        )->name('admin-guru.tambah');
 
-        Route::put('/guru/{id}', [AdminController::class, 'editGuru'])
-            ->name('admin-guru.edit');
+        Route::put(
+            '/guru/{id}',
+            [AdminController::class, 'editGuru']
+        )->name('admin-guru.edit');
 
-        Route::delete('/guru/{id}', [AdminController::class, 'destroyGuru'])
-            ->name('admin.guru.delete');
+        Route::delete(
+            '/guru/{id}',
+            [AdminController::class, 'destroyGuru']
+        )->name('admin.guru.delete');
 
 
         /*
@@ -217,17 +210,25 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/kelas', [AdminController::class, 'kelas'])
-            ->name('admin.kelas');
+        Route::get(
+            '/kelas',
+            [AdminController::class, 'kelas']
+        )->name('admin.kelas');
 
-        Route::post('/kelas', [AdminController::class, 'storeKelas'])
-            ->name('admin.kelas.store');
+        Route::post(
+            '/kelas',
+            [AdminController::class, 'storeKelas']
+        )->name('admin.kelas.store');
 
-        Route::put('/kelas/{kelas}', [AdminController::class, 'updateKelas'])
-            ->name('admin.kelas.update');
+        Route::put(
+            '/kelas/{kelas}',
+            [AdminController::class, 'updateKelas']
+        )->name('admin.kelas.update');
 
-        Route::delete('/kelas/{kelas}', [AdminController::class, 'destroyKelas'])
-            ->name('admin.kelas.delete');
+        Route::delete(
+            '/kelas/{kelas}',
+            [AdminController::class, 'destroyKelas']
+        )->name('admin.kelas.delete');
 
 
         /*
@@ -236,17 +237,25 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/siswa', [AdminController::class, 'siswa'])
-            ->name('admin.siswa');
+        Route::get(
+            '/siswa',
+            [AdminController::class, 'siswa']
+        )->name('admin.siswa');
 
-        Route::post('/siswa', [AdminController::class, 'storeSiswa'])
-            ->name('admin.siswa.register');
+        Route::post(
+            '/siswa',
+            [AdminController::class, 'storeSiswa']
+        )->name('admin.siswa.register');
 
-        Route::put('/siswa/{id}', [AdminController::class, 'updateSiswa'])
-            ->name('admin.siswa.update');
+        Route::put(
+            '/siswa/{id}',
+            [AdminController::class, 'updateSiswa']
+        )->name('admin.siswa.update');
 
-        Route::delete('/siswa/{id}', [AdminController::class, 'destroySiswa'])
-            ->name('admin.siswa.delete');
+        Route::delete(
+            '/siswa/{id}',
+            [AdminController::class, 'destroySiswa']
+        )->name('admin.siswa.delete');
 
 
         /*
@@ -255,14 +264,20 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/orang-tua', [AdminController::class, 'orangTua'])
-            ->name('admin.orang');
+        Route::get(
+            '/orang-tua',
+            [AdminController::class, 'orangTua']
+        )->name('admin.orang');
 
-        Route::post('/orang-tua', [AdminController::class, 'registerOrtu'])
-            ->name('admin.orang.register');
+        Route::post(
+            '/orang-tua',
+            [AdminController::class, 'registerOrtu']
+        )->name('admin.orang.register');
 
-        Route::delete('/orang-tua/{id}', [AdminController::class, 'destroyOrangTua'])
-            ->name('admin.orang.delete');
+        Route::delete(
+            '/orang-tua/{id}',
+            [AdminController::class, 'destroyOrangTua']
+        )->name('admin.orang.delete');
 
 
         /*
@@ -271,11 +286,15 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/pelanggaran', [AdminController::class, 'pelanggaran'])
-            ->name('admin.pelanggaran');
+        Route::get(
+            '/pelanggaran',
+            [AdminController::class, 'pelanggaran']
+        )->name('admin.pelanggaran');
 
-        Route::post('/pelanggaran', [PelanggaranController::class, 'store'])
-            ->name('admin.pelanggaran.store');
+        Route::post(
+            '/pelanggaran',
+            [PelanggaranController::class, 'store']
+        )->name('admin.pelanggaran.store');
 
         Route::put(
             '/pelanggaran/{pelanggaran}',
@@ -294,11 +313,15 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/kebajikan', [KebajikanController::class, 'index'])
-            ->name('admin.kebajikan');
+        Route::get(
+            '/kebajikan',
+            [KebajikanController::class, 'index']
+        )->name('admin.kebajikan');
 
-        Route::post('/kebajikan', [KebajikanController::class, 'store'])
-            ->name('admin.kebajikan.store');
+        Route::post(
+            '/kebajikan',
+            [KebajikanController::class, 'store']
+        )->name('admin.kebajikan.store');
 
         Route::put(
             '/kebajikan/{kebajikan}',
@@ -310,11 +333,12 @@ Route::prefix('admin')
             [KebajikanController::class, 'destroy']
         )->name('admin.kebajikan.delete');
 
+
         /*
-    |--------------------------------------------------------------------------
-    | Pemberian Kebajikan
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | Pemberian Kebajikan
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/poin-kebajikan',
@@ -330,23 +354,33 @@ Route::prefix('admin')
             '/poin-kebajikan/{riwayat}',
             [AdminController::class, 'hapusKebajikan']
         )->name('admin.poin-kebajikan.delete');
+
+
         /*
         |--------------------------------------------------------------------------
         | Skorsing
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/skorsing', [AdminController::class, 'skorsing'])
-            ->name('admin.skorsing');
+        Route::get(
+            '/skorsing',
+            [AdminController::class, 'skorsing']
+        )->name('admin.skorsing');
 
-        Route::post('/skorsing', [AdminController::class, 'tambahSkorsing'])
-            ->name('admin.skorsing.store');
+        Route::post(
+            '/skorsing',
+            [AdminController::class, 'tambahSkorsing']
+        )->name('admin.skorsing.store');
 
-        Route::get('/skorsing/{id}', [AdminController::class, 'detailSkorsing'])
-            ->name('admin.skorsing.detail');
+        Route::get(
+            '/skorsing/{id}',
+            [AdminController::class, 'detailSkorsing']
+        )->name('admin.skorsing.detail');
 
-        Route::delete('/skorsing/{id}', [AdminController::class, 'destroySkorsing'])
-            ->name('admin.skorsing.delete');
+        Route::delete(
+            '/skorsing/{id}',
+            [AdminController::class, 'destroySkorsing']
+        )->name('admin.skorsing.delete');
 
 
         /*
@@ -394,8 +428,16 @@ Route::prefix('guru')
     ->middleware(['auth', 'role:guru'])
     ->group(function () {
 
-        Route::get('/dashboard', [GuruController::class, 'index'])
-            ->name('guru.dashboard');
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/dashboard',
+            [GuruController::class, 'index']
+        )->name('guru.dashboard');
 
 
         /*
@@ -404,14 +446,20 @@ Route::prefix('guru')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/profil', [GuruController::class, 'profil'])
-            ->name('guru.profil');
+        Route::get(
+            '/profil',
+            [GuruController::class, 'profil']
+        )->name('guru.profil');
 
-        Route::put('/profil', [GuruController::class, 'edit'])
-            ->name('guru.edit');
+        Route::put(
+            '/profil',
+            [GuruController::class, 'edit']
+        )->name('guru.edit');
 
-        Route::put('/profil/password', [GuruController::class, 'updatePassword'])
-            ->name('guru.password.update');
+        Route::put(
+            '/profil/password',
+            [GuruController::class, 'updatePassword']
+        )->name('guru.password.update');
 
 
         /*
@@ -420,8 +468,10 @@ Route::prefix('guru')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/jenis-pelanggaran', [GuruController::class, 'pelanggaran'])
-            ->name('guru.pelanggaran');
+        Route::get(
+            '/jenis-pelanggaran',
+            [GuruController::class, 'pelanggaran']
+        )->name('guru.pelanggaran');
 
 
         /*
@@ -430,17 +480,25 @@ Route::prefix('guru')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/skorsing', [GuruController::class, 'skorsing'])
-            ->name('guru.skorsing');
+        Route::get(
+            '/skorsing',
+            [GuruController::class, 'skorsing']
+        )->name('guru.skorsing');
 
-        Route::post('/skorsing', [GuruController::class, 'tambahSkorsing'])
-            ->name('guru.skorsing.store');
+        Route::post(
+            '/skorsing',
+            [GuruController::class, 'tambahSkorsing']
+        )->name('guru.skorsing.store');
 
-        Route::get('/skorsing/{id}', [GuruController::class, 'detailSkorsing'])
-            ->name('guru.skorsing.detail');
+        Route::get(
+            '/skorsing/{id}',
+            [GuruController::class, 'detailSkorsing']
+        )->name('guru.skorsing.detail');
 
-        Route::delete('/skorsing/{id}', [GuruController::class, 'destroySkorsing'])
-            ->name('guru.skorsing.delete');
+        Route::delete(
+            '/skorsing/{id}',
+            [GuruController::class, 'destroySkorsing']
+        )->name('guru.skorsing.delete');
 
 
         /*
@@ -449,11 +507,15 @@ Route::prefix('guru')
         |--------------------------------------------------------------------------
         */
 
-        Route::get('/kebajikan', [KebajikanController::class, 'guruIndex'])
-            ->name('guru.kebajikan');
+        Route::get(
+            '/kebajikan',
+            [KebajikanController::class, 'guruIndex']
+        )->name('guru.kebajikan');
 
-        Route::post('/kebajikan', [KebajikanController::class, 'beriPoin'])
-            ->name('guru.kebajikan.store');
+        Route::post(
+            '/kebajikan',
+            [KebajikanController::class, 'beriPoin']
+        )->name('guru.kebajikan.store');
 
         Route::delete(
             '/kebajikan/{riwayat}',
@@ -472,17 +534,48 @@ Route::prefix('orang-tua')
     ->middleware(['auth', 'role:orang_tua'])
     ->group(function () {
 
+        /*
+        |--------------------------------------------------------------------------
+        | Dashboard
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/dashboard',
             [OrangTuaController::class, 'dashboard']
         )->name('ortu.dashboard');
 
+        Route::get(
+            '/profil',
+            [OrangTuaController::class, 'profil']
+        )->name('ortu.profil');
+
+        Route::put(
+            '/profil',
+            [OrangTuaController::class, 'updateProfil']
+        )->name('ortu.profil.update');
+
+        Route::put(
+            '/profil/password',
+            [OrangTuaController::class, 'updatePassword']
+        )->name('ortu.password.update');
+        /*
+        |--------------------------------------------------------------------------
+        | Jenis Pelanggaran
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/jenis-pelanggaran',
             [OrangTuaController::class, 'pelanggaran']
         )->name('ortu.pelanggaran');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Kebajikan
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/kebajikan',
@@ -497,9 +590,10 @@ Route::prefix('orang-tua')
 |--------------------------------------------------------------------------
 */
 
-Route::get('/manifest.json', [PWAController::class, 'manifest'])
-    ->name('pwa.manifest');
-
+Route::get(
+    '/manifest.json',
+    [PWAController::class, 'manifest']
+)->name('pwa.manifest');
 
 Route::get('/serviceworker.js', function () {
 
@@ -518,12 +612,15 @@ Route::get('/serviceworker.js', function () {
     );
 })->name('pwa.serviceworker');
 
+Route::view(
+    '/offline.html',
+    'pwa.offline'
+)->name('pwa.offline');
 
-Route::view('/offline.html', 'pwa.offline')
-    ->name('pwa.offline');
-
-Route::view('/pwa/install', 'pwa.install')
-    ->name('pwa.install');
+Route::view(
+    '/pwa/install',
+    'pwa.install'
+)->name('pwa.install');
 
 
 /*

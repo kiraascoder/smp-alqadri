@@ -448,64 +448,18 @@
 
                     {{-- EMAIL --}}
                     <div>
-
-                        <label for="email"
-                            class="
-                                block
-                                text-sm
-                                font-semibold
-                                text-slate-700
-                                mb-2
-                            ">
-
-                            Email
-
+                        <label for="login" class="mb-2 block text-sm font-semibold text-slate-700">
+                            Email atau Nomor HP
                         </label>
 
+                        <input id="login" type="text" name="login" value="{{ old('login') }}"
+                            autocomplete="username" required autofocus placeholder="Email atau nomor HP"
+                            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3.5 text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100">
 
-                        <div class="relative">
-
-                            <div
-                                class="
-                                    absolute
-                                    left-4
-                                    top-1/2
-                                    -translate-y-1/2
-                                    text-slate-400
-                                    pointer-events-none
-                                ">
-
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 12H8m8 0l-4-4m4 4l-4 4m8-8v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h12a2 2 0 012 2z" />
-
-                                </svg>
-
-                            </div>
-
-
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                autofocus autocomplete="email" placeholder="nama@email.com"
-                                class="
-                                    w-full
-                                    pl-12
-                                    pr-4
-                                    py-3.5
-                                    border
-                                    border-slate-300
-                                    rounded-xl
-                                    text-slate-800
-                                    placeholder:text-slate-400
-                                    outline-none
-                                    transition
-                                    focus:border-blue-500
-                                    focus:ring-4
-                                    focus:ring-blue-100
-                                ">
-
-                        </div>
-
+                        <p class="mt-2 text-xs leading-5 text-slate-500">
+                            Admin dan guru menggunakan email.
+                            Orang tua dapat menggunakan nomor HP yang terdaftar.
+                        </p>
                     </div>
 
 

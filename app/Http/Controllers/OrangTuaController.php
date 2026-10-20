@@ -8,6 +8,9 @@ use App\Models\Pelanggaran;
 use App\Models\RiwayatKebajikan;
 use App\Models\RiwayatPelanggaran;
 use App\Models\Siswa;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class OrangTuaController extends Controller
 {
@@ -224,5 +227,112 @@ class OrangTuaController extends Controller
             'orangtua.kebajikan',
             compact('kebajikans')
         );
+    }
+    public function profil()
+    {
+        $user = auth()->user();
+
+        return view(
+            'orangtua.profil',
+            compact('user')
+        );
+    }
+
+    public function updateProfil(Request $request)
+    {
+        $user = auth()->user();
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'no_hp' => ['required', 'string', 'max:20'],
+            'jenis_kelamin' => [
+                'nullable',
+                Rule::in(['Laki-Laki', 'Perempuan']),
+            ],
+        ]);
+
+        $phone = $this->normalizePhone($data['no_hp']);
+
+        if (! $phone) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'no_hp' => 'Nomor WhatsApp tidak valid. Gunakan nomor Indonesia, contoh 08123456789.',
+                ]);
+        }
+
+        $phoneExists = OrangTua::with('user')
+            ->get()
+            ->contains(function ($orangTua) use ($phone, $user) {
+                if (! $orangTua->user || $orangTua->user->id === $user->id) {
+                    return false;
+                }
+
+                return $this->normalizePhone($orangTua->user->no_hp) === $phone;
+            });
+
+        if ($phoneExists) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'no_hp' => 'Nomor WhatsApp tersebut sudah digunakan oleh akun orang tua lain.',
+                ]);
+        }
+
+        $data['no_hp'] = $phone;
+
+        $user->update($data);
+
+        return back()->with(
+            'success',
+            'Profil berhasil diperbarui.'
+        );
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $data = $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+        ]);
+
+        auth()->user()->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return back()->with(
+            'success',
+            'Password berhasil diperbarui.'
+        );
+    }
+
+    private function normalizePhone(?string $value): ?string
+    {
+        $phone = preg_replace('/\D+/', '', (string) $value) ?? '';
+
+        if ($phone === '') {
+            return null;
+        }
+
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        } elseif (str_starts_with($phone, '8')) {
+            $phone = '62' . $phone;
+        }
+
+        if (! preg_match('/^628\d{8,12}$/', $phone)) {
+            return null;
+        }
+
+        return $phone;
     }
 }

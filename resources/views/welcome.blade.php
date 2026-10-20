@@ -3,54 +3,32 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>
         SMP Al-Qadri Islamic School
     </title>
-
     <meta name="description"
         content="Website resmi SMP Al-Qadri Islamic School. Informasi sekolah, pengumuman, layanan sekolah, serta Sistem Informasi Bimbingan dan Konseling untuk guru, orang tua, dan administrator.">
-
     <meta name="keywords"
         content="SMP Al-Qadri, SMP Al-Qadri Islamic School, sekolah Islam, pendidikan Islam, bimbingan konseling, informasi sekolah">
-
     <meta name="author" content="SMP Al-Qadri Islamic School">
-
     <meta name="theme-color" content="#047857">
-
     <meta property="og:title" content="SMP Al-Qadri Islamic School">
-
     <meta property="og:description" content="Website resmi SMP Al-Qadri Islamic School">
-
     <meta property="og:url" content="{{ url('/') }}">
-
     <meta property="og:type" content="website">
-
-
     {{-- PWA --}}
     <link rel="manifest" href="/manifest.json">
-
     <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
-
     <link rel="icon" type="image/png" href="{{ asset('logo-baru.png') }}">
-
-
     {{-- FONT --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap"
         rel="stylesheet">
-
-
     {{-- TAILWIND --}}
     <script src="https://cdn.tailwindcss.com"></script>
-
-
     <style>
         * {
             font-family: 'Inter', sans-serif;
@@ -91,14 +69,10 @@
     </style>
 </head>
 
-
 <body class="bg-slate-50 text-slate-800">
-
-
     {{-- ============================================================= --}}
     {{-- OFFLINE STATUS --}}
     {{-- ============================================================= --}}
-
     <div id="offline-status"
         class="
             hidden
@@ -110,17 +84,11 @@
             text-sm
             px-4 py-2
         ">
-
         Anda sedang offline. Beberapa fitur mungkin tidak tersedia.
-
     </div>
-
-
-
     {{-- ============================================================= --}}
     {{-- NAVBAR --}}
     {{-- ============================================================= --}}
-
     <header
         class="
             fixed
@@ -131,7 +99,6 @@
             border-b
             border-slate-200
         ">
-
         <div
             class="
                 max-w-7xl
@@ -143,15 +110,10 @@
                 items-center
                 justify-between
             ">
-
-
             {{-- LOGO --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
-
                 <img src="{{ asset('logo-baru.png') }}" alt="Logo SMP Al-Qadri" class="w-12 h-12 object-contain">
-
                 <div>
-
                     <h1
                         class="
                             text-sm
@@ -160,28 +122,18 @@
                             text-slate-900
                             leading-tight
                         ">
-
                         SMP AL-QADRI
-
                     </h1>
-
                     <p
                         class="
                             text-xs
                             text-emerald-600
                             font-medium
                         ">
-
                         Islamic School
-
                     </p>
-
                 </div>
-
             </a>
-
-
-
             {{-- DESKTOP MENU --}}
             <nav
                 class="
@@ -193,46 +145,25 @@
                     font-medium
                     text-slate-600
                 ">
-
                 <a href="{{ route('home') }}" class="hover:text-emerald-600 transition">
-
                     Beranda
-
                 </a>
-
                 <a href="{{ route('tentang') }}" class="hover:text-emerald-600 transition">
-
                     Tentang
-
                 </a>
-
                 <a href="{{ route('layanan') }}" class="hover:text-emerald-600 transition">
-
                     Layanan
-
                 </a>
-
                 <a href="{{ route('pengumuman') }}" class="hover:text-emerald-600 transition">
-
                     Pengumuman
-
                 </a>
-
                 <a href="#fitur" class="hover:text-emerald-600 transition">
-
                     Sistem Informasi
-
                 </a>
-
             </nav>
-
-
-
             {{-- PORTAL BUTTON --}}
-            <div class="hidden lg:block">
-
+            <div class="hidden lg:flex items-center gap-2">
                 @auth
-
                     @php
                         $dashboardRoute = match (auth()->user()->role) {
                             'admin' => route('admin.dashboard'),
@@ -241,7 +172,6 @@
                             default => route('home'),
                         };
                     @endphp
-
                     <a href="{{ $dashboardRoute }}"
                         class="
                             inline-flex
@@ -256,36 +186,27 @@
                             text-sm
                             transition
                         ">
-
                         Dashboard
-
                     </a>
                 @else
                     <a href="{{ route('login') }}"
                         class="
                             inline-flex
                             items-center
-                            gap-2
+                            justify-center
                             bg-emerald-600
                             hover:bg-emerald-700
                             text-white
-                            px-5 py-2.5
+                            px-4 py-2.5
                             rounded-xl
                             font-semibold
                             text-sm
                             transition
                         ">
-
-                        Login Portal
-
+                        Login
                     </a>
-
                 @endauth
-
             </div>
-
-
-
             {{-- MOBILE MENU BUTTON --}}
             <button id="mobile-menu-button" type="button"
                 class="
@@ -296,18 +217,11 @@
                     flex items-center justify-center
                     text-slate-700
                 ">
-
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-
                 </svg>
-
             </button>
-
         </div>
-
-
         {{-- MOBILE MENU --}}
         <div id="mobile-menu"
             class="
@@ -317,7 +231,6 @@
                 border-slate-200
                 bg-white
             ">
-
             <div
                 class="
                     px-5
@@ -326,65 +239,47 @@
                     flex-col
                     gap-2
                 ">
-
                 <a href="{{ route('home') }}"
                     class="
                         px-4 py-3
                         rounded-xl
                         hover:bg-slate-50
                     ">
-
                     Beranda
-
                 </a>
-
                 <a href="{{ route('tentang') }}"
                     class="
                         px-4 py-3
                         rounded-xl
                         hover:bg-slate-50
                     ">
-
                     Tentang Sekolah
-
                 </a>
-
                 <a href="{{ route('layanan') }}"
                     class="
                         px-4 py-3
                         rounded-xl
                         hover:bg-slate-50
                     ">
-
                     Layanan
-
                 </a>
-
                 <a href="{{ route('pengumuman') }}"
                     class="
                         px-4 py-3
                         rounded-xl
                         hover:bg-slate-50
                     ">
-
                     Pengumuman
-
                 </a>
-
                 <a href="#fitur"
                     class="
                         px-4 py-3
                         rounded-xl
                         hover:bg-slate-50
                     ">
-
                     Sistem Informasi
-
                 </a>
-
-
                 @auth
-
                     <a href="{{ $dashboardRoute }}"
                         class="
                             mt-2
@@ -395,40 +290,44 @@
                             rounded-xl
                             font-semibold
                         ">
-
                         Dashboard
-
                     </a>
                 @else
                     <a href="{{ route('login') }}"
                         class="
                             mt-2
+                            bg-slate-100
+                            hover:bg-slate-200
+                            text-slate-700
+                            text-center
+                            px-4 py-3
+                            rounded-xl
+                            font-semibold
+                            transition
+                        ">
+                        Login
+                    </a>
+                    <a href="{{ route('login') }}"
+                        class="
+                            mt-2
                             bg-emerald-600
+                            hover:bg-emerald-700
                             text-white
                             text-center
                             px-4 py-3
                             rounded-xl
                             font-semibold
+                            transition
                         ">
-
-                        Login Portal
-
+                        Login
                     </a>
-
                 @endauth
-
             </div>
-
         </div>
-
     </header>
-
-
-
     {{-- ============================================================= --}}
     {{-- HERO --}}
     {{-- ============================================================= --}}
-
     <section
         class="
             hero-gradient
@@ -439,8 +338,6 @@
             lg:pt-44
             lg:pb-32
         ">
-
-
         <div
             class="
                 absolute
@@ -452,8 +349,6 @@
                 blur-3xl
             ">
         </div>
-
-
         <div
             class="
                 absolute
@@ -465,8 +360,6 @@
                 blur-3xl
             ">
         </div>
-
-
         <div
             class="
                 max-w-7xl
@@ -476,8 +369,6 @@
                 relative
                 z-10
             ">
-
-
             <div
                 class="
                     grid
@@ -485,12 +376,8 @@
                     gap-14
                     items-center
                 ">
-
-
                 {{-- HERO TEXT --}}
                 <div class="text-white">
-
-
                     <div
                         class="
                             inline-flex
@@ -502,7 +389,6 @@
                             text-sm
                             mb-6
                         ">
-
                         <span
                             class="
                                 w-2 h-2
@@ -510,13 +396,8 @@
                                 rounded-full
                             ">
                         </span>
-
                         Website Resmi SMP Al-Qadri Islamic School
-
                     </div>
-
-
-
                     <h2
                         class="
                             text-4xl
@@ -525,24 +406,16 @@
                             font-extrabold
                             leading-tight
                         ">
-
                         Pendidikan Islami untuk
-
                         <span
                             class="
                                 block
                                 text-emerald-200
                                 mt-2
                             ">
-
                             Generasi Berilmu dan Berakhlak
-
                         </span>
-
                     </h2>
-
-
-
                     <p
                         class="
                             mt-6
@@ -552,17 +425,12 @@
                             leading-relaxed
                             max-w-2xl
                         ">
-
                         Selamat datang di website SMP Al-Qadri Islamic School.
                         Website ini menjadi pusat informasi sekolah sekaligus
                         akses menuju sistem layanan digital sekolah untuk
                         mendukung komunikasi antara sekolah, guru, dan
                         orang tua siswa.
-
                     </p>
-
-
-
                     <div
                         class="
                             mt-8
@@ -571,8 +439,6 @@
                             sm:flex-row
                             gap-4
                         ">
-
-
                         <a href="{{ route('tentang') }}"
                             class="
                                 inline-flex
@@ -587,12 +453,8 @@
                                 transition
                                 shadow-lg
                             ">
-
                             Tentang Sekolah
-
                         </a>
-
-
                         <a href="{{ route('pengumuman') }}"
                             class="
                                 inline-flex
@@ -606,15 +468,9 @@
                                 hover:bg-white/20
                                 transition
                             ">
-
                             Lihat Pengumuman
-
                         </a>
-
                     </div>
-
-
-
                     <div
                         class="
                             mt-8
@@ -624,22 +480,13 @@
                             text-sm
                             text-emerald-100
                         ">
-
                         <span>✓ Informasi Sekolah</span>
-
                         <span>•</span>
-
                         <span>✓ Portal Guru & Orang Tua</span>
-
                     </div>
-
                 </div>
-
-
-
                 {{-- HERO CARD --}}
                 <div class="hidden lg:block">
-
                     <div
                         class="
                             glass
@@ -647,8 +494,6 @@
                             p-8
                             shadow-2xl
                         ">
-
-
                         <div
                             class="
                                 bg-white
@@ -656,66 +501,47 @@
                                 p-8
                                 text-slate-800
                             ">
-
-
                             <div
                                 class="
                                     flex
                                     justify-center
                                     mb-6
                                 ">
-
                                 <img src="{{ asset('logo-baru.png') }}" alt="Logo SMP Al-Qadri"
                                     class="
                                         w-28
                                         h-28
                                         object-contain
                                     ">
-
                             </div>
-
-
                             <div class="text-center">
-
                                 <h3
                                     class="
                                         text-2xl
                                         font-bold
                                         text-slate-900
                                     ">
-
                                     SMP Al-Qadri
-
                                 </h3>
-
                                 <p
                                     class="
                                         text-emerald-600
                                         font-semibold
                                         mt-1
                                     ">
-
                                     Islamic School
-
                                 </p>
-
-
                                 <p
                                     class="
                                         text-slate-500
                                         mt-4
                                         leading-relaxed
                                     ">
-
                                     Membangun lingkungan pendidikan
                                     yang mendukung perkembangan akademik,
                                     karakter, kedisiplinan, dan kebajikan siswa.
-
                                 </p>
-
                             </div>
-
-
                             <div
                                 class="
                                     grid
@@ -723,7 +549,6 @@
                                     gap-3
                                     mt-8
                                 ">
-
                                 <div
                                     class="
                                         bg-emerald-50
@@ -731,25 +556,18 @@
                                         p-4
                                         text-center
                                     ">
-
                                     <div class="text-2xl">
                                         📚
                                     </div>
-
                                     <p
                                         class="
                                             text-xs
                                             font-semibold
                                             mt-2
                                         ">
-
                                         Pendidikan
-
                                     </p>
-
                                 </div>
-
-
                                 <div
                                     class="
                                         bg-blue-50
@@ -757,25 +575,18 @@
                                         p-4
                                         text-center
                                     ">
-
                                     <div class="text-2xl">
                                         👨‍🏫
                                     </div>
-
                                     <p
                                         class="
                                             text-xs
                                             font-semibold
                                             mt-2
                                         ">
-
                                         Pembinaan
-
                                     </p>
-
                                 </div>
-
-
                                 <div
                                     class="
                                         bg-amber-50
@@ -783,46 +594,29 @@
                                         p-4
                                         text-center
                                     ">
-
                                     <div class="text-2xl">
                                         ⭐
                                     </div>
-
                                     <p
                                         class="
                                             text-xs
                                             font-semibold
                                             mt-2
                                         ">
-
                                         Karakter
-
                                     </p>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- AKSES CEPAT --}}
     {{-- ============================================================= --}}
-
     <section class="py-16 bg-white">
-
         <div
             class="
                 max-w-7xl
@@ -830,10 +624,7 @@
                 px-5
                 lg:px-8
             ">
-
-
             <div class="text-center mb-10">
-
                 <p
                     class="
                         text-emerald-600
@@ -842,11 +633,8 @@
                         uppercase
                         tracking-wider
                     ">
-
                     Akses Cepat
-
                 </p>
-
                 <h2
                     class="
                         text-3xl
@@ -855,12 +643,8 @@
                         text-slate-900
                         mt-2
                     ">
-
                     Informasi Sekolah
-
                 </h2>
-
-
                 <p
                     class="
                         text-slate-500
@@ -868,24 +652,16 @@
                         mx-auto
                         mt-3
                     ">
-
                     Temukan informasi penting tentang sekolah
                     melalui halaman yang telah tersedia.
-
                 </p>
-
             </div>
-
-
-
             <div
                 class="
                     grid
                     md:grid-cols-3
                     gap-6
                 ">
-
-
                 {{-- TENTANG --}}
                 <a href="{{ route('tentang') }}"
                     class="
@@ -897,7 +673,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-14 h-14
@@ -909,12 +684,8 @@
                             justify-center
                             text-2xl
                         ">
-
                         🏫
-
                     </div>
-
-
                     <h3
                         class="
                             text-xl
@@ -922,25 +693,17 @@
                             mt-5
                             text-slate-900
                         ">
-
                         Tentang Sekolah
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
                             mt-2
                             leading-relaxed
                         ">
-
                         Mengenal SMP Al-Qadri Islamic School
                         dan informasi mengenai sekolah.
-
                     </p>
-
-
                     <div
                         class="
                             mt-5
@@ -948,15 +711,9 @@
                             font-semibold
                             text-sm
                         ">
-
                         Selengkapnya →
-
                     </div>
-
                 </a>
-
-
-
                 {{-- PENGUMUMAN --}}
                 <a href="{{ route('pengumuman') }}"
                     class="
@@ -968,7 +725,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-14 h-14
@@ -980,12 +736,8 @@
                             justify-center
                             text-2xl
                         ">
-
                         📢
-
                     </div>
-
-
                     <h3
                         class="
                             text-xl
@@ -993,25 +745,17 @@
                             mt-5
                             text-slate-900
                         ">
-
                         Pengumuman
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
                             mt-2
                             leading-relaxed
                         ">
-
                         Akses informasi dan pengumuman terbaru
                         yang disampaikan oleh sekolah.
-
                     </p>
-
-
                     <div
                         class="
                             mt-5
@@ -1019,15 +763,9 @@
                             font-semibold
                             text-sm
                         ">
-
                         Lihat Pengumuman →
-
                     </div>
-
                 </a>
-
-
-
                 {{-- LAYANAN --}}
                 <a href="{{ route('layanan') }}"
                     class="
@@ -1039,7 +777,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-14 h-14
@@ -1051,12 +788,8 @@
                             justify-center
                             text-2xl
                         ">
-
                         🤝
-
                     </div>
-
-
                     <h3
                         class="
                             text-xl
@@ -1064,26 +797,18 @@
                             mt-5
                             text-slate-900
                         ">
-
                         Layanan Sekolah
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
                             mt-2
                             leading-relaxed
                         ">
-
                         Informasi mengenai layanan sekolah
                         yang dapat dimanfaatkan oleh siswa
                         dan orang tua.
-
                     </p>
-
-
                     <div
                         class="
                             mt-5
@@ -1091,27 +816,16 @@
                             font-semibold
                             text-sm
                         ">
-
                         Lihat Layanan →
-
                     </div>
-
                 </a>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- FITUR SISTEM --}}
     {{-- ============================================================= --}}
-
     <section id="fitur" class="py-20 bg-slate-50">
-
         <div
             class="
                 max-w-7xl
@@ -1119,10 +833,7 @@
                 px-5
                 lg:px-8
             ">
-
-
             <div class="text-center mb-14">
-
                 <p
                     class="
                         text-emerald-600
@@ -1131,12 +842,8 @@
                         uppercase
                         tracking-wider
                     ">
-
                     Sistem Informasi Sekolah
-
                 </p>
-
-
                 <h2
                     class="
                         text-3xl
@@ -1145,12 +852,8 @@
                         text-slate-900
                         mt-2
                     ">
-
                     Fitur Portal Sekolah
-
                 </h2>
-
-
                 <p
                     class="
                         text-slate-500
@@ -1159,18 +862,12 @@
                         mx-auto
                         leading-relaxed
                     ">
-
                     Portal sekolah membantu pengelolaan data siswa,
                     pencatatan pelanggaran dan kebajikan,
                     serta memudahkan orang tua memantau perkembangan
                     putra-putrinya.
-
                 </p>
-
             </div>
-
-
-
             <div
                 class="
                     grid
@@ -1178,8 +875,6 @@
                     lg:grid-cols-3
                     gap-6
                 ">
-
-
                 {{-- DATA SEKOLAH --}}
                 <div
                     class="
@@ -1190,7 +885,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1202,24 +896,16 @@
                             justify-center
                             text-xl
                         ">
-
                         🗂️
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Manajemen Data Sekolah
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1227,17 +913,11 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Admin dapat mengelola data guru,
                         kelas, siswa, serta akun orang tua
                         dalam satu sistem.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- PELANGGARAN --}}
                 <div
                     class="
@@ -1248,7 +928,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1260,24 +939,16 @@
                             justify-center
                             text-xl
                         ">
-
                         ⚠️
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Pencatatan Pelanggaran
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1285,17 +956,11 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Guru dapat mencatat pelanggaran siswa
                         berdasarkan jenis dan skor pelanggaran
                         yang telah ditentukan sekolah.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- KEBAJIKAN --}}
                 <div
                     class="
@@ -1306,7 +971,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1318,24 +982,16 @@
                             justify-center
                             text-xl
                         ">
-
                         ⭐
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Poin Kebajikan
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1343,17 +999,11 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Perilaku positif siswa dapat dicatat
                         melalui sistem poin kebajikan sebagai
                         bentuk pembinaan karakter.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- MONITORING ORTU --}}
                 <div
                     class="
@@ -1364,7 +1014,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1376,24 +1025,16 @@
                             justify-center
                             text-xl
                         ">
-
                         👪
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Portal Orang Tua
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1401,17 +1042,11 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Orang tua dapat melihat informasi anak,
                         riwayat pelanggaran, skor,
                         dan kebajikan yang telah diberikan.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- DASHBOARD GURU --}}
                 <div
                     class="
@@ -1422,7 +1057,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1434,24 +1068,16 @@
                             justify-center
                             text-xl
                         ">
-
                         👨‍🏫
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Dashboard Guru
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1459,17 +1085,11 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Guru dapat melihat riwayat pelanggaran
                         dan kebajikan yang telah diberikan
                         kepada siswa.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- REKAP --}}
                 <div
                     class="
@@ -1480,7 +1100,6 @@
                         p-7
                         card-hover
                     ">
-
                     <div
                         class="
                             w-12 h-12
@@ -1492,24 +1111,16 @@
                             justify-center
                             text-xl
                         ">
-
                         📊
-
                     </div>
-
-
                     <h3
                         class="
                             font-bold
                             text-lg
                             mt-5
                         ">
-
                         Rekap & Laporan
-
                     </h3>
-
-
                     <p
                         class="
                             text-slate-500
@@ -1517,29 +1128,18 @@
                             leading-relaxed
                             mt-2
                         ">
-
                         Admin dapat melakukan filter,
                         melihat rekap pelanggaran dan kebajikan,
                         serta mengunduh laporan dalam format PDF.
-
                     </p>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- ROLE SECTION --}}
     {{-- ============================================================= --}}
-
     <section class="py-20 bg-white">
-
         <div
             class="
                 max-w-7xl
@@ -1547,8 +1147,6 @@
                 px-5
                 lg:px-8
             ">
-
-
             <div
                 class="
                     grid
@@ -1556,10 +1154,7 @@
                     gap-14
                     items-center
                 ">
-
-
                 <div>
-
                     <p
                         class="
                             text-emerald-600
@@ -1568,12 +1163,8 @@
                             tracking-wider
                             text-sm
                         ">
-
                         Portal Terintegrasi
-
                     </p>
-
-
                     <h2
                         class="
                             text-3xl
@@ -1582,32 +1173,22 @@
                             text-slate-900
                             mt-3
                         ">
-
                         Satu Sistem untuk Sekolah,
                         Guru, dan Orang Tua
-
                     </h2>
-
-
                     <p
                         class="
                             text-slate-500
                             leading-relaxed
                             mt-5
                         ">
-
                         Setiap pengguna memiliki akses yang
                         disesuaikan dengan perannya sehingga
                         informasi sekolah dapat dikelola dan
                         dipantau dengan lebih terstruktur.
-
                     </p>
-
-
                     <div class="mt-8">
-
                         @auth
-
                             <a href="{{ $dashboardRoute }}"
                                 class="
                                     inline-flex
@@ -1621,40 +1202,45 @@
                                     font-semibold
                                     transition
                                 ">
-
                                 Buka Dashboard →
-
                             </a>
                         @else
-                            <a href="{{ route('login') }}"
-                                class="
-                                    inline-flex
-                                    items-center
-                                    gap-2
-                                    bg-emerald-600
-                                    hover:bg-emerald-700
-                                    text-white
-                                    px-7 py-3.5
-                                    rounded-xl
-                                    font-semibold
-                                    transition
-                                ">
-
-                                Masuk ke Portal →
-
-                            </a>
-
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <a href="{{ route('login') }}"
+                                    class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        bg-slate-100
+                                        hover:bg-slate-200
+                                        text-slate-700
+                                        px-7 py-3.5
+                                        rounded-xl
+                                        font-semibold
+                                        transition
+                                    ">
+                                    Login
+                                </a>
+                                <a href="{{ route('login') }}"
+                                    class="
+                                        inline-flex
+                                        items-center
+                                        justify-center
+                                        bg-emerald-600
+                                        hover:bg-emerald-700
+                                        text-white
+                                        px-7 py-3.5
+                                        rounded-xl
+                                        font-semibold
+                                        transition
+                                    ">
+                                    Login →
+                                </a>
+                            </div>
                         @endauth
-
                     </div>
-
                 </div>
-
-
-
                 <div class="space-y-4">
-
-
                     {{-- ADMIN --}}
                     <div
                         class="
@@ -1666,7 +1252,6 @@
                             flex
                             gap-4
                         ">
-
                         <div
                             class="
                                 w-12 h-12
@@ -1676,37 +1261,24 @@
                                 flex items-center justify-center
                                 text-xl
                             ">
-
                             🛡️
-
                         </div>
-
-
                         <div>
-
                             <h3 class="font-bold">
                                 Administrator
                             </h3>
-
                             <p
                                 class="
                                     text-sm
                                     text-slate-500
                                     mt-1
                                 ">
-
                                 Mengelola guru, kelas, siswa,
                                 orang tua, jenis pelanggaran,
                                 kebajikan, skorsing, dan laporan.
-
                             </p>
-
                         </div>
-
                     </div>
-
-
-
                     {{-- GURU --}}
                     <div
                         class="
@@ -1718,7 +1290,6 @@
                             flex
                             gap-4
                         ">
-
                         <div
                             class="
                                 w-12 h-12
@@ -1728,38 +1299,25 @@
                                 flex items-center justify-center
                                 text-xl
                             ">
-
                             👨‍🏫
-
                         </div>
-
-
                         <div>
-
                             <h3 class="font-bold">
                                 Guru
                             </h3>
-
                             <p
                                 class="
                                     text-sm
                                     text-slate-500
                                     mt-1
                                 ">
-
                                 Mencatat pelanggaran,
                                 memberikan kebajikan,
                                 melihat riwayat,
                                 dan mengelola profil.
-
                             </p>
-
                         </div>
-
                     </div>
-
-
-
                     {{-- ORANG TUA --}}
                     <div
                         class="
@@ -1771,7 +1329,6 @@
                             flex
                             gap-4
                         ">
-
                         <div
                             class="
                                 w-12 h-12
@@ -1781,51 +1338,32 @@
                                 flex items-center justify-center
                                 text-xl
                             ">
-
                             👪
-
                         </div>
-
-
                         <div>
-
                             <h3 class="font-bold">
                                 Orang Tua
                             </h3>
-
                             <p
                                 class="
                                     text-sm
                                     text-slate-500
                                     mt-1
                                 ">
-
                                 Memantau perkembangan anak,
                                 riwayat pelanggaran,
                                 serta kebajikan yang diperoleh.
-
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- NILAI SEKOLAH --}}
     {{-- ============================================================= --}}
-
     <section class="py-20 bg-emerald-50">
-
         <div
             class="
                 max-w-7xl
@@ -1833,22 +1371,15 @@
                 px-5
                 lg:px-8
             ">
-
-
             <div class="text-center">
-
                 <p
                     class="
                         arabic
                         text-3xl
                         text-emerald-800
                     ">
-
                     وَقُل رَّبِّ زِدْنِي عِلْمًا
-
                 </p>
-
-
                 <h2
                     class="
                         text-3xl
@@ -1856,12 +1387,8 @@
                         text-slate-900
                         mt-5
                     ">
-
                     Pendidikan yang Membentuk Ilmu dan Akhlak
-
                 </h2>
-
-
                 <p
                     class="
                         max-w-2xl
@@ -1870,13 +1397,9 @@
                         mt-4
                         leading-relaxed
                     ">
-
                     “Dan katakanlah: Ya Tuhanku,
                     tambahkanlah kepadaku ilmu pengetahuan.”
-
                 </p>
-
-
                 <p
                     class="
                         text-sm
@@ -1884,23 +1407,14 @@
                         font-medium
                         mt-2
                     ">
-
                     QS. Taha: 114
-
                 </p>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- CTA --}}
     {{-- ============================================================= --}}
-
     <section
         class="
             hero-gradient
@@ -1908,8 +1422,6 @@
             relative
             overflow-hidden
         ">
-
-
         <div
             class="
                 max-w-4xl
@@ -1920,20 +1432,14 @@
                 relative
                 z-10
             ">
-
-
             <h2
                 class="
                     text-3xl
                     lg:text-4xl
                     font-bold
                 ">
-
                 Akses Sistem Informasi SMP Al-Qadri
-
             </h2>
-
-
             <p
                 class="
                     text-emerald-100
@@ -1941,14 +1447,10 @@
                     text-lg
                     leading-relaxed
                 ">
-
                 Gunakan portal sekolah sesuai akun yang telah
                 diberikan untuk mengakses informasi dan layanan
                 yang tersedia.
-
             </p>
-
-
             <div
                 class="
                     mt-8
@@ -1958,10 +1460,7 @@
                     justify-center
                     gap-4
                 ">
-
-
                 @auth
-
                     <a href="{{ $dashboardRoute }}"
                         class="
                             px-8 py-4
@@ -1972,9 +1471,7 @@
                             hover:bg-emerald-50
                             transition
                         ">
-
                         Buka Dashboard
-
                     </a>
                 @else
                     <a href="{{ route('login') }}"
@@ -1987,14 +1484,21 @@
                             hover:bg-emerald-50
                             transition
                         ">
-
-                        Login Portal
-
+                        Login
                     </a>
-
+                    <a href="{{ route('login') }}"
+                        class="
+                            px-8 py-4
+                            bg-emerald-600
+                            text-white
+                            rounded-xl
+                            font-semibold
+                            hover:bg-emerald-700
+                            transition
+                        ">
+                        Login
+                    </a>
                 @endauth
-
-
                 <button id="install-button" onclick="installSchoolApp()"
                     class="
                         hidden
@@ -2005,25 +1509,15 @@
                         font-semibold
                         transition
                     ">
-
                     Install Aplikasi
-
                 </button>
-
             </div>
-
         </div>
-
     </section>
-
-
-
     {{-- ============================================================= --}}
     {{-- FOOTER --}}
     {{-- ============================================================= --}}
-
     <footer class="bg-slate-950 text-white">
-
         <div
             class="
                 max-w-7xl
@@ -2032,53 +1526,38 @@
                 lg:px-8
                 py-12
             ">
-
-
             <div
                 class="
                     grid
                     md:grid-cols-3
                     gap-10
                 ">
-
-
                 {{-- SCHOOL --}}
                 <div>
-
                     <div
                         class="
                             flex
                             items-center
                             gap-3
                         ">
-
                         <img src="{{ asset('logo-baru.png') }}" alt="Logo"
                             class="
                                 w-12 h-12
                                 object-contain
                             ">
-
                         <div>
-
                             <h3 class="font-bold">
                                 SMP AL-QADRI
                             </h3>
-
                             <p
                                 class="
                                     text-sm
                                     text-emerald-400
                                 ">
-
                                 Islamic School
-
                             </p>
-
                         </div>
-
                     </div>
-
-
                     <p
                         class="
                             text-slate-400
@@ -2086,23 +1565,15 @@
                             leading-relaxed
                             mt-5
                         ">
-
                         Website resmi dan portal sistem informasi
                         SMP Al-Qadri Islamic School.
-
                     </p>
-
                 </div>
-
-
-
                 {{-- NAV --}}
                 <div>
-
                     <h4 class="font-semibold mb-4">
                         Informasi
                     </h4>
-
                     <div
                         class="
                             flex
@@ -2111,72 +1582,56 @@
                             text-sm
                             text-slate-400
                         ">
-
                         <a href="{{ route('tentang') }}" class="hover:text-white">
-
                             Tentang Sekolah
-
                         </a>
-
                         <a href="{{ route('layanan') }}" class="hover:text-white">
-
                             Layanan
-
                         </a>
-
                         <a href="{{ route('pengumuman') }}" class="hover:text-white">
-
                             Pengumuman
-
                         </a>
-
                     </div>
-
                 </div>
-
-
-
                 {{-- PORTAL --}}
                 <div>
-
                     <h4 class="font-semibold mb-4">
                         Portal Sekolah
                     </h4>
-
                     <p
                         class="
                             text-sm
                             text-slate-400
                             leading-relaxed
                         ">
-
-                        Portal digunakan oleh administrator,
-                        guru, dan orang tua sesuai hak akses
-                        masing-masing.
-
+                        Administrator dan guru menggunakan login portal dengan
+                        email dan password. Orang tua menggunakan login
+                        khusus melalui nomor WhatsApp dan kode OTP.
                     </p>
-
-
-                    <a href="{{ route('login') }}"
-                        class="
-                            inline-flex
-                            mt-4
-                            text-emerald-400
-                            hover:text-emerald-300
-                            text-sm
-                            font-semibold
-                        ">
-
-                        Masuk Portal →
-
-                    </a>
-
+                    <div class="mt-4 flex flex-col items-start gap-3">
+                        <a href="{{ route('login') }}"
+                            class="
+                                inline-flex
+                                text-emerald-400
+                                hover:text-emerald-300
+                                text-sm
+                                font-semibold
+                            ">
+                            Login →
+                        </a>
+                        <a href="{{ route('login') }}"
+                            class="
+                                inline-flex
+                                text-emerald-400
+                                hover:text-emerald-300
+                                text-sm
+                                font-semibold
+                            ">
+                            Login →
+                        </a>
+                    </div>
                 </div>
-
             </div>
-
-
-
             <div
                 class="
                     border-t
@@ -2191,169 +1646,88 @@
                     text-sm
                     text-slate-500
                 ">
-
                 <p>
                     &copy; {{ date('Y') }}
                     SMP Al-Qadri Islamic School.
                 </p>
-
                 <p>
                     Sistem Informasi Sekolah
                 </p>
-
             </div>
-
         </div>
-
     </footer>
-
-
-
     {{-- ============================================================= --}}
     {{-- SCRIPT --}}
     {{-- ============================================================= --}}
-
     <script>
-        /*
-                |--------------------------------------------------------------------------
-                | MOBILE MENU
-                |--------------------------------------------------------------------------
-                */
-
         const mobileButton =
             document.getElementById('mobile-menu-button');
-
         const mobileMenu =
             document.getElementById('mobile-menu');
-
-
         mobileButton?.addEventListener('click', function() {
-
             mobileMenu.classList.toggle('hidden');
-
         });
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | PWA INSTALL
-        |--------------------------------------------------------------------------
-        */
-
         let deferredPrompt = null;
-
         const installButton =
             document.getElementById('install-button');
-
-
         window.addEventListener(
             'beforeinstallprompt',
             function(event) {
-
                 event.preventDefault();
-
                 deferredPrompt = event;
-
                 installButton?.classList.remove('hidden');
-
             }
         );
-
-
         async function installSchoolApp() {
-
             if (!deferredPrompt) {
                 return;
             }
-
             deferredPrompt.prompt();
-
             await deferredPrompt.userChoice;
-
             deferredPrompt = null;
-
             installButton?.classList.add('hidden');
-
         }
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | SERVICE WORKER
-        |--------------------------------------------------------------------------
-        */
-
         if ('serviceWorker' in navigator) {
-
             window.addEventListener(
                 'load',
                 function() {
-
                     navigator.serviceWorker
                         .register('/serviceworker.js')
                         .catch(function(error) {
-
                             console.error(
                                 'Service Worker gagal:',
                                 error
                             );
-
                         });
-
                 }
             );
-
         }
 
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ONLINE / OFFLINE
-        |--------------------------------------------------------------------------
-        */
-
         function updateConnectionStatus() {
-
             const status =
                 document.getElementById('offline-status');
-
             if (!status) {
                 return;
             }
-
-
             if (navigator.onLine) {
-
                 status.classList.add('hidden');
-
             } else {
-
                 status.classList.remove('hidden');
-
             }
-
         }
-
-
         window.addEventListener(
             'online',
             updateConnectionStatus
         );
-
         window.addEventListener(
             'offline',
             updateConnectionStatus
         );
-
         document.addEventListener(
             'DOMContentLoaded',
             updateConnectionStatus
         );
     </script>
-
 </body>
 
 </html>

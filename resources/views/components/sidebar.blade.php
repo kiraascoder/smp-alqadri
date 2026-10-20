@@ -468,6 +468,15 @@
 
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('ortu.profil') }}"
+                        class="{{ $active }}
+        {{ request()->routeIs('ortu.profil') ? $selected : $normal }}">
+
+                        👤 Profil
+
+                    </a>
+                </li>
             @endif
 
 
