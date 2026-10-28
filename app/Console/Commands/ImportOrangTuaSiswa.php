@@ -258,10 +258,7 @@ class ImportOrangTuaSiswa extends Command
                                     $phone
                                 ),
                                 'no_hp' => $phone,
-                                'password' =>
-                                Hash::make( 
-                                    Str::random(64)
-                                ),
+                               'password' => Hash::make('password123!'),
                                 'role' =>
                                 User::ROLE_ORANG_TUA,
                             ]);
