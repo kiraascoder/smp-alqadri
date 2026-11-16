@@ -512,22 +512,49 @@ shadow-sm
 overflow-hidden">
 
 
-            <div class="p-6 border-b">
 
-                <h2 class="text-lg font-semibold">
+            <div class="p-6 border-b flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-                    Daftar Orang Tua
+                <div>
+                    <h2 class="text-lg font-semibold text-slate-900">
+                        Daftar Orang Tua
+                    </h2>
 
-                </h2>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Data akun orang tua yang terdaftar.
+                    </p>
+                </div>
 
+                <form method="GET" action="{{ url()->current() }}"
+                    class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
 
-                <p class="text-sm text-slate-500">
+                    <div class="relative">
+                        <input type="search" name="search" value="{{ $search }}"
+                            placeholder="Cari orang tua, email, HP, atau anak..." maxlength="100"
+                            class="w-full sm:w-80 border border-slate-300
+                       rounded-xl py-3 pl-4 pr-4 text-sm
+                       focus:outline-none focus:ring-2
+                       focus:ring-blue-500">
+                    </div>
 
-                    Data akun orang tua yang terdaftar.
+                    <button type="submit"
+                        class="px-5 py-3 rounded-xl bg-blue-700
+                       hover:bg-blue-800 text-white
+                       text-sm font-semibold transition">
+                        Cari
+                    </button>
 
-                </p>
-
+                    @if ($search !== '')
+                        <a href="{{ url()->current() }}"
+                            class="px-5 py-3 rounded-xl bg-slate-100
+                      hover:bg-slate-200 text-slate-700
+                      text-sm font-medium text-center transition">
+                            Reset
+                        </a>
+                    @endif
+                </form>
             </div>
+
 
 
 

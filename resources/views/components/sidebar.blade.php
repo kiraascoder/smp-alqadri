@@ -253,6 +253,18 @@
                     </a>
                 </li>
 
+                {{-- STRUKTUR ORGANISASI --}}
+                <li>
+                    <a href="{{ route('admin.struktur.index') }}"
+                        class="{{ $active }}
+       {{ request()->routeIs('admin.struktur.*') ? $selected : $normal }}">
+
+                        🏛️ Struktur Organisasi
+
+                    </a>
+                </li>
+
+
 
                 <li>
                     <a href="{{ route('admin.kelas') }}"

@@ -7,6 +7,7 @@ use App\Http\Controllers\KebajikanController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PelanggaranController;
 use App\Http\Controllers\PWAController;
+use App\Http\Controllers\SchoolStructureController;
 use App\Http\Controllers\SesiController;
 use Illuminate\Support\Facades\Route;
 
@@ -175,6 +176,13 @@ Route::prefix('admin')
             '/penilaian-kebajikan/{riwayat}',
             [AdminController::class, 'beriPoinKebajikan']
         )->name('admin.penilaian-kebajikan.update');
+
+
+        Route::get(
+            '/struktur-organisasi',
+            [SchoolStructureController::class, 'adminIndex']
+        )->name('admin.struktur.index');
+
 
 
         /*

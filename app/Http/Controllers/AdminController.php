@@ -338,38 +338,61 @@ class AdminController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function siswa()
+
+    public function siswa(Request $request)
     {
+        $data = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $search = trim($data['search'] ?? '');
+
         $siswas = Siswa::with([
             'kelas',
             'orangTua.user',
         ])
-            ->latest()
-            ->paginate(10);
+            ->when($search !== '', function ($query) use ($search) {
 
+                $keyword = '%' . $search . '%';
 
-        $kelasList = Kelas::orderBy(
-            'nama_kelas'
-        )->get();
+                $query->where(function ($q) use ($keyword) {
 
+                    // Cari nama siswa
+                    $q->where('nama', 'like', $keyword)
+
+                        // Cari berdasarkan kelas
+                        ->orWhereHas('kelas', function ($kelas) use ($keyword) {
+                            $kelas->where('nama_kelas', 'like', $keyword);
+                        })
+
+                        // Cari berdasarkan nama orang tua
+                        ->orWhereHas('orangTua.user', function ($user) use ($keyword) {
+                            $user->where('name', 'like', $keyword);
+                        });
+                });
+            })
+            ->latest('id')
+            ->paginate(10)
+            ->withQueryString();
+
+        $kelasList = Kelas::orderBy('nama_kelas')
+            ->get();
 
         $orangTuaList = OrangTua::with('user')
             ->get()
-            ->sortBy(
-                fn($ortu) =>
-                $ortu->user?->name
-            );
-
+            ->sortBy(fn($ortu) => $ortu->user?->name);
 
         return view(
             'admin.siswa',
             compact(
                 'siswas',
                 'kelasList',
-                'orangTuaList'
+                'orangTuaList',
+                'search'
             )
         );
     }
+
 
 
     public function storeSiswa(Request $request)
@@ -475,34 +498,50 @@ class AdminController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function orangTua()
+
+    public function orangTua(Request $request)
     {
+        $request->validate([
+            'search' => 'nullable|string|max:100',
+        ]);
+
+        $search = trim((string) $request->query('search', ''));
+
         $ortu = OrangTua::with([
             'user',
             'siswa.kelas',
         ])
+            ->when($search !== '', function ($query) use ($search) {
+                $keyword = '%' . $search . '%';
+
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereHas('user', function ($user) use ($keyword) {
+                        $user->where(function ($u) use ($keyword) {
+                            $u->where('name', 'like', $keyword)
+                                ->orWhere('email', 'like', $keyword)
+                                ->orWhere('no_hp', 'like', $keyword);
+                        });
+                    })
+                        ->orWhereHas('siswa', function ($siswa) use ($keyword) {
+                            $siswa->where('nama', 'like', $keyword);
+                        });
+                });
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-
-        /*
-         * Hanya siswa yang belum mempunyai orang tua
-         * yang ditampilkan pada pilihan tautkan anak.
-         */
         $siswaList = Siswa::with('kelas')
             ->whereNull('orang_tua_id')
             ->orderBy('nama')
             ->get();
 
-
         return view(
             'admin.orang-tua',
-            compact(
-                'ortu',
-                'siswaList'
-            )
+            compact('ortu', 'siswaList', 'search')
         );
     }
+
 
 
     public function registerOrtu(Request $request)
