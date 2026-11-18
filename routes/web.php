@@ -3,12 +3,15 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BeritaController;
 use App\Models\Berita;
+use App\Models\Pengumuman;
+use App\Models\SchoolPosition;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KebajikanController;
 use App\Http\Controllers\OrangTuaController;
 use App\Http\Controllers\PelanggaranController;
 use App\Http\Controllers\PWAController;
+use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\SchoolStructureController;
 use App\Http\Controllers\SesiController;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +27,34 @@ Route::get('/', function () {
         ->limit(3)
         ->get();
 
-    return view('welcome', compact('beritaTerbaru'));
+    $leaders = SchoolPosition::query()
+        ->where('is_active', true)
+        ->where('show_homepage', true)
+        ->with(['members' => function ($query) {
+            $query->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id');
+        }])
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->limit(4)
+        ->get();
+
+    // Tiga pengumuman aktif dan terbaru; yang penting berada paling atas.
+    $pengumumanTerbaru = Pengumuman::visible()
+        ->orderByDesc('is_pinned')
+        ->orderByDesc('published_at')
+        ->orderByDesc('id')
+        ->limit(3)
+        ->get();
+
+    return view('welcome', compact('beritaTerbaru', 'leaders', 'pengumumanTerbaru'));
 })->name('home');
-Route::view('/pengumuman', 'pengumuman')->name('pengumuman');
+// Pengumuman publik: nama route lama tetap 'pengumuman' agar menu tidak rusak.
+Route::get('/pengumuman', [PengumumanController::class, 'publicIndex'])
+    ->name('pengumuman');
+Route::get('/pengumuman/{pengumuman:slug}', [PengumumanController::class, 'publicShow'])
+    ->name('pengumuman.show');
 Route::view('/tentang', 'tentang')->name('tentang');
 Route::view('/layanan', 'layanan')->name('layanan');
 
@@ -120,6 +148,24 @@ Route::prefix('admin')
             ->name('admin.struktur.members.update');
         Route::delete('/struktur-organisasi/personel/{member}', [SchoolStructureController::class, 'destroyMember'])
             ->name('admin.struktur.members.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENGUMUMAN SEKOLAH - ADMIN
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/pengumuman', [PengumumanController::class, 'adminIndex'])
+            ->name('admin.pengumuman.index');
+        Route::get('/pengumuman/tambah', [PengumumanController::class, 'create'])
+            ->name('admin.pengumuman.create');
+        Route::post('/pengumuman', [PengumumanController::class, 'store'])
+            ->name('admin.pengumuman.store');
+        Route::get('/pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])
+            ->name('admin.pengumuman.edit');
+        Route::put('/pengumuman/{pengumuman}', [PengumumanController::class, 'update'])
+            ->name('admin.pengumuman.update');
+        Route::delete('/pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])
+            ->name('admin.pengumuman.destroy');
 
         /*
         |--------------------------------------------------------------------------

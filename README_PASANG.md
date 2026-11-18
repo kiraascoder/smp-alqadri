@@ -1,43 +1,39 @@
-# Modul Struktur Organisasi — SMP Al-Qadri Islamic School
+# Homepage baru SMP Al-Qadri — Jumbotron, Berita & Struktur Organisasi
 
-Paket kode tambahan untuk repo https://github.com/kiraascoder/smp-alqadri. Tidak otomatis dipasang pada repo/server. Paket ini dibangun dari route dan Blade repo publik yang dicek pada 6 November 2026, serta gaya kode Laravel yang diberikan pengguna dalam percakapan.
+Paket ini mengganti **tampilan halaman Beranda** saja. Tidak mengubah data dan tidak menambah tabel.
 
-## Fitur
-- Admin mengelola jabatan/kelompok dan relasi induk-anak (hierarki tanpa batasan level kaku)
-- Admin mengelola nama personel, gelar/keterangan singkat, foto opsional, urutan
-- Satu jabatan bisa memiliki banyak personel; seorang personel dapat didaftarkan ke lebih dari satu jabatan
-- Draft/publikasi per jabatan dan personel
-- Admin memilih jabatan yang ditampilkan ringkas di homepage
-- Halaman publik `/struktur-organisasi` berbentuk bagan yang dapat digeser horizontal
-- Integrasi dengan homepage dan sidebar existing melalui potongan kode di `docs/`
+## Isi
+- `resources/views/welcome.blade.php` — halaman homepage baru lengkap.
+- `docs/PATCH_ROUTE_HOME.php` — kode untuk mengganti *hanya* route GET `/` dalam `routes/web.php`.
 
-## Cara pemasangan LOCAL / STAGING
+## Cara memasang
+1. Backup dahulu `resources/views/welcome.blade.php` dan `routes/web.php`.
+2. Salin `resources/views/welcome.blade.php` dari paket ke project.
+3. Buka `routes/web.php`. Pastikan terdapat import `App\Models\Berita` dan `App\Models\SchoolPosition`.
+4. **Ganti** route homepage sebelumnya (`Route::view('/', 'welcome')` atau `Route::get('/', ...)`) dengan kode di `docs/PATCH_ROUTE_HOME.php`. Jangan menduplikasi route `/`.
+5. Pastikan route `berita.index`, `berita.show` dan `struktur.index` telah terpasang; juga migration `berita`, `school_positions` dan `school_position_members` telah sukses.
+6. Unggah tiga foto sekolah dengan nama persis:
+   - `public/images/slider/slide-1.jpg`
+   - `public/images/slider/slide-2.jpg`
+   - `public/images/slider/slide-3.jpg`
+   Gunakan foto horizontal sekitar **1920×900 px**, dioptimasi agar ringan (sekitar 200–500 KB jika memungkinkan). Foto tidak disertakan dalam ZIP, karena harus menggunakan dokumentasi asli sekolah. Jika foto belum ada, slideshow tetap tampil memakai gradasi hijau.
+7. Untuk menampilkan personel di homepage, buka `/admin/struktur-organisasi`: aktifkan `Publikasikan` dan `Homepage` untuk jabatan, aktifkan `Publikasikan` untuk personel. Maksimal empat jabatan tampil di homepage; halaman `/struktur-organisasi` tetap memuat struktur lengkap.
+8. Agar berita muncul, admin harus membuat berita dengan status **Terbit**, dan tanggal publikasinya tidak berada di masa depan. Homepage menampilkan tiga terbaru.
+9. Jalankan:
+   ```bash
+   php artisan optimize:clear
+   php artisan route:list --name=home
+   php artisan route:list --name=berita
+   php artisan route:list --name=struktur
+   php artisan view:cache
+   ```
+   Jika ingin mengedit view lagi dalam development, gunakan `php artisan view:clear`.
+10. Uji di browser pada desktop dan mobile: slider, tombol navigasi, route, foto berita, personel, dan login.
 
-1. Backup database saat ini. Disarankan buat branch Git baru.
-2. Salin direktori `app`, `database`, dan `resources` dari paket ini ke akar project Laravel **tanpa menimpa file yang sudah ada** (file di paket baru).
-3. Jalankan `php artisan migrate` (bukan `migrate:fresh`). Migration ini hanya membuat dua tabel baru.
-4. Jalankan `php artisan storage:link` untuk foto (jika belum).
-5. Terapkan route dari `docs/PATCH_ROUTES_WEB.md`.
-6. Terapkan menu admin dari `docs/PATCH_SIDEBAR.md`.
-7. Terapkan ringkasan homepage dari `docs/PATCH_HOMEPAGE.md` jika diperlukan; jalankan migration lebih dahulu sebelum mengganti route `/`.
-8. **Opsional:** jalankan `php artisan db:seed --class=SchoolPositionSeeder` hanya jika ingin membuat daftar jabatan template. Seeder hanya membuat jabatan kosong, tidak menebak nama orang pada foto.
-9. Jalankan `php artisan optimize:clear` dan `php artisan route:list --path=struktur-organisasi`.
-10. Masuk sebagai admin, buka `/admin/struktur-organisasi`, isi personel dan publikasikan.
-
-## Testing manual sebelum deploy
-- Pengunjung tanpa login dapat membaca `/struktur-organisasi` namun tidak mengakses `/admin/struktur-organisasi`.
-- Guru dan orang tua tidak bisa mengelola struktur.
-- Admin dapat tambah/edit/hapus posisi dan personel; hapus posisi yang beranak harus ditolak.
-- Pemindahan induk ke turunan diri sendiri harus ditolak.
-- Tidak ada personel draft yang bocor ke halaman publik.
-- Foto opsional tampil setelah `storage:link`; hapus/ganti foto bekerja.
-- Urutan jabatan/personel konsisten. Tampilan desktop/mobile bisa scroll horizontal.
-- Homepage tetap tampil tanpa jabatan, lalu menampilkan maksimal 4 jabatan yang dicentang homepage.
-- Fitur skorsing, kebajikan, dan semua tabel siswa tidak terpengaruh.
-
-## Catatan
-- Ini adalah implementasi dasar yang sudah diperiksa dengan `php -l`, tetapi belum dijalankan pada aplikasi Laravel pengguna sehingga tetap harus diuji end-to-end di staging.
-- Pengurutan memakai angka `sort_order`, bukan drag-and-drop. Drag-and-drop dapat menjadi fase berikutnya.
-- Publikasikan nama/foto staf setelah mendapat persetujuan sekolah.
-- Bagan top-level belum memiliki garis putus-putus relasi koordinatif seperti pada foto referensi, tetapi semua posisi dan garis hubungan hierarkis dapat diatur.
-- Saat ini pemilih induk menampilkan semua jabatan dalam daftar biasa; siklus ditolak saat submit.
+## Catatan penting
+- Jangan jalankan `migrate:fresh` pada server production.
+- Foto berita/personel memakai disk Laravel `public`. Pastikan `php artisan storage:link` pernah dijalankan dan folder `storage` bisa diakses publik.
+- Jika menggunakan Tailwind CDN pada website lama, paket ini mengikuti pendekatan tersebut agar langsung kompatibel. Untuk production yang lebih optimal, pindahkan kelas yang digunakan ke build Tailwind/Vite sebelum menghapus CDN.
+- Perhatikan izin publikasi foto/nama peserta didik pada berita.
+- Paket tidak menyediakan pengelolaan slider melalui admin: gambar slider diatur dengan mengganti tiga file di `public/images/slider`.
+- Jika website memakai service worker PWA, versi cache lama dapat menunda tampilan homepage baru. Perbarui strategi cache saat deployment jika perlu.
