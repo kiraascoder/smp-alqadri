@@ -264,6 +264,15 @@
                     </a>
                 </li>
 
+                {{-- BERITA SEKOLAH --}}
+                <li>
+                    <a href="{{ route('admin.berita.index') }}"
+                        class="{{ $active }}
+       {{ request()->routeIs('admin.berita.*') ? $selected : $normal }}">
+                        📰 Berita Sekolah
+                    </a>
+                </li>
+p
 
 
                 <li>
