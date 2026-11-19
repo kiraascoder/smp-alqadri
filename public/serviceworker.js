@@ -1,354 +1,129 @@
-const CACHE_NAME = "bk-alqadri-v1.2";
-const OFFLINE_URL = "/offline.html";
-const FALLBACK_IMAGE = "/images/offline-placeholder.png";
+/*
+ * SMP Al-Qadri - Service Worker v1.3
+ * Perbaikan:
+ * - URL /storage/* tidak diintersep (termasuk saat JPG dibuka sebagai dokumen).
+ * - Respons HTTP 404/403 diteruskan apa adanya, tidak disamarkan menjadi halaman offline.
+ * - Halaman autentikasi/dasbor/API tidak disimpan di Cache Storage.
+ * - Cache lama v1.2 dibersihkan saat aktivasi untuk menghindari data privat tertinggal.
+ * - Hanya offline fallback dan aset statis publik yang dapat di-cache.
+ */
 
-// Enhanced cache strategy dengan lebih banyak URL
-const urlsToCache = [
-    "/",
-    "/login",
-    "/offline.html",
-    "/css/app.css",
-    "/js/app.js",
+const CACHE_NAME = "bk-alqadri-v1.3";
+const CACHE_PREFIX = "bk-alqadri-";
+const OFFLINE_URL = "/offline.html";
+
+// Hindari cache precache untuk URL yang mungkin tidak ada / memerlukan login.
+const PRECACHE_URLS = [
+    OFFLINE_URL,
     "/images/icons/icon-192x192.png",
     "/images/icons/icon-512x512.png",
-    // Tambahkan route-route penting sistem BK
-    "/siswa/dashboard",
-    "/siswa/profil-siswa",
-    "/siswa/konseling",
-    "/siswa/pelanggaran",
-    "/siswa/laporan",
-    "/guru/dashboard",
-    "/guru/profil",
-    "/guru/siswa",
-    "/bk/dashboard",
-    "/bk/profil",
-    "/bk/siswa",
-    "/bk/konseling",
-    "/admin/dashboard",
 ];
 
-// Dynamic cache patterns untuk halaman yang sering diakses
-const CACHE_PATTERNS = [
-    /^\/siswa\//,
-    /^\/guru\//,
-    /^\/bk\//,
-    /^\/admin\//,
-    /\.css$/,
-    /\.js$/,
-    /\.png$/,
-    /\.jpg$/,
-    /\.jpeg$/,
-    /\.gif$/,
-    /\.svg$/,
-];
+const PRIVATE_PATH = /^\/(?:admin|guru|orang-tua|siswa|bk|api|login|logout|lupa-password|reset-password)(?:\/|$)/i;
+const PUBLIC_ASSET_PATH = /^\/(?:css|js|build|images)\//i;
+const ASSET_EXTENSION = /\.(?:css|js|png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
 
 self.addEventListener("install", (event) => {
-    console.log("[BK Service Worker] Installing v1.2...");
-    event.waitUntil(
-        caches
-            .open(CACHE_NAME)
-            .then((cache) => {
-                console.log(
-                    "[BK Service Worker] Caching app shell and essential pages",
-                );
-                return cache.addAll(
-                    urlsToCache.map((url) => {
-                        const request = new Request(url, {
-                            cache: "reload",
-                            credentials: "same-origin",
-                        });
-                        return request;
-                    }),
-                );
-            })
-            .catch((error) => {
-                console.error("[BK Service Worker] Cache failed:", error);
-                // Fallback: cache minimal essentials jika ada yang gagal
-                return caches.open(CACHE_NAME).then((cache) => {
-                    return cache.addAll(["/", "/offline.html"]);
-                });
-            }),
-    );
-    self.skipWaiting();
+    event.waitUntil((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        await Promise.all(PRECACHE_URLS.map(async (path) => {
+            try {
+                const response = await fetch(new Request(path, {
+                    cache: "reload",
+                    credentials: "same-origin",
+                }));
+                const type = response.headers.get("content-type") || "";
+                const expectedType = path === OFFLINE_URL ? "text/html" : "image/";
+                if (response.ok && type.includes(expectedType)) {
+                    await cache.put(path, response);
+                } else {
+                    console.warn("[SW] Tidak di-cache:", path, response.status);
+                }
+            } catch (error) {
+                console.warn("[SW] Precache gagal:", path, error);
+            }
+        }));
+        await self.skipWaiting();
+    })());
 });
 
 self.addEventListener("activate", (event) => {
-    console.log("[BK Service Worker] Activating v1.2...");
-    event.waitUntil(
-        Promise.all([
-            // Cleanup old caches
-            caches.keys().then((cacheNames) => {
-                return Promise.all(
-                    cacheNames.map((cacheName) => {
-                        if (cacheName !== CACHE_NAME) {
-                            console.log(
-                                "[BK Service Worker] Deleting old cache:",
-                                cacheName,
-                            );
-                            return caches.delete(cacheName);
-                        }
-                    }),
-                );
-            }),
-            // Claim clients immediately
-            self.clients.claim(),
-        ]),
-    );
+    event.waitUntil((async () => {
+        const names = await caches.keys();
+        await Promise.all(names
+            .filter((name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME)
+            .map((name) => caches.delete(name)));
+        await self.clients.claim();
+    })());
 });
 
-// Enhanced fetch handler dengan better offline support
 self.addEventListener("fetch", (event) => {
-    // Skip cross-origin dan chrome-extension requests
-    if (
-        !event.request.url.startsWith(self.location.origin) ||
-        event.request.url.startsWith("chrome-extension://")
-    ) {
+    const request = event.request;
+    if (request.method !== "GET") return;
+
+    const url = new URL(request.url);
+    if (url.origin !== self.location.origin) return;
+
+    // PENTING: biarkan web server mengirim gambar upload asli beserta 403/404-nya.
+    // Pengecekan ini harus sebelum pemeriksaan request.mode === "navigate".
+    if (url.pathname.startsWith("/storage/")) return;
+
+    // Jangan cache konten akun pengguna, API, atau hasil login.
+    if (PRIVATE_PATH.test(url.pathname)) return;
+
+    // Saat user membuka URL .jpg secara langsung, browser dapat mengirim mode=navigate.
+    // Hanya respons jaringan gagal (bukan status HTTP 404/403) yang mendapat fallback offline.
+    if (request.mode === "navigate" || request.destination === "document") {
+        event.respondWith(handlePublicNavigation(request));
         return;
     }
 
-    // Skip POST, PUT, DELETE requests untuk avoid caching form submissions
-    if (event.request.method !== "GET") {
+    // Aset statis publik boleh di-cache. File upload /storage tetap tidak masuk sini.
+    if (PUBLIC_ASSET_PATH.test(url.pathname) && ASSET_EXTENSION.test(url.pathname)) {
+        event.respondWith(handlePublicAsset(event));
         return;
     }
 
-    const url = new URL(event.request.url);
-
-    // Handle navigation requests (HTML pages)
-    if (
-        event.request.destination === "document" ||
-        event.request.headers.get("accept")?.includes("text/html")
-    ) {
-        event.respondWith(handleNavigationRequest(event.request));
-    }
-    // Handle images
-    else if (event.request.destination === "image") {
-        event.respondWith(handleImageRequest(event.request));
-    }
-    // Handle CSS, JS, and other static assets
-    else if (isStaticAsset(event.request)) {
-        event.respondWith(handleStaticAssetRequest(event.request));
-    }
-    // Handle API requests
-    else if (url.pathname.startsWith("/api/")) {
-        event.respondWith(handleApiRequest(event.request));
-    }
-    // Default handling
-    else {
-        event.respondWith(handleDefaultRequest(event.request));
-    }
+    // Semua URL lain menggunakan jaringan biasa tanpa caching.
 });
 
-// Navigation request handler - prioritas network, fallback ke cache, then offline page
-async function handleNavigationRequest(request) {
+async function handlePublicNavigation(request) {
     try {
-        // Try network first
-        const networkResponse = await fetch(request);
-
-        if (networkResponse.ok) {
-            // Cache successful responses
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseClone);
-            });
-            return networkResponse;
-        }
-        throw new Error("Network response not ok");
+        // Status 404/403 tetap dikembalikan; jangan dianggap gangguan internet.
+        return await fetch(request);
     } catch (error) {
-        console.log("[SW] Network failed for navigation, trying cache...");
-
-        // Try cache
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-
-        // Check if URL matches dynamic patterns
-        if (shouldCacheDynamically(request.url)) {
-            // Try to find similar cached page
-            const similarPage = await findSimilarCachedPage(request.url);
-            if (similarPage) {
-                return similarPage;
-            }
-        }
-
-        // Fallback to offline page
-        console.log("[SW] Serving offline page for:", request.url);
-        return caches.match(OFFLINE_URL);
-    }
-}
-
-// Image request handler
-async function handleImageRequest(request) {
-    try {
-        // Try cache first for images
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-
-        // Try network
-        const networkResponse = await fetch(request);
-        if (networkResponse.ok) {
-            // Cache successful image responses
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseClone);
-            });
-            return networkResponse;
-        }
-        throw new Error("Image network response not ok");
-    } catch (error) {
-        // Return placeholder image or fallback
-        console.log("[SW] Image failed, serving placeholder");
-        return (
-            caches.match(FALLBACK_IMAGE) ||
-            new Response("", {
-                status: 200,
-                statusText: "Image not available offline",
-            })
-        );
-    }
-}
-
-// Static asset handler (CSS, JS)
-async function handleStaticAssetRequest(request) {
-    try {
-        // Try cache first for static assets
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-
-        // Try network with timeout
-        const networkResponse = await Promise.race([
-            fetch(request),
-            new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Timeout")), 3000),
-            ),
-        ]);
-
-        if (networkResponse.ok) {
-            // Cache static assets aggressively
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseClone);
-            });
-            return networkResponse;
-        }
-        throw new Error("Static asset network response not ok");
-    } catch (error) {
-        console.log("[SW] Static asset failed:", request.url);
-        return new Response("/* Asset not available offline */", {
-            status: 200,
-            statusText: "Asset cached version not available",
-            headers: {
-                "Content-Type": request.url.endsWith(".css")
-                    ? "text/css"
-                    : "application/javascript",
-            },
+        const cache = await caches.open(CACHE_NAME);
+        const offlinePage = await cache.match(OFFLINE_URL);
+        return offlinePage || new Response("Tidak ada koneksi internet.", {
+            status: 503,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
         });
     }
 }
 
-// API request handler
-async function handleApiRequest(request) {
-    try {
-        const networkResponse = await fetch(request);
-
-        // Only cache GET API requests that are successful
-        if (networkResponse.ok && request.method === "GET") {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseClone);
-            });
-        }
-
-        return networkResponse;
-    } catch (error) {
-        // For API requests, try cache for GET requests
-        if (request.method === "GET") {
-            const cachedResponse = await caches.match(request);
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-        }
-
-        // Return offline API response
-        return new Response(
-            JSON.stringify({
-                error: "Offline",
-                message: "API not available offline",
-            }),
-            {
-                status: 503,
-                statusText: "Service Unavailable",
-                headers: { "Content-Type": "application/json" },
-            },
-        );
-    }
-}
-
-// Default request handler
-async function handleDefaultRequest(request) {
-    try {
-        const networkResponse = await fetch(request);
-        if (networkResponse.ok) {
-            // Cache if it matches patterns
-            if (shouldCacheDynamically(request.url)) {
-                const responseClone = networkResponse.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(request, responseClone);
-                });
-            }
-            return networkResponse;
-        }
-        throw new Error("Default network response not ok");
-    } catch (error) {
-        const cachedResponse = await caches.match(request);
-        return (
-            cachedResponse ||
-            new Response("Not available offline", {
-                status: 503,
-                statusText: "Service Unavailable",
-            })
-        );
-    }
-}
-
-// Helper functions
-function isStaticAsset(request) {
-    return (
-        request.destination === "style" ||
-        request.destination === "script" ||
-        request.url.match(/\.(css|js)$/)
-    );
-}
-
-function shouldCacheDynamically(url) {
-    return CACHE_PATTERNS.some((pattern) => pattern.test(url));
-}
-
-async function findSimilarCachedPage(url) {
+async function handlePublicAsset(event) {
+    const request = event.request;
     const cache = await caches.open(CACHE_NAME);
-    const keys = await cache.keys();
+    const cached = await cache.match(request);
+    if (cached) return cached;
 
-    // Cari halaman dengan pattern mirip
-    for (const request of keys) {
-        if (request.url.includes("/siswa/") && url.includes("/siswa/")) {
-            return cache.match(request);
+    try {
+        const response = await fetch(request);
+        const type = response.headers.get("content-type") || "";
+        const isValidType = /^(?:text\/css|(?:text|application)\/javascript|image\/|font\/|application\/font-)/i.test(type);
+        if (response.ok && isValidType && !response.headers.has("set-cookie")) {
+            // Pertahankan proses penyimpanan walaupun response sudah dikirim.
+            event.waitUntil(cache.put(request, response.clone()).catch((err) => {
+                console.warn("[SW] Cache aset gagal:", err);
+            }));
         }
-        if (request.url.includes("/guru/") && url.includes("/guru/")) {
-            return cache.match(request);
-        }
-        if (request.url.includes("/bk/") && url.includes("/bk/")) {
-            return cache.match(request);
-        }
-        if (request.url.includes("/admin/") && url.includes("/admin/")) {
-            return cache.match(request);
-        }
+        return response;
+    } catch (error) {
+        return new Response("Aset tidak tersedia saat offline.", {
+            status: 503,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
     }
-
-    return null;
 }
 
 // Background sync untuk data BK
